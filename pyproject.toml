@@ -1,0 +1,48 @@
+[project]
+name = "video-eval-bench"
+version = "0.1.0"
+description = "Benchmark for AI-generated videos: seed dataset + LLM video judge with category-specific rubrics"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "opencv-python-headless>=4.8",
+    "pillow>=10.0",
+    "litellm>=1.40",
+    "hydra-core>=1.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[project.scripts]
+veb = "video_eval_bench.run:main"
+veb-compare = "video_eval_bench.compare:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+# The e2e tier needs the real pi binary and a live gx10 model, so it is opt-in:
+#   python -m pytest tests/e2e -m e2e -q
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: end-to-end run against the real pi agent and a live LLM endpoint",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["video_eval_bench*"]
+
+[tool.setuptools.package-data]
+video_eval_bench = [
+    "conf/*.yaml",
+    "conf/**/*.yaml",
+    "generator/prompts/*.md",
+    "generator/pi_ext/*.ts",
+]

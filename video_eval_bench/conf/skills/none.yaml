@@ -1,0 +1,6 @@
+# @package generator.skills
+#
+# Baseline: the agent gets no skills at all.
+
+paths: []
+discover: false

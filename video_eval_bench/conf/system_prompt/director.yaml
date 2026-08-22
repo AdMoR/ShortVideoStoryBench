@@ -1,0 +1,8 @@
+# @package generator.system_prompt
+#
+# The full director prompt: how to finish, how to discover its own capabilities,
+# and — the expensive one to get wrong — how to wait for a slow generation.
+
+system_file: ${veb_prompt:director_system.md}
+task_file: ${veb_prompt:task.md}
+append_files: []

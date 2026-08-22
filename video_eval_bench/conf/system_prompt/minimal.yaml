@@ -1,0 +1,7 @@
+# @package generator.system_prompt
+#
+# Two sentences. The contrast arm that shows what the director prompt is buying.
+
+system_file: ${veb_prompt:minimal_system.md}
+task_file: ${veb_prompt:task.md}
+append_files: []

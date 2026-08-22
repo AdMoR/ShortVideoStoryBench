@@ -1,0 +1,7 @@
+# @package generator.tools
+#
+# No shell. Isolates how much of the agent's ability is "can run commands".
+
+builtin: [read, write, edit, grep, find, ls]
+exclude: []
+no_builtin: false

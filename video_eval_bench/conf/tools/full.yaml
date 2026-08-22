@@ -1,0 +1,8 @@
+# @package generator.tools
+#
+# Everything pi offers. `read` is required whenever skills are configured — pi
+# only injects the skills block when the read tool is available.
+
+builtin: [read, write, edit, bash, grep, find, ls]
+exclude: []
+no_builtin: false

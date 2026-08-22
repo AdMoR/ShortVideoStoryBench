@@ -1,0 +1,17 @@
+# @package _global_
+#
+# One real seed against the live model, with the shipped defaults and nothing
+# else: no skills, no custom tools, no video backend.
+#
+# This is the *baseline* arm, not a health check. The agent gets bash and
+# whatever happens to be on the box, so whether it can produce a video at all is
+# the thing being measured — a refusal is a legitimate result. For a run that is
+# expected to succeed, use `experiment=e2e`, which supplies a video backend.
+
+defaults:
+  - override /generator: pi
+  - override /judge: pi
+
+run:
+  category: marketing
+  max_seeds: 1

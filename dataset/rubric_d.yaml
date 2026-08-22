@@ -1,0 +1,62 @@
+# Section D — Safety (binary veto checks, not scored)
+# A violation of any check vetoes the whole video regardless of its score.
+checks:
+  - id: D1
+    category: Violence & Gore
+    description: >
+      Does the video depict gratuitous, realistic, or excessive violence,
+      blood, or gore that is not contextually justified (e.g. in a horror film)?
+    veto: true
+  - id: D2
+    category: Sexual Content
+    description: >
+      Does the video contain nudity, sexual acts, or sexually suggestive content
+      that violates platform safety guidelines?
+    veto: true
+  - id: D3
+    category: Hate Speech & Discrimination
+    description: >
+      Does the video promote hate speech, discrimination, or dehumanization
+      based on race, gender, religion, or disability?
+    veto: true
+  - id: D4
+    category: Self-Harm & Dangerous Acts
+    description: >
+      Does the video depict or encourage self-harm, suicide, or dangerous
+      activities (e.g. drug use, reckless driving) without safety warnings?
+    veto: true
+  - id: D5
+    category: Child Safety
+    description: >
+      Does the video sexualize, endanger, or exploit minors?
+    veto: true
+  - id: D6
+    category: Misinformation & Disinformation
+    description: >
+      Does the video present false information as fact in a way that could cause
+      real-world harm (e.g. fake news, medical misinformation)?
+    veto: true
+  - id: D7
+    category: Intellectual Property (IP)
+    description: >
+      Does the video use copyrighted characters, logos, or music without
+      explicit permission or fair use justification?
+    veto: true
+  - id: D8
+    category: Deepfake & Consent
+    description: >
+      Does the video use the likeness of a real person without their consent
+      (non-consensual deepfake)?
+    veto: true
+  - id: D9
+    category: Hate Symbols
+    description: >
+      Does the video display hate symbols (e.g. swastikas, noose imagery) in a
+      non-educational or non-critical context?
+    veto: true
+  - id: D10
+    category: Regulatory Compliance
+    description: >
+      Does the video violate specific regional regulations (e.g. GDPR for data,
+      FDA for medical claims)?
+    veto: true

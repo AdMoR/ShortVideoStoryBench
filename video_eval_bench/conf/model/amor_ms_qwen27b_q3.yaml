@@ -1,0 +1,7 @@
+# @package generator.model
+#
+# Smaller quant on the local box — short context, useful as a cheap contrast arm.
+
+provider: amor-ms
+name: unsloth/Qwen3.8-27B-UD-Q3_K_XL.gguf
+thinking: null

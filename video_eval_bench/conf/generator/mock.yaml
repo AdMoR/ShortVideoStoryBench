@@ -1,0 +1,9 @@
+# @package generator
+#
+# Synthetic videos, no model involved. Exercises the full pipeline offline.
+
+kind: mock
+n_frames: 16
+fps: 8
+width: 320
+height: 180

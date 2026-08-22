@@ -1,0 +1,50 @@
+# video-eval-bench run configuration.
+#
+# One run = one agent variant, scored over a seed selection, producing one report.
+# Comparison is a separate step (`veb-compare`) over those reports.
+#
+# Each group below is an ablation axis. Swap one, keep the rest:
+#
+#   veb skills=video_basic
+#   veb system_prompt=minimal tools=no_bash
+#   veb -m skills=none,video_basic      # both, one report each
+#
+# Adding an arm is a new file in the group's directory — no Python change.
+
+defaults:
+  # _self_ first: the run: block below is the base that later entries refine.
+  - _self_
+  # The generator block next; the axis groups after it package into it and
+  # therefore override its placeholders.
+  - generator: pi
+  - model: gx10_qwen27b_q8
+  - system_prompt: director
+  - skills: none
+  - tools: full
+  - judge: pi
+  # Whole-variant presets, last so they can override any of the above.
+  - experiment: null
+
+paths:
+  # Relative paths in group files resolve against wherever `veb` was invoked.
+  root: ${hydra:runtime.cwd}
+
+run:
+  dataset_dir: null
+  category: null # restrict to one genre
+  seed_ids: null # explicit subset, e.g. [marketing_001]
+  max_seeds: null # cap the count — agentic runs are slow, ablate on 1-2 seeds
+  note: "" # free text, lands in the report
+
+hydra:
+  # The Hydra output directory IS the run directory, so .hydra/config.yaml and
+  # .hydra/overrides.yaml land beside the report and every run is reproducible
+  # from its own folder.
+  run:
+    dir: runs/${now:%Y%m%d-%H%M%S}
+  sweep:
+    dir: runs/sweep_${now:%Y%m%d-%H%M%S}
+    subdir: ${hydra.job.num}
+  job:
+    # Never chdir: relative paths must keep meaning what the user typed.
+    chdir: false

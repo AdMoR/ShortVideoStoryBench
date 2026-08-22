@@ -1,0 +1,13 @@
+# @package _global_
+#
+# Fully offline: synthetic videos, fake verdicts, no model and no network.
+# Replaces the old `--mock` flag. The generator axes do not apply, so they are
+# dropped rather than left dangling.
+
+defaults:
+  - override /generator: mock
+  - override /judge: mock
+  - override /model: null
+  - override /system_prompt: null
+  - override /skills: null
+  - override /tools: null

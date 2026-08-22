@@ -1,0 +1,11 @@
+# @package judge
+#
+# Deterministic fake verdicts. For exercising the generator without paying for
+# ~25 model calls per video.
+
+backend: mock
+model: null
+provider: null
+api_base: null
+api_key: null
+n_frames: 8

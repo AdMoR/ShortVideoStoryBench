@@ -1,0 +1,10 @@
+# @package generator.skills
+#
+# The skill for the end-to-end tier's stand-in video backend. Also the worked
+# example for adding a skill bundle: drop a directory containing SKILL.md
+# somewhere, point a file like this at it, and `skills=<name>` becomes an arm of
+# the ablation. `tools` must include `read` or pi will not surface the skill.
+
+paths:
+  - ${paths.root}/tests/e2e/skills/mock-video
+discover: false

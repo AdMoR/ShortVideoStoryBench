@@ -1,0 +1,100 @@
+categories:
+  - key: talking_head
+    name: Talking Head
+    rubric:
+      criteria:
+        - key: lip_sync
+          name: Lip Sync
+          description: >
+            The character's mouth movements must match the spoken line in timing
+            and shape. Lips frozen, mouth shut while speaking, or clearly
+            out-of-sync syllables are failures.
+          weight: 2.0
+        - key: identity
+          name: Identity Consistency
+          description: >
+            The character's face, hair and clothing must stay consistent across
+            the whole clip. Any noticeable change in facial features or outfit
+            is identity drift.
+          weight: 1.5
+        - key: naturalness
+          name: Natural Movement
+          description: >
+            Head turns, blinks, gestures and facial expressions should look
+            natural and continuous. A character locked in one pose for the
+            entire clip is a failure.
+          weight: 1.0
+        - key: artifacts
+          name: Visual Artifacts
+          description: >
+            No flicker, smearing, deformed anatomy (extra/missing limbs or
+            fingers), clipping into objects, or garbled background text.
+          weight: 1.0
+      notes: >
+        Scoring scale per criterion: 9-10 clean, 7-8 minor issues, 5-6 visible
+        but tolerable, 3-4 major issues, 0-2 unusable. A frozen character or
+        completely absent lip movement caps the total at 4.
+
+  - key: action
+    name: Action / Motion
+    rubric:
+      criteria:
+        - key: motion_accuracy
+          name: Motion Accuracy
+          description: >
+            The described action must be performed correctly: right direction,
+            right object, physically plausible trajectory. A person running
+            backward when they should run forward is a failure.
+          weight: 2.0
+        - key: physics
+          name: Physical Plausibility
+          description: >
+            No teleporting objects, no bodies passing through walls or
+            furniture, no impossible limb angles.
+          weight: 1.5
+        - key: continuity
+          name: Temporal Continuity
+          description: >
+            Objects and the character must persist consistently across frames —
+            no popping in/out, no duplicated textures, no flicker.
+          weight: 1.0
+        - key: artifacts
+          name: Visual Artifacts
+          description: >
+            No heavy distortion, smearing, or deformed anatomy during motion.
+          weight: 1.0
+      notes: >
+        Scoring scale per criterion: 9-10 clean, 7-8 minor issues, 5-6 visible
+        but tolerable, 3-4 major issues, 0-2 unusable. A physically impossible
+        action (wrong direction, clipping) caps the total at 4.
+
+  - key: scenery
+    name: Scenery / B-Roll
+    rubric:
+      criteria:
+        - key: scene_match
+          name: Scene Match
+          description: >
+            The generated scene must match the described location, time of day,
+            weather and key objects.
+          weight: 2.0
+        - key: camera_motion
+          name: Camera Motion
+          description: >
+            Camera movement (pan, dolly, static) must be smooth and match the
+            prompt. Jerky or drifting camera is a deduction.
+          weight: 1.0
+        - key: coherence
+          name: Scene Coherence
+          description: >
+            The layout must be physically possible: supported objects, correct
+            scale, consistent geometry across frames.
+          weight: 1.5
+        - key: artifacts
+          name: Visual Artifacts
+          description: >
+            No flicker, morphing structures, garbled text or texture smearing.
+          weight: 1.0
+      notes: >
+        Scoring scale per criterion: 9-10 clean, 7-8 minor issues, 5-6 visible
+        but tolerable, 3-4 major issues, 0-2 unusable.

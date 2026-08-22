@@ -1,0 +1,10 @@
+# @package judge
+#
+# Any OpenAI-compatible / Anthropic / Google endpoint, via litellm.
+
+backend: litellm
+model: openai/gpt-4o
+provider: null
+api_base: null
+api_key: null
+n_frames: 8

@@ -1,0 +1,7 @@
+# @package generator.tools
+#
+# Inspection only. Expected to fail at producing video — the floor of the axis.
+
+builtin: [read, grep, find, ls]
+exclude: []
+no_builtin: false

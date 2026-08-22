@@ -1,0 +1,23 @@
+# @package _global_
+#
+# End-to-end: the real agent and the real judge against a live model, with a
+# fast stand-in for the video backend and deliberately tight timings, so the
+# process lifecycle is exercised in seconds rather than hours.
+#
+# Override judge=mock to iterate on generator plumbing without paying for ~25
+# judge calls per video.
+
+defaults:
+  - override /generator: pi
+  - override /skills: e2e_mock
+  - override /tools: full
+  - override /judge: pi
+
+generator:
+  timeout_seconds: 180
+  exit_grace_seconds: 5
+  heartbeat_seconds: 5
+
+run:
+  category: marketing
+  max_seeds: 1

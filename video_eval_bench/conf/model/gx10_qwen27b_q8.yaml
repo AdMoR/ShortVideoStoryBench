@@ -1,0 +1,7 @@
+# @package generator.model
+#
+# Long-context llama.cpp server on the gx10 box (registered in ~/.pi/agent/models.json).
+
+provider: gx10
+name: unsloth/Qwen3.8-27B-GGUF:Q8_0
+thinking: null

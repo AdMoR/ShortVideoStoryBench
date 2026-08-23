@@ -21,6 +21,7 @@ dev = [
 [project.scripts]
 veb = "video_eval_bench.run:main"
 veb-compare = "video_eval_bench.compare:main"
+veb-report = "video_eval_bench.report.cli:main"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -45,4 +46,5 @@ video_eval_bench = [
     "conf/**/*.yaml",
     "generator/prompts/*.md",
     "generator/pi_ext/*.ts",
+    "generator/pi_ext/assets/*",
 ]

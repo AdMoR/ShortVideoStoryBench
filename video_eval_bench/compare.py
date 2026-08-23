@@ -26,6 +26,7 @@ METRICS = {
     "pass_rate": ("pass%", lambda s: _pct(s.get("n_passed"), s.get("n_seeds"))),
     "safety_vetoes": ("vetoes", lambda s: s.get("n_safety_vetoes")),
     "gen_errors": ("gen-err", lambda s: s.get("n_generation_errors")),
+    "skipped": ("skip", lambda s: s.get("n_skipped")),
 }
 
 
@@ -84,7 +85,10 @@ def build_table(reports: List[Report], metric: str) -> tuple:
     axes = varying_axes(reports)
     categories = sorted({c for r in reports for c in r.categories})
 
-    header = [*(axes or ["variant"]), header_name, *categories, "pass", "veto", "err", "runtime"]
+    header = [
+        *(axes or ["variant"]), header_name, *categories,
+        "pass", "veto", "err", "skip", "runtime",
+    ]
     rows = []
     for report in reports:
         summary = report.summary
@@ -96,6 +100,8 @@ def build_table(reports: List[Report], metric: str) -> tuple:
             f"{summary.get('n_passed', 0)}/{summary.get('n_seeds', 0)}",
             str(summary.get("n_safety_vetoes", 0)),
             str(summary.get("n_generation_errors", 0)),
+            # Older reports predate the field; "-" is honest, 0 would not be.
+            _fmt(summary.get("n_skipped")),
             _duration(summary.get("total_duration_seconds")),
         ]
         rows.append(row)

@@ -29,7 +29,9 @@ video_eval_bench/
 ├── schemas.py          # JudgeVerdict, JudgeScore, SafetyResult
 ├── dataset/            # Seed/Category/Rubric schemas + YAML loaders
 ├── generator/
-│   ├── base.py         # GenerateFn: async (seed, output_dir) -> video_path
+│   ├── base.py         # GenerateFn: async (seed, output_dir) -> GenerationResult
+│   ├── manifest.py     # videos.yaml: the format runs write and imports read
+│   ├── external_generator.py  # score videos made elsewhere / replay a run
 │   ├── mock_generator.py   # synthetic videos, for offline runs
 │   ├── pi_generator.py     # the agentic generator (one pi run per seed)
 │   ├── pi_ext/bench_tools.ts   # the submit_video handoff tool
@@ -40,6 +42,10 @@ video_eval_bench/
 │   ├── llm.py          # VisionLLM backends: LiteLlmBackend / MockBackend
 │   ├── pi_backend.py   # judge via the pi CLI (local vision model)
 │   └── agent.py        # VideoJudge — frames + prompt + LLM → JudgeVerdict
+├── report/
+│   ├── base.py         # BenchReport / SeedResult + aggregation
+│   ├── html.py         # the per-run HTML report
+│   └── cli.py          # `veb-report` — re-render an existing run
 ├── bench.py            # run_bench(): generate + judge every seed
 ├── run.py              # `veb` — the entry point
 └── compare.py          # `veb-compare` — comparative table over reports
@@ -66,15 +72,15 @@ tests/                  # offline suite; tests/e2e/ is the opt-in live tier
 ```bash
 veb                                  # defaults: pi agent on gx10, pi judge
 veb experiment=mock                  # fully offline: synthetic video, fake verdicts
-veb experiment=smoke                 # one real seed, baseline agent (no skills/tools)
+veb experiment=smoke                 # one real seed, stand-in generator, ~10 min
 veb run.category=marketing run.max_seeds=1
 ```
 
-`experiment=smoke` is the **baseline arm**, not a health check: the agent gets the
-default prompt, bash, and nothing else, so whether it can produce a video at all is
-part of what is being measured — a refusal is a legitimate result. Nothing in this
-repo wires the agent to a video backend; supplying one is what the `skills` and
-`extensions` config does. `tests/e2e/` contains a working example of both.
+`experiment=smoke` runs the real agent and the real judge against one seed with the
+**stand-in** generation tool, so it finishes in minutes. It answers "can the agent
+drive the tool and hand back a result", not "is the video good". Swap in
+`video_backend=wangp` for the real generator, and budget accordingly — a single
+generation takes minutes.
 
 An agentic run against a local model takes minutes per seed, so `run.max_seeds`
 and `run.seed_ids` exist to keep ablations cheap. Only a settled configuration
@@ -89,7 +95,32 @@ veb skills=e2e_mock                  # give the agent a skill
 veb system_prompt=minimal            # strip the prompt back
 veb tools=no_bash                    # take the shell away
 veb model=amor_ms_qwen27b_q3         # smaller quant, shorter context
+veb model=openai_gpt56_luna          # hosted frontier arm (needs OPENAI_API_KEY)
+veb video_backend=wangp              # give it a real video generator
 ```
+
+To judge videos you generated some other way, or to re-judge a previous run
+without regenerating it, see [Judging videos made elsewhere](#judging-videos-made-elsewhere).
+
+### The video backend
+
+`video_backend` decides what the agent has to generate video with:
+
+| Arm | What the agent gets |
+|---|---|
+| `none` | nothing — bash and whatever is on the box. The baseline. |
+| `wangp` | a blocking `generate_video` tool driving MiniMax H3 on the WanGP server: `t2va` (text only) and `ref2va` (reference-conditioned) |
+| `fake` | the same tool, same parameters, returning a fixed video instantly |
+
+`fake` exists to separate two questions that cost very different amounts. Whether
+the agent *drives the tool correctly* — right mode, a full brief in the prompt,
+`submit_video` afterwards — is answerable in seconds. Only whether the video is
+any *good* needs the GPU. Running the cheap question against the real backend
+wastes minutes per seed and makes prompt iteration impractical.
+
+The real tool blocks through submit → poll → download inside one call, on
+purpose: polling from the agent loop costs a model call per check and pushes a
+long run into auto-compaction (see §4b in the generator docstring).
 
 Run several in one command; each is a separate run with its own report:
 
@@ -102,7 +133,23 @@ veb -m skills=none,e2e_mock tools=full,no_bash
 containing a `SKILL.md`, and `skills=<name>` becomes a new arm.
 
 Available groups: `generator`, `model`, `system_prompt`, `skills`, `tools`,
-`judge`, `experiment`.
+`video_backend`, `judge`, `experiment`.
+
+### Reading a run
+
+Every run writes `report.html` next to its videos — one page with the summary,
+the exact config, and per seed: the brief, the video inline, what the agent
+actually did, and the judge's verdict on every criterion. Seeds are collapsible,
+so an eight-seed run opens as a short list you expand where it matters.
+
+```bash
+xdg-open runs/20260822-193000/report.html
+veb-report runs/*/            # re-render (e.g. after the renderer changes)
+```
+
+It references the videos rather than embedding them, so the page stays in the
+low hundreds of KB and opens instantly — but it belongs to its run directory.
+Move the folder, not the file.
 
 ### Comparing runs
 
@@ -134,6 +181,8 @@ runs/20260822-193000/
 ├── .hydra/config.yaml       # the exact composed config
 ├── .hydra/overrides.yaml    # the overrides that produced it
 ├── report.json              # verdicts, aggregates, variant, resolved config
+├── videos.yaml              # the videos this run produced — replay it (below)
+├── report.html              # the same, readable, with videos and traces inline
 ├── marketing_001/
 │   ├── workspace/           # the agent's working directory, kept for debugging
 │   ├── transcript.jsonl     # the full pi event stream
@@ -142,15 +191,82 @@ runs/20260822-193000/
 └── marketing_001.mp4        # the submitted video — what the judge sees
 ```
 
+## Judging videos made elsewhere
+
+Videos generated outside the harness are scored by pointing the `external` arm at
+a manifest. Nothing is generated; each seed's video is looked up, checked, and
+placed in the run directory, so it flows through the same judge, report and
+`veb-compare` as an agentic run and is directly comparable with one.
+
+```yaml
+# videos.yaml — paths resolve against this file's directory
+label: wangp-minimax-h3-turbo
+videos:
+  - seed_id: marketing_001
+    path: out/marketing_001.mp4
+    prompt: "..."               # optional: the prompt actually used, if it differs
+    duration_seconds: 1320      # optional: what generation really cost, elsewhere
+    source: "MiniMax-H3 turbo 832x480"
+```
+
+```bash
+veb experiment=external generator.manifest=videos.yaml
+```
+
+**The dataset still drives the run.** A manifest covering three of eight seeds
+scores three and marks five **skipped** — distinct from an error, counted
+separately, and shown on the report's front page and in `veb-compare`'s `skip`
+column. The benchmark does not quietly shrink to fit what you supplied.
+
+`label` names the batch in `veb-compare`, which otherwise sees only
+`generator=external` and cannot tell two imports apart.
+
+### Replaying the judge
+
+Every run writes its videos as `videos.yaml` in exactly that format — so a run is
+its own manifest, and can be pushed back through a different judge without
+repeating the generation:
+
+```bash
+veb experiment=external generator.manifest=runs/20260822-193000/videos.yaml \
+    generator.copy_videos=false judge=litellm judge.model=openai/gpt-4o
+
+veb-compare runs/20260822-193000/report.json runs/<replay>/report.json
+```
+
+That is the expensive half saved: an agentic seed takes minutes to hours, and
+judging it again should not cost that again. `copy_videos=false` symlinks instead
+of copying, which suits a run that is staying on disk; the default copies so the
+new run directory stays self-contained.
+
+The manifest is rewritten after **every seed**, not at the end, because the runs
+worth replaying are the ones that do not finish — a run killed at seed five has
+already paid for four videos.
+
 ## Writing a generator
 
 The contract is one async callable:
 
 ```python
-async def generate(seed: Seed, output_dir: Path) -> str:
+async def generate(seed: Seed, output_dir: Path) -> GenerationResult:
     ...  # produce a video for seed.prompt
-    return "/path/to/video.mp4"
+    return GenerationResult(seed_id=seed.seed_id, video_path="/path/to/video.mp4")
 ```
+
+It returns a result rather than a path because the answer is rarely just a
+filename. A generator may also report:
+
+- `metadata` — anything worth recording about how the video was made. It arrives
+  bound to the video it describes, and lands in the report as-is.
+- `duration_seconds` — what generation actually cost, when timing this process
+  would measure nothing (an imported video was generated elsewhere, days ago).
+- `status="skipped"` — *there is no video for this seed*. Only an import says
+  this. It is deliberately not an error: a batch covering three of eight seeds
+  has not failed five times, and the report counts the two apart.
+
+Failure is a raised `GenerationError`, which carries `metadata` too — a run that
+burned an hour before timing out is the most expensive seed in the run, and its
+turn count is the only clue to why it failed.
 
 `PiGenerator` is the agentic implementation. Two details of it are load-bearing:
 

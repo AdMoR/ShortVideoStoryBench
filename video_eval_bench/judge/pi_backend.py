@@ -48,6 +48,12 @@ class PiConfig:
     model: str = DEFAULT_PI_MODEL
     provider: Optional[str] = None
     timeout_seconds: float = 120.0
+    # A criterion that fails here is recorded as a score of ZERO, not as "not
+    # scored" — so a slow model or a hiccup silently depresses the result rather
+    # than showing up as a gap. Observed in runs/20260823-145259, where U2 timed
+    # out and dragged section A to 0. Retrying is much cheaper than a wrong number.
+    attempts: int = 3
+    retry_backoff_seconds: float = 5.0
     extra_args: List[str] = field(default_factory=list)
 
 
@@ -69,7 +75,38 @@ class PiBackend(VisionLLM):
                 p.write_bytes(img)
                 mentions.append(str(p))
             prompt = user_text + ("\n\n" + " ".join(f"@{m}" for m in mentions) if mentions else "")
-            return await self._run_pi(system, prompt)
+            return await self._complete_with_retries(system, prompt)
+
+    async def _complete_with_retries(self, system: str, prompt: str) -> str:
+        """
+        Run one criterion, retrying transient failures.
+
+        Every failure mode here — a timeout, a non-zero exit, an empty reply — is
+        the infrastructure failing rather than the video being bad, and the caller
+        cannot tell the difference: it scores the criterion zero either way. So
+        the cost of one more attempt is far lower than the cost of a wrong score.
+        """
+        cfg = self.config
+        attempts = max(1, cfg.attempts)
+        last: Exception | None = None
+
+        for attempt in range(1, attempts + 1):
+            try:
+                return await self._run_pi(system, prompt)
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:  # timeout, bad exit, empty text
+                last = exc
+                if attempt == attempts:
+                    break
+                delay = cfg.retry_backoff_seconds * attempt
+                logger.warning(
+                    f"[PiBackend] attempt {attempt}/{attempts} failed ({exc}); "
+                    f"retrying in {delay:.0f}s"
+                )
+                await asyncio.sleep(delay)
+
+        raise RuntimeError(f"all {attempts} judge attempts failed; last error: {last}")
 
     async def _run_pi(self, system: str, prompt: str) -> str:
         """Run pi in non-interactive, tool-free JSON mode and return the final assistant text."""

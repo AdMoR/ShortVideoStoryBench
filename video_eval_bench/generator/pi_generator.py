@@ -8,9 +8,10 @@ It works in its own directory and hands the finished video back by calling the
 
 ## How a run ends, and how the video comes back
 
-`terminate: true` on the submit tool does not stop the process; it only tells pi to
-skip the follow-up LLM call after the tool batch. Python unblocks on process exit,
-which `--print` mode reaches once the agent loop has no more work.
+Submitting does **not** end the run, and `submit_video` carries no `terminate`. The
+agent may submit as often as it likes and the last successful submission wins, so
+banking an early result costs it nothing. Python unblocks on process exit, which
+`--print` mode reaches once the agent loop has no more work, or on `timeout_seconds`.
 
 The result arrives through two channels, and both are required:
 
@@ -20,10 +21,13 @@ The result arrives through two channels, and both are required:
     without which a stale file from an earlier attempt would read as a fresh result.
 
 Because the extension finishes its copy before returning, and the event is emitted
-after `execute()` resolves, the file is whole by the time we see the event. That is
-what makes it safe to stop waiting early: after a submission we give pi
-`exit_grace_seconds` to exit on its own, then kill it rather than let a chatty model
-keep going.
+after `execute()` resolves, the file is whole by the time we see the event.
+
+A run that hits the budget having already submitted is a **success**, not a failure:
+`outcome` records `timeout_after_submit` and the banked video is the result. The
+earlier design — kill the agent `exit_grace_seconds` after its first submission —
+forced an all-or-nothing choice between delivering and continuing to work, and a
+real run spent an hour refining a finished video it never submitted at all.
 
 ## What must not be added
 
@@ -55,6 +59,7 @@ from typing import Dict, List, Optional
 
 from video_eval_bench.config import BENCH_TOOLS_EXTENSION, SUBMIT_TOOL, PiGeneratorConfig
 from video_eval_bench.dataset.seed import Seed
+from video_eval_bench.generator.base import GenerationError, GenerationResult
 from video_eval_bench.judge.frames import video_frame_count
 from video_eval_bench.pi_ndjson import is_error, parse_line, tool_result_details
 
@@ -68,7 +73,7 @@ _READ_CHUNK = 65536
 _MAX_PENDING_LINE = 64 * 1024 * 1024
 
 
-class PiGenerationError(RuntimeError):
+class PiGenerationError(GenerationError):
     """Generation failed for one seed. run_bench records it and continues."""
 
 
@@ -106,8 +111,11 @@ class _RunState:
                     self.submitted_at = time.monotonic()
                     self.submit_notes = str(details.get("notes", ""))
 
+        # pi emits an all-zeros usage block on message_start, so "non-empty" is
+        # not enough — accepting it resets the count and reports a long run as
+        # having used no tokens at all.
         usage = event.get("usage")
-        if isinstance(usage, dict) and usage:
+        if isinstance(usage, dict) and usage.get("totalTokens"):
             self.usage = usage
 
 
@@ -118,11 +126,10 @@ class PiGenerator:
         self.config = config
         if shutil.which(config.pi_bin) is None and not Path(config.pi_bin).exists():
             raise RuntimeError(f"pi binary not found: {config.pi_bin!r}")
-        self._metadata: Dict[str, dict] = {}
 
     # ── the generator contract ────────────────────────────────────────────────
 
-    async def __call__(self, seed: Seed, output_dir: Path) -> str:
+    async def __call__(self, seed: Seed, output_dir: Path) -> GenerationResult:
         cfg = self.config
         seed_dir = Path(output_dir) / seed.seed_id
         workspace = seed_dir / "workspace"
@@ -164,12 +171,22 @@ class PiGenerator:
                 )
                 returncode = await proc.wait()
             except asyncio.TimeoutError:
-                state.outcome = "timeout"
                 await _kill_group(proc)
-                error = (
-                    f"pi run exceeded the {cfg.timeout_seconds:g}s budget"
-                    f"{_stderr_tail(stderr_path)}"
-                )
+                if state.submitted_path is not None:
+                    # Submission no longer ends the run, so an agent that keeps
+                    # working until the budget expires is normal, not a failure.
+                    # It banked a video; that video is the result.
+                    state.outcome = "timeout_after_submit"
+                    logger.info(
+                        f"[PiGenerator] {seed.seed_id}: budget expired with a submitted "
+                        f"video — keeping the last submission"
+                    )
+                else:
+                    state.outcome = "timeout"
+                    error = (
+                        f"pi run exceeded the {cfg.timeout_seconds:g}s budget"
+                        f"{_stderr_tail(stderr_path)}"
+                    )
             except BaseException:
                 # Cancellation included: never leave the tree running.
                 await _kill_group(proc)
@@ -182,16 +199,27 @@ class PiGenerator:
         metadata = self._write_run_json(
             seed_dir, seed, argv, state, returncode, elapsed, transcript_path, stderr_path
         )
-        self._metadata[seed.seed_id] = metadata
 
         if error:
-            raise PiGenerationError(error)
+            raise PiGenerationError(error, metadata=metadata)
 
-        return self._resolve_video(state, output_path, returncode, stderr_path, elapsed)
+        # _resolve_video raises from four places, and a run that burned its whole
+        # budget before failing is the one whose turn count and token usage are
+        # most worth reporting — so every exit carries the metadata out.
+        try:
+            video_path = self._resolve_video(
+                state, output_path, returncode, stderr_path, elapsed
+            )
+        except PiGenerationError as exc:
+            exc.metadata = metadata
+            raise
 
-    def metadata_for(self, seed_id: str) -> dict:
-        """Run metadata for the report (opt-in protocol used by run_bench)."""
-        return self._metadata.get(seed_id, {})
+        # duration_seconds stays None on purpose: `elapsed` is generation only,
+        # while the report's duration has always meant generate+judge. pi's own
+        # cost is in metadata, which is where the report already looks for it.
+        return GenerationResult(
+            seed_id=seed.seed_id, video_path=video_path, metadata=metadata
+        )
 
     # ── argv / env ────────────────────────────────────────────────────────────
 
@@ -233,10 +261,12 @@ class PiGenerator:
             argv.append("--no-builtin-tools")
         elif cfg.tools.builtin:
             # --tools is an allowlist over built-in *and* extension tools alike,
-            # so the handoff tool has to be named or it is filtered out — and the
-            # agent then generates a perfectly good video with no way to deliver
-            # it. Observed, not theorised.
-            argv += ["--tools", ",".join([*cfg.tools.builtin, SUBMIT_TOOL])]
+            # so every custom tool has to be named or it is silently filtered
+            # out. Both halves of this were observed on real runs: first the
+            # agent produced a video with no way to deliver it, then it hunted
+            # nine turns for a generator that was loaded the whole time.
+            allowed = [*cfg.tools.builtin, SUBMIT_TOOL, *cfg.extension_tools]
+            argv += ["--tools", ",".join(dict.fromkeys(allowed))]
         if cfg.tools.exclude:
             argv += ["--exclude-tools", ",".join(cfg.tools.exclude)]
 
@@ -260,6 +290,10 @@ class PiGenerator:
             workspace=str(workspace),
             output_path=str(output_path),
             reference_video=seed.reference_video or "",
+            # The agent has no clock of its own. Without this it cannot tell a
+            # cheap refinement from one that costs it the whole run, and a real
+            # run ended with a finished video it never got around to submitting.
+            budget_minutes=max(1, round(self.config.timeout_seconds / 60)),
         )
         try:
             return self.config.system_prompt.task().format(**fields)
@@ -326,15 +360,6 @@ class PiGenerator:
                     break  # EOF: pi has closed stdout and is exiting
 
                 now = time.monotonic()
-                if self._grace_expired(state, now):
-                    logger.info(
-                        f"[PiGenerator] {seed.seed_id}: video submitted, pi still running after "
-                        f"{cfg.exit_grace_seconds:g}s grace — terminating"
-                    )
-                    state.outcome = "early_terminated"
-                    await _kill_group(proc)
-                    break
-
                 if now - last_heartbeat >= cfg.heartbeat_seconds:
                     last_heartbeat = now
                     logger.info(
@@ -351,17 +376,7 @@ class PiGenerator:
 
     def _tick(self, state: _RunState) -> float:
         """How long to wait for the next chunk before doing housekeeping."""
-        tick = self.config.heartbeat_seconds
-        if state.submitted_at is not None:
-            remaining = self.config.exit_grace_seconds - (time.monotonic() - state.submitted_at)
-            tick = min(tick, max(remaining, 0.05))
-        return tick
-
-    def _grace_expired(self, state: _RunState, now: float) -> bool:
-        return (
-            state.submitted_at is not None
-            and now - state.submitted_at >= self.config.exit_grace_seconds
-        )
+        return self.config.heartbeat_seconds
 
     # ── result ────────────────────────────────────────────────────────────────
 

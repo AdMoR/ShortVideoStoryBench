@@ -126,7 +126,7 @@ def test_extract_frames_from_synthetic_video(tmp_path):
     import asyncio
 
     gen = MockGenerator(n_frames=16)
-    path = asyncio.run(gen(make_seed(), tmp_path))
+    path = asyncio.run(gen(make_seed(), tmp_path)).video_path
     frames = extract_frames(path, n=4)
     assert len(frames) == 4
     assert all(f[:2] == b"\xff\xd8" for f in frames)  # JPEG magic bytes
@@ -156,7 +156,7 @@ async def test_judge_full_pipeline_mock(tmp_path):
     ds = load_dataset()
     backend = MockBackend()
     judge = VideoJudge(backend=backend, dataset=ds, n_frames=4)
-    video = await MockGenerator(n_frames=16)(make_seed(), tmp_path)
+    video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
 
     verdict = await judge.judge(make_seed(), video)
 
@@ -185,7 +185,7 @@ async def test_judge_partial_failures(tmp_path):
     # Every 3rd criterion fails
     backend = MockBackend(fail_rate=1 / 3)
     judge = VideoJudge(backend=backend, dataset=ds, n_frames=4)
-    video = await MockGenerator(n_frames=16)(make_seed(), tmp_path)
+    video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
 
     verdict = await judge.judge(make_seed(), video)
 
@@ -206,7 +206,7 @@ async def test_judge_safety_veto_blocks_pass(tmp_path):
     ds = load_dataset()
     backend = MockBackend(veto=True)  # all criteria pass, but D1 violated
     judge = VideoJudge(backend=backend, dataset=ds, n_frames=4)
-    video = await MockGenerator(n_frames=16)(make_seed(), tmp_path)
+    video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
 
     verdict = await judge.judge(make_seed(), video)
 
@@ -225,7 +225,7 @@ async def test_judge_pass_threshold(tmp_path):
     # Fail enough criteria to drop below the 60/100 threshold
     backend = MockBackend(fail_rate=0.5)
     judge = VideoJudge(backend=backend, dataset=ds, n_frames=4)
-    video = await MockGenerator(n_frames=16)(make_seed(), tmp_path)
+    video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
 
     verdict = await judge.judge(make_seed(), video)
     # Half the criteria fail → ~50% per section → below the 60 threshold
@@ -245,7 +245,7 @@ async def test_judge_broken_backend_degrades_conservatively(tmp_path):
 
     ds = load_dataset()
     judge = VideoJudge(backend=MockBackend(fail=True), dataset=ds, n_frames=4)
-    video = await MockGenerator(n_frames=16)(make_seed(), tmp_path)
+    video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
     verdict = await judge.judge(make_seed(), video)
     assert verdict.judge_error is not None
     assert "25/25" in verdict.judge_error
@@ -402,3 +402,190 @@ async def test_run_bench_records_generation_errors(tmp_path):
     assert summary["n_generation_errors"] == 2
     assert summary["n_ok"] == 0
     assert all(r.generation_error == "GPU on fire" for r in report.results)
+
+
+async def test_failed_seed_still_records_its_cost(tmp_path):
+    """
+    A seed that burns an hour before timing out is the most expensive one in the
+    run; reporting it as free hides exactly the cost worth seeing.
+    """
+    import asyncio
+
+    from video_eval_bench.bench import run_bench
+
+    async def slow_failure(seed, output_dir):
+        await asyncio.sleep(0.05)
+        raise RuntimeError("timed out")
+
+    ds = load_dataset()
+    judge = VideoJudge(backend=MockBackend(), dataset=ds, n_frames=4)
+    report = await run_bench(
+        judge=judge,
+        generate=slow_failure,
+        output_dir=tmp_path,
+        run_id="test_run",
+        dataset=ds,
+        category="marketing",
+    )
+    assert report.results[0].duration_seconds > 0
+    assert report.summary()["total_duration_seconds"] > 0
+
+
+# ── the generator seam ────────────────────────────────────────────────────────
+
+
+async def test_generator_metadata_and_duration_reach_the_report(tmp_path):
+    """
+    Whatever the generator reports about a seed rides back with the video, rather
+    than being fetched afterwards by id, and a generator that knows its own cost
+    overrides the bench's stopwatch.
+    """
+    from video_eval_bench.bench import MockGenerator, run_bench
+    from video_eval_bench.generator.base import GenerationResult
+
+    inner = MockGenerator(n_frames=16)
+
+    async def reporting(seed, output_dir):
+        produced = await inner(seed, output_dir)
+        return GenerationResult(
+            seed_id=seed.seed_id,
+            video_path=produced.video_path,
+            metadata={"turns": 7, "source": "somewhere else"},
+            duration_seconds=1320.0,
+        )
+
+    ds = load_dataset()
+    report = await run_bench(
+        judge=VideoJudge(backend=MockBackend(), dataset=ds, n_frames=4),
+        generate=reporting,
+        output_dir=tmp_path,
+        run_id="test_run",
+        dataset=ds,
+        seed_ids=["entertainment_001"],
+    )
+    (result,) = report.results
+    assert result.status == "completed"
+    assert result.metadata["turns"] == 7
+    # Not the fraction of a second this process actually took.
+    assert result.duration_seconds == 1320.0
+
+
+async def test_generation_error_carries_its_metadata(tmp_path):
+    """
+    A run that burned its budget before failing still knows its turn count, and
+    that is the most interesting thing about it. The failure path must not drop it.
+    """
+    from video_eval_bench.bench import run_bench
+    from video_eval_bench.generator.base import GenerationError
+
+    async def expensive_failure(seed, output_dir):
+        raise GenerationError("budget exceeded", metadata={"turns": 46, "outcome": "timeout"})
+
+    ds = load_dataset()
+    report = await run_bench(
+        judge=VideoJudge(backend=MockBackend(), dataset=ds, n_frames=4),
+        generate=expensive_failure,
+        output_dir=tmp_path,
+        run_id="test_run",
+        dataset=ds,
+        seed_ids=["entertainment_001"],
+    )
+    (result,) = report.results
+    assert result.status == "errored"
+    assert result.generation_error == "budget exceeded"
+    assert result.metadata["turns"] == 46
+    assert report.summary()["n_generation_errors"] == 1
+
+
+async def test_skipped_seed_is_never_judged(tmp_path):
+    """
+    A skipped seed has no video. Handing the judge a missing path would earn a
+    permissive default verdict — a fabricated 50/100 for a video that does not
+    exist — so the judge must not be called at all.
+    """
+    from video_eval_bench.bench import run_bench
+    from video_eval_bench.generator.base import GenerationResult
+
+    class ExplodingBackend:
+        async def complete(self, system, user, images):
+            raise AssertionError("the judge must not be called for a skipped seed")
+
+    async def has_nothing(seed, output_dir):
+        return GenerationResult(seed_id=seed.seed_id, status="skipped")
+
+    ds = load_dataset()
+    report = await run_bench(
+        judge=VideoJudge(backend=ExplodingBackend(), dataset=ds, n_frames=4),
+        generate=has_nothing,
+        output_dir=tmp_path,
+        run_id="test_run",
+        dataset=ds,
+        category="entertainment",
+    )
+    summary = report.summary()
+    assert summary["n_skipped"] == 2
+    # A skip is not a failure, and the benchmark did not shrink to fit.
+    assert summary["n_generation_errors"] == 0
+    assert summary["n_seeds"] == 2
+    assert summary["mean_score"] is None
+    assert all(r.verdict is None for r in report.results)
+
+
+async def test_result_for_the_wrong_seed_is_rejected(tmp_path):
+    """
+    One copy-pasted seed_id in a manifest would otherwise grade a video against
+    another seed's rubric and report a perfectly plausible score for it.
+    """
+    from video_eval_bench.bench import MockGenerator, run_bench
+    from video_eval_bench.generator.base import GenerationResult
+
+    inner = MockGenerator(n_frames=16)
+
+    async def mislabelled(seed, output_dir):
+        produced = await inner(seed, output_dir)
+        return GenerationResult(seed_id="somebody_else", video_path=produced.video_path)
+
+    ds = load_dataset()
+    with pytest.raises(ValueError, match="somebody_else"):
+        await run_bench(
+            judge=VideoJudge(backend=MockBackend(), dataset=ds, n_frames=4),
+            generate=mislabelled,
+            output_dir=tmp_path,
+            run_id="test_run",
+            dataset=ds,
+            seed_ids=["entertainment_001"],
+        )
+
+
+async def test_manifest_survives_a_run_that_dies_partway(tmp_path):
+    """
+    The runs worth replaying are the ones that do not finish. A manifest written
+    only on a clean exit would strand the videos already paid for.
+    """
+    import yaml
+
+    from video_eval_bench.bench import MockGenerator, run_bench
+    from video_eval_bench.generator.manifest import MANIFEST_NAME
+
+    inner = MockGenerator(n_frames=16)
+    seen = []
+
+    async def dies_on_the_second(seed, output_dir):
+        seen.append(seed.seed_id)
+        if len(seen) > 1:
+            raise KeyboardInterrupt("killed")
+        return await inner(seed, output_dir)
+
+    ds = load_dataset()
+    with pytest.raises(KeyboardInterrupt):
+        await run_bench(
+            judge=VideoJudge(backend=MockBackend(), dataset=ds, n_frames=4),
+            generate=dies_on_the_second,
+            output_dir=tmp_path,
+            run_id="test_run",
+            dataset=ds,
+            category="entertainment",
+        )
+
+    manifest = yaml.safe_load((tmp_path / MANIFEST_NAME).read_text())
+    assert [v["seed_id"] for v in manifest["videos"]] == [seen[0]]

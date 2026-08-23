@@ -2,7 +2,7 @@ seeds:
   - seed_id: entertainment_001
     category: entertainment
     prompt: >
-      A short story in 3 scenes: (1) a woman opens a mysterious letter at a
+      A 5 seconds short story in 3 scenes: (1) a woman opens a mysterious letter at a
       kitchen table, warm morning light; (2) she walks through a rainy city
       street at night, following a stranger; (3) they meet in a dimly lit
       cafe, she smiles with relief. Same woman throughout, same red coat.
@@ -10,28 +10,28 @@ seeds:
   - seed_id: entertainment_002
     category: entertainment
     prompt: >
-      A chef in a small restaurant: (1) he plates a dish with tweezers,
+      5 seconds story : A chef in a small restaurant: (1) he plates a dish with tweezers,
       close-up; (2) he serves it to a table of guests, medium shot; (3) the
       guests taste it and react with delight. Consistent warm lighting. The restaurant is small and cosy, the kitchen is behind a counter
 
   - seed_id: educational_001
     category: educational
     prompt: >
-      An explainer video showing how a car engine works, step by step:
+      5 seconds story : An explainer video showing how a car engine works, step by step:
       intake, compression, combustion, exhaust. Clear on-screen text labels
       for each step, centered diagrams, plain background.
 
   - seed_id: educational_002
     category: educational
     prompt: >
-      A 1920s history lesson: a classroom scene with period-accurate clothing
+      5 seconds story : A 1920s history lesson: a classroom scene with period-accurate clothing
       and blackboard, a teacher explaining the Weimar Republic. No modern
       objects visible.
 
   - seed_id: marketing_001
     category: marketing
     prompt: >
-      A 30-second product ad for a blue water bottle: (1) the bottle on a
+      A 8-second product ad for a blue water bottle: (1) the bottle on a
       clean white background with the brand logo; (2) a runner using it on a
       trail; (3) final frame with the bottle, logo, and "Buy Now" call to
       action. 16:9 aspect ratio.
@@ -39,7 +39,7 @@ seeds:
   - seed_id: social_media_001
     category: social_media
     prompt: >
-      A 28-second vertical (9:16) short-form video: (0-3s) a before after of messy then clean kitchen
+      A 12-second vertical (9:16) short-form video: (0-3s) a before after of messy then clean kitchen
       (3-8s) the messy "before" state of a kitchen; frustration
       and mess piling up; (8-9s) the cleaning product reveal; (9-12s) The before after of the cleaning with details shots
       "Link in bio" CTA. Fast cuts
@@ -47,14 +47,14 @@ seeds:
   - seed_id: gaming_001
     category: gaming
     prompt: >
-      A gameplay highlight clip in a stylized low-poly game: the player
+      5 seconds story : A gameplay highlight clip in a stylized low-poly game: the player
       character dodges enemy fire, the HUD shows health and score, a boss
       defeat moment with particle effects matching the game's style. 5 seconds
 
   - seed_id: event_001
     category: event
     prompt: >
-      Live coverage of a marathon finish: (1) wide shot of the finish line
+      5 seconds story : Live coverage of a marathon finish: (1) wide shot of the finish line
       with crowd; (2) close-up of the winner crossing; (3) podium ceremony
       with confetti. At least two camera angles, stable camera, venue
       lighting.

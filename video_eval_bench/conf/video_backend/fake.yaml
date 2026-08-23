@@ -1,0 +1,18 @@
+# @package generator
+#
+# A stand-in generate_video with the same name, parameters and result shape as
+# the real one, returning a fixed video immediately.
+#
+# This separates the cheap question from the expensive one. Whether the agent
+# drives the tool correctly — right mode, a full brief in the prompt, submitting
+# afterwards — is answerable in seconds without a GPU. Only whether the video is
+# any good needs the real backend.
+
+extension_tools:
+  - generate_video
+
+extensions:
+  - ${veb_ext:fake_video_tools.ts}
+
+env:
+  VEB_FAKE_VIDEO_DELAY: "0" # seconds to stall, to exercise long-wait handling

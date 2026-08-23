@@ -11,3 +11,4 @@ defaults:
   - override /system_prompt: null
   - override /skills: null
   - override /tools: null
+  - override /video_backend: null

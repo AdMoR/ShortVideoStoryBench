@@ -14,7 +14,8 @@ Modes:
     submit_then_fail   submit a good video, then exit 3
     empty_file         submit a 0-byte file
     file_only          write the video but never emit the submit event
-    linger             submit, then sleep past the exit grace period
+    resubmit           submit a video, then submit a better one over it
+    linger             submit, then keep running past the submission
     silent             go quiet past the heartbeat interval, then submit
     stderr_flood       write megabytes to stderr, then submit
     hang               never produce anything, never exit
@@ -67,7 +68,9 @@ def work(tool: str = "bash") -> None:
     emit(
         {
             "type": "message_update",
-            "usage": {"input": 1200, "output": 340},
+            # Real pi reports totalTokens alongside the breakdown, and emits an
+            # all-zeros block on message_start — both shapes matter downstream.
+            "usage": {"input": 1200, "output": 340, "totalTokens": 1540},
             "assistantMessageEvent": {"type": "text_delta", "contentIndex": 0, "delta": "..."},
         }
     )
@@ -171,6 +174,16 @@ def main() -> int:
 
     shutil.copyfile(produced, destination)
     submit(destination, size, produced)
+
+    if mode == "resubmit":
+        # Bank a first result, then improve it and submit again. The second video
+        # is visibly longer, so a harness that kept the first one is detectable.
+        second = os.path.join(workspace, "better.mp4")
+        second_size = write_video(second, n_frames=24)
+        shutil.copyfile(second, destination)
+        submit(destination, second_size, second)
+        finish()
+        return 0
 
     if mode == "linger":
         finish()

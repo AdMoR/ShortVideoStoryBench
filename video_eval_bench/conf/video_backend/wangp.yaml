@@ -1,0 +1,16 @@
+# @package generator
+#
+# The real thing: MiniMax H3 on the WanGP server, via a blocking generate_video
+# tool covering t2va (text only) and ref2va (reference-conditioned).
+#
+# A single generation takes minutes, so budget accordingly — the tool blocks,
+# which is deliberate: polling from the agent loop costs a model call per check.
+
+extension_tools:
+  - generate_video
+
+extensions:
+  - ${veb_ext:wangp_tools.ts}
+
+env:
+  LTX_SERVER_URL: http://gx10-cbc5:8082

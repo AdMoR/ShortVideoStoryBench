@@ -2,6 +2,7 @@ from typing import Awaitable, Callable, Dict, List, Optional
 import logging
 import numpy as np
 from video_eval_bench.dataset.seed import Seed
+from video_eval_bench.generator.base import GenerationResult
 from pathlib import Path
 import cv2
 import hashlib
@@ -31,7 +32,7 @@ class MockGenerator:
         self.size = size
         self.calls: List[str] = []
 
-    async def __call__(self, seed: Seed, output_dir: Path) -> str:
+    async def __call__(self, seed: Seed, output_dir: Path) -> GenerationResult:
 
         self.calls.append(seed.seed_id)
         # Deterministic color per seed so different seeds look different.
@@ -61,4 +62,6 @@ class MockGenerator:
             writer.write(frame)
         writer.release()
         logger.info(f"[MockGenerator] wrote {out_path}")
-        return str(out_path)
+        # No metadata: a synthetic video has nothing to report, and that is now
+        # expressible rather than needing an opt-out.
+        return GenerationResult(seed_id=seed.seed_id, video_path=str(out_path))

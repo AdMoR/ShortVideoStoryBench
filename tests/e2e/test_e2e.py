@@ -40,7 +40,7 @@ async def test_agent_generates_and_submits_a_video(e2e_config, video_service, tm
     """
     service = video_service(delay=0.0)
     bench = e2e_config(service)
-    path = await PiGenerator(bench.generator)(make_seed(), tmp_path)
+    path = (await PiGenerator(bench.generator)(make_seed(), tmp_path)).video_path
 
     assert video_frame_count(path) > 0, "submitted file is not a decodable video"
     assert service.calls, "the agent never called the video service"
@@ -96,7 +96,7 @@ async def test_a_slow_generation_still_succeeds(e2e_config, video_service, tmp_p
     bench = e2e_config(
         service, "generator.timeout_seconds=180", "generator.heartbeat_seconds=5"
     )
-    path = await PiGenerator(bench.generator)(make_seed(), tmp_path)
+    path = (await PiGenerator(bench.generator)(make_seed(), tmp_path)).video_path
 
     assert video_frame_count(path) > 0
     assert run_json(tmp_path)["duration_seconds"] >= 20

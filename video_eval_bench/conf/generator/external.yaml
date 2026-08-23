@@ -1,0 +1,17 @@
+# @package generator
+#
+# Score videos generated somewhere else. Nothing is generated here: each seed's
+# video is looked up in a manifest, checked, and placed in the run directory.
+#
+# Because every run also writes that same format (videos.yaml, beside the
+# report), this is the replay arm too:
+#
+#   veb experiment=external generator.manifest=runs/<ts>/videos.yaml \
+#       generator.copy_videos=false judge=litellm
+#
+# re-judges a finished run's videos without repeating the generation.
+
+kind: external
+manifest: ??? # required: the YAML mapping seed_id -> video file
+copy_videos: true # false symlinks instead — for a run staying put, or a large batch
+label: "" # names this batch in veb-compare; defaults to the manifest's label

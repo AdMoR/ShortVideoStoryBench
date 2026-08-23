@@ -59,6 +59,24 @@ def test_tool_allowlist_keeps_the_handoff_tool(pi_config, tmp_path):
     assert "submit_video" in allowed
 
 
+def test_extension_tools_reach_the_allowlist(pi_config, tmp_path):
+    """
+    An extension tool missing from --tools is loaded and then filtered out. On a
+    real run the agent spent nine turns hunting for a generator that was loaded
+    the whole time, then read the grading rubric instead.
+    """
+    ext = tmp_path / "video.ts"
+    ext.write_text("// stub")
+    argv = PiGenerator(
+        pi_config(extensions=[ext], extension_tools=["generate_video"])
+    ).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+
+    allowed = argv[argv.index("--tools") + 1].split(",")
+    assert "generate_video" in allowed
+    assert "submit_video" in allowed
+    assert len(allowed) == len(set(allowed)), "no duplicates in the allowlist"
+
+
 def test_no_builtin_tools_still_leaves_the_handoff_tool(pi_config, tmp_path):
     """--no-builtin-tools keeps extension tools, so no allowlist is needed."""
     from video_eval_bench.config import ToolsConfig
@@ -105,7 +123,8 @@ def test_bad_template_placeholder_names_itself(pi_config, tmp_path):
 async def test_produces_a_readable_video(pi_config, mode, tmp_path):
     mode("submit")
     generator = PiGenerator(pi_config())
-    path = await generator(make_seed(), tmp_path)
+    result = await generator(make_seed(), tmp_path)
+    path = result.video_path
 
     assert Path(path) == tmp_path / "marketing_001.mp4"
     assert video_frame_count(path) > 0
@@ -114,7 +133,7 @@ async def test_produces_a_readable_video(pi_config, mode, tmp_path):
 async def test_writes_transcript_and_run_metadata(pi_config, mode, tmp_path):
     mode("submit")
     generator = PiGenerator(pi_config())
-    await generator(make_seed(), tmp_path)
+    result = await generator(make_seed(), tmp_path)
 
     seed_dir = tmp_path / "marketing_001"
     transcript = (seed_dir / "transcript.jsonl").read_text()
@@ -126,7 +145,22 @@ async def test_writes_transcript_and_run_metadata(pi_config, mode, tmp_path):
     assert run_json["returncode"] == 0
     assert run_json["tool_calls"]["submit_video"] == 1
     assert run_json["usage"]["input"] == 1200
-    assert generator.metadata_for("marketing_001") == run_json
+    # The metadata comes back bound to the result, not fetched afterwards by id.
+    assert result.seed_id == "marketing_001"
+    assert result.metadata == run_json
+
+
+def test_zero_usage_does_not_erase_the_token_count():
+    """
+    pi emits an all-zeros usage block on message_start. Accepting it reports a
+    60-minute run as having used no tokens — observed on a real run.
+    """
+    from video_eval_bench.generator.pi_generator import _RunState
+
+    state = _RunState()
+    state.observe({"type": "message_end", "usage": {"totalTokens": 12910, "input": 12000}})
+    state.observe({"type": "message_start", "usage": {"totalTokens": 0, "input": 0}})
+    assert state.usage["totalTokens"] == 12910
 
 
 # ── failure paths ─────────────────────────────────────────────────────────────
@@ -176,29 +210,63 @@ async def test_timeout_kills_the_run(pi_config, mode, tmp_path):
 async def test_submission_then_nonzero_exit_is_still_a_result(pi_config, mode, tmp_path):
     """The video exists and the agent claimed it; the exit code is an anomaly."""
     mode("submit_then_fail")
-    path = await PiGenerator(pi_config())(make_seed(), tmp_path)
+    path = (await PiGenerator(pi_config())(make_seed(), tmp_path)).video_path
 
     assert video_frame_count(path) > 0
     run_json = json.loads((tmp_path / "marketing_001" / "pi_run.json").read_text())
     assert run_json["returncode"] == 3
 
 
-async def test_early_exit_when_pi_lingers(pi_config, mode, tmp_path):
+async def test_work_continues_after_submitting(pi_config, mode, tmp_path):
     """
-    A model that keeps going after submitting must not burn the whole budget.
-    The file is complete by the time the event arrives, so stopping is safe.
+    Submitting must not end the run.
+
+    The agent is told it can bank a result and keep improving it, so a model that
+    is still working after a submission is behaving correctly and must be left
+    alone until it exits or the budget runs out. Killing it here is what made
+    submission all-or-nothing, and cost a real run an hour of work it never
+    delivered.
     """
-    mode("linger", FAKE_PI_LINGER=60)
+    mode("linger", FAKE_PI_LINGER=30)
     started = time.monotonic()
-    path = await PiGenerator(pi_config(exit_grace_seconds=1.0, timeout_seconds=45))(
-        make_seed(), tmp_path
-    )
+    result = await PiGenerator(pi_config(timeout_seconds=3))(make_seed(), tmp_path)
     elapsed = time.monotonic() - started
 
-    assert video_frame_count(path) > 0
-    assert elapsed < 20, f"waited {elapsed:.1f}s for a linger of 60s"
+    # The budget, not the submission, is what stopped it.
+    assert elapsed >= 3, f"stopped after {elapsed:.1f}s — the submission cut it short"
+    assert video_frame_count(result.video_path) > 0
     run_json = json.loads((tmp_path / "marketing_001" / "pi_run.json").read_text())
-    assert run_json["outcome"] == "early_terminated"
+    assert run_json["outcome"] == "timeout_after_submit"
+
+
+async def test_the_last_submission_wins(pi_config, mode, tmp_path):
+    """
+    Re-submission is the whole point of letting the run continue: the agent banks
+    something scoreable early, then replaces it as it improves. The harness must
+    report the newest submission, not the first one it saw.
+    """
+    mode("resubmit")
+    result = await PiGenerator(pi_config(timeout_seconds=30))(make_seed(), tmp_path)
+
+    # The fake's second video is twice as long as its first.
+    assert video_frame_count(result.video_path) == 24
+    run_json = json.loads((tmp_path / "marketing_001" / "pi_run.json").read_text())
+    assert run_json["tool_calls"]["submit_video"] == 2
+    # submitted_path is the pinned destination, the same for both submissions —
+    # which is why the frame count above is what proves the second one landed.
+    assert run_json["submitted_path"] == str(result.video_path)
+
+
+async def test_budget_expiry_with_a_submission_is_not_a_failure(pi_config, mode, tmp_path):
+    """
+    Running out of time having already delivered is a success. Before, the banked
+    video was thrown away and the seed reported a bare generation error.
+    """
+    mode("linger", FAKE_PI_LINGER=30)
+    result = await PiGenerator(pi_config(timeout_seconds=2))(make_seed(), tmp_path)
+
+    assert video_frame_count(result.video_path) > 0
+    assert result.metadata["outcome"] == "timeout_after_submit"
 
 
 async def test_stderr_flood_does_not_deadlock(pi_config, mode, tmp_path):
@@ -208,7 +276,9 @@ async def test_stderr_flood_does_not_deadlock(pi_config, mode, tmp_path):
     that pipes stderr and reads it after stdout.
     """
     mode("stderr_flood")
-    path = await PiGenerator(pi_config(timeout_seconds=30))(make_seed(), tmp_path)
+    path = (
+        await PiGenerator(pi_config(timeout_seconds=30))(make_seed(), tmp_path)
+    ).video_path
 
     assert video_frame_count(path) > 0
     assert (tmp_path / "marketing_001" / "pi_stderr.log").stat().st_size > 1_000_000
@@ -222,9 +292,11 @@ async def test_long_silence_is_not_a_failure(pi_config, mode, tmp_path, caplog):
     """
     mode("silent", FAKE_PI_SILENCE=2.0)
     with caplog.at_level("INFO"):
-        path = await PiGenerator(pi_config(heartbeat_seconds=0.4, timeout_seconds=30))(
-            make_seed(), tmp_path
-        )
+        path = (
+            await PiGenerator(pi_config(heartbeat_seconds=0.4, timeout_seconds=30))(
+                make_seed(), tmp_path
+            )
+        ).video_path
 
     assert video_frame_count(path) > 0
     assert any("elapsed" in record.message for record in caplog.records)
@@ -315,3 +387,37 @@ async def test_generation_failure_does_not_abort_the_bench(pi_config, mode, tmp_
 
     assert report.summary()["n_seeds"] == 2
     assert report.summary()["n_generation_errors"] == 2
+    assert all(r.status == "errored" for r in report.results)
+
+    # A failed run is the one whose turn count and token usage are most worth
+    # having: it is the expensive one, and the only clue to why it failed. The
+    # metadata now rides out on the exception rather than being stashed for the
+    # bench to fetch, so this is the regression guard for that path.
+    for result in report.results:
+        assert result.metadata["outcome"] == "exited"
+        assert result.metadata["turns"] >= 1
+        assert Path(result.metadata["transcript"]).exists()
+
+
+async def test_a_timed_out_run_still_reports_what_it_burned(pi_config, mode, tmp_path):
+    """The most expensive failure there is; reporting it as a blank hides the cost."""
+    from video_eval_bench.bench import run_bench
+    from video_eval_bench.dataset import load_dataset
+    from video_eval_bench.judge.agent import VideoJudge
+    from video_eval_bench.judge.llm import MockBackend
+
+    mode("hang")
+    dataset = load_dataset()
+    report = await run_bench(
+        judge=VideoJudge(backend=MockBackend(), dataset=dataset, n_frames=4),
+        generate=PiGenerator(pi_config(timeout_seconds=1.5)),
+        output_dir=tmp_path,
+        run_id="test_run",
+        dataset=dataset,
+        category="marketing",
+    )
+
+    (result,) = report.results
+    assert result.status == "errored"
+    assert "budget" in result.generation_error
+    assert result.metadata["outcome"] == "timeout"

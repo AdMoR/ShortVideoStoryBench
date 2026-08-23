@@ -34,7 +34,8 @@ SUBMIT_TOOL = "submit_video"
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 DEFAULT_PROMPT_DIR = PACKAGE_DIR / "generator" / "prompts"
-BENCH_TOOLS_EXTENSION = PACKAGE_DIR / "generator" / "pi_ext" / "bench_tools.ts"
+PI_EXT_DIR = PACKAGE_DIR / "generator" / "pi_ext"
+BENCH_TOOLS_EXTENSION = PI_EXT_DIR / "bench_tools.ts"
 
 
 class _Base(BaseModel):
@@ -144,6 +145,14 @@ class PiGeneratorConfig(_Base):
         default_factory=list,
         description="Extra pi extension files (.ts) providing custom tools.",
     )
+    extension_tools: List[str] = Field(
+        default_factory=list,
+        description=(
+            "Tool names those extensions register. pi's --tools allowlist covers "
+            "extension tools too, so anything not named here is filtered out and "
+            "the agent never sees it."
+        ),
+    )
     discover_extensions: bool = False
     context_files: bool = Field(default=False, description="Load AGENTS.md / CLAUDE.md.")
     prompt_templates: bool = False
@@ -164,7 +173,11 @@ class PiGeneratorConfig(_Base):
     exit_grace_seconds: float = Field(
         default=15.0,
         gt=0,
-        description="How long to let pi exit on its own after submit_video before killing it.",
+        description=(
+            "Unused. Submitting no longer ends a run — the agent may submit repeatedly "
+            "and the last one wins — so there is no post-submission grace to enforce. "
+            "Kept so existing configs and sweeps still load."
+        ),
     )
     heartbeat_seconds: float = Field(
         default=60.0,
@@ -199,6 +212,26 @@ class PiGeneratorConfig(_Base):
         return self
 
     @model_validator(mode="after")
+    def _extension_tools_are_declared(self) -> "PiGeneratorConfig":
+        """
+        An extension whose tools are not in the allowlist is loaded and then
+        filtered out — the agent is never told the tool exists.
+
+        Caught here because the symptom is silent and expensive: observed on a
+        real run, where the agent spent nine turns hunting for a generator that
+        was loaded the whole time, then went and read the grading rubric instead.
+        """
+        if self.extensions and not self.tools.no_builtin and self.tools.builtin:
+            if not self.extension_tools:
+                raise ValueError(
+                    f"{len(self.extensions)} extension(s) are configured but "
+                    "extension_tools is empty. pi's --tools allowlist covers extension "
+                    "tools, so their tools would be filtered out and the agent would "
+                    "never see them. List the tool names the extensions register."
+                )
+        return self
+
+    @model_validator(mode="after")
     def _files_exist(self) -> "PiGeneratorConfig":
         missing = [
             str(p)
@@ -227,8 +260,55 @@ class MockGeneratorConfig(_Base):
     height: int = 180
 
 
+class ExternalGeneratorConfig(_Base):
+    """
+    Videos generated elsewhere, scored here.
+
+    Nothing is generated: each seed's video comes from a manifest. Because every
+    run also *writes* that format, this is equally the replay arm — pointing it
+    at a finished run's `videos.yaml` re-judges those videos without repeating
+    the generation that produced them.
+    """
+
+    kind: Literal["external"] = "external"
+    manifest: Path = Field(description="YAML manifest mapping seed_id -> video file")
+    # Not just `copy`: that name shadows a BaseModel attribute and pydantic warns.
+    copy_videos: bool = Field(
+        default=True,
+        description=(
+            "Copy each video into the run directory (self-contained, archivable) "
+            "rather than symlinking it. Symlinks suit replaying a run that is "
+            "staying put, or a batch too large to duplicate."
+        ),
+    )
+    label: str = Field(
+        default="",
+        description=(
+            "Names this batch in the report's choices, so veb-compare can tell two "
+            "imports apart — both are `generator=external` otherwise. Defaults to "
+            "the manifest's own label."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _manifest_exists(self) -> "ExternalGeneratorConfig":
+        """A missing manifest should fail now, not after the dataset loads."""
+        # Hydra's mandatory-value sentinel survives to_container(), so say what to
+        # pass rather than reporting a file literally named "???" as missing.
+        if str(self.manifest) == "???":
+            raise ValueError(
+                "this arm needs a manifest of videos to judge; pass "
+                "generator.manifest=<path to videos.yaml> "
+                "(a previous run's videos.yaml works — that is how replay works)"
+            )
+        if not Path(self.manifest).expanduser().exists():
+            raise ValueError(f"manifest does not exist: {self.manifest}")
+        return self
+
+
 GeneratorConfig = Annotated[
-    Union[PiGeneratorConfig, MockGeneratorConfig], Field(discriminator="kind")
+    Union[PiGeneratorConfig, MockGeneratorConfig, ExternalGeneratorConfig],
+    Field(discriminator="kind"),
 ]
 
 
@@ -242,6 +322,10 @@ class JudgeConfig(_Base):
     api_key: Optional[str] = None
     pi_bin: str = "pi"
     timeout_seconds: float = 120.0
+    # Per criterion, not per video. A failed call scores the criterion zero, so
+    # retrying protects the number itself, not just the run.
+    attempts: int = Field(default=3, ge=1)
+    retry_backoff_seconds: float = Field(default=5.0, ge=0)
     n_frames: int = Field(default=8, gt=0)
 
 
@@ -278,15 +362,31 @@ def _read(path: Optional[Path]) -> str:
 
 
 def build_generator(cfg):
-    """Build the generator callable for a validated generator config."""
+    """
+    Build the generator callable for a validated generator config.
+
+    Dispatch is explicit on purpose: a fall-through default would quietly build
+    the wrong generator for a kind nobody wired up, and the symptom — an agent
+    run where an import was asked for — costs an hour to notice.
+    """
     if isinstance(cfg, MockGeneratorConfig):
         from video_eval_bench.generator.mock_generator import MockGenerator
 
         return MockGenerator(n_frames=cfg.n_frames, fps=cfg.fps, size=(cfg.width, cfg.height))
 
-    from video_eval_bench.generator.pi_generator import PiGenerator
+    if isinstance(cfg, ExternalGeneratorConfig):
+        from video_eval_bench.generator.external_generator import ExternalGenerator
 
-    return PiGenerator(cfg)
+        return ExternalGenerator(
+            manifest=cfg.manifest, copy=cfg.copy_videos, label=cfg.label
+        )
+
+    if isinstance(cfg, PiGeneratorConfig):
+        from video_eval_bench.generator.pi_generator import PiGenerator
+
+        return PiGenerator(cfg)
+
+    raise TypeError(f"no generator for config of type {type(cfg).__name__}")
 
 
 def build_judge(cfg: JudgeConfig, dataset):
@@ -305,6 +405,8 @@ def build_judge(cfg: JudgeConfig, dataset):
                 provider=cfg.provider,
                 model=cfg.model or PiConfig.model,
                 timeout_seconds=cfg.timeout_seconds,
+                attempts=cfg.attempts,
+                retry_backoff_seconds=cfg.retry_backoff_seconds,
             )
         )
     else:

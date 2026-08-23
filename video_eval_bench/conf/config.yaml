@@ -21,6 +21,7 @@ defaults:
   - system_prompt: director
   - skills: none
   - tools: full
+  - video_backend: none
   - judge: pi
   # Whole-variant presets, last so they can override any of the above.
   - experiment: null

@@ -1,16 +1,25 @@
 # @package _global_
 #
-# One real seed against the live model, with the shipped defaults and nothing
-# else: no skills, no custom tools, no video backend.
+# One real seed against the live model, with a stand-in generation tool.
 #
-# This is the *baseline* arm, not a health check. The agent gets bash and
-# whatever happens to be on the box, so whether it can produce a video at all is
-# the thing being measured — a refusal is a legitimate result. For a run that is
-# expected to succeed, use `experiment=e2e`, which supplies a video backend.
+# This asks the cheap half of the question: can the agent drive generate_video
+# correctly — right mode, a full brief in the prompt, submit_video afterwards —
+# without spending GPU minutes on a video whose quality is not what is being
+# tested here. Use `video_backend=wangp` for the real thing.
+#
+# The budget is deliberately short. With the tool returning instantly, an agent
+# that knows what to do finishes in a couple of minutes; anything longer means
+# it is lost, and waiting an hour to learn that is a waste.
 
 defaults:
   - override /generator: pi
+  - override /video_backend: fake
   - override /judge: pi
+
+generator:
+  timeout_seconds: 600
+  exit_grace_seconds: 10
+  heartbeat_seconds: 30
 
 run:
   category: marketing

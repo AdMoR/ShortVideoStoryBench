@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from video_eval_bench.dataset.seed import Seed
 from video_eval_bench.schemas import JudgeVerdict
@@ -7,9 +7,20 @@ from video_eval_bench.schemas import JudgeVerdict
 
 @dataclass
 class SeedResult:
-    """Outcome of one seed in a benchmark run."""
+    """
+    Outcome of one seed in a benchmark run.
+
+    `status` is a field rather than a key in `metadata` because it drives the
+    summary counts and a `veb-compare` column, and `metadata` is generator-defined
+    and best-effort — nothing that has to be counted can live in there.
+
+    "skipped" means no video was supplied for this seed, which only an import can
+    say. It is deliberately not an error: an import covering three of eight seeds
+    has not failed five times.
+    """
 
     seed: Seed
+    status: Literal["completed", "skipped", "errored"] = "completed"
     video_path: Optional[str] = None
     generation_error: Optional[str] = None
     duration_seconds: float = 0.0
@@ -55,6 +66,7 @@ class BenchReport:
             per_cat[cat] = {
                 "n_seeds": len(rs),
                 "n_judged": len(scored),
+                "n_skipped": sum(1 for r in rs if r.status == "skipped"),
                 "mean_score": round(sum(scored) / len(scored), 2) if scored else None,
                 "n_passed": sum(1 for r in rs if r.verdict and r.verdict.passed),
                 "n_safety_vetoes": sum(
@@ -68,6 +80,7 @@ class BenchReport:
             "n_seeds": len(self.results),
             "n_ok": sum(1 for r in self.results if r.ok),
             "n_generation_errors": sum(1 for r in self.results if r.generation_error),
+            "n_skipped": sum(1 for r in self.results if r.status == "skipped"),
             "n_judge_errors": sum(
                 1 for r in self.results if r.verdict is not None and r.verdict.judge_error
             ),
@@ -95,6 +108,7 @@ class BenchReport:
                 {
                     "seed_id": r.seed.seed_id,
                     "category": r.seed.category,
+                    "status": r.status,
                     "video_path": r.video_path,
                     "generation_error": r.generation_error,
                     "duration_seconds": round(r.duration_seconds, 2),

@@ -1,0 +1,6 @@
+# @package generator
+#
+# No generation tool. The agent gets bash and whatever is on the box — the
+# baseline that shows what the model can do unaided.
+
+extensions: []

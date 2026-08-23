@@ -81,6 +81,43 @@ def test_variant_is_derived_from_the_chosen_options():
     assert "model=gx10_qwen27b_q8" in variant
 
 
+def test_video_backend_arms_swap_the_generation_tool():
+    """The generator the agent is handed is an axis like any other."""
+    none, _, _ = build("video_backend=none")
+    fake, _, _ = build("video_backend=fake")
+    real, _, _ = build("video_backend=wangp")
+
+    assert none.generator.extensions == []
+    assert [p.name for p in fake.generator.extensions] == ["fake_video_tools.ts"]
+    assert [p.name for p in real.generator.extensions] == ["wangp_tools.ts"]
+    assert real.generator.env["LTX_SERVER_URL"].startswith("http")
+
+
+def test_packaged_extensions_and_asset_exist():
+    """`${veb_ext:...}` must resolve to files that ship with the package."""
+    from video_eval_bench.config import PI_EXT_DIR
+
+    for name in ("bench_tools.ts", "wangp_tools.ts", "fake_video_tools.ts"):
+        assert (PI_EXT_DIR / name).is_file(), name
+    # The stand-in has to be a real, decodable video — the judge scores it.
+    from video_eval_bench.judge.frames import video_frame_count
+
+    asset = PI_EXT_DIR / "assets" / "fake_take.mp4"
+    assert asset.is_file()
+    assert video_frame_count(str(asset)) > 0
+
+
+def test_smoke_experiment_is_cheap_and_uses_the_stand_in():
+    """
+    The smoke run exists to answer a question in minutes. If it ever inherits
+    the hour-long default budget again, that is a regression worth failing on.
+    """
+    bench, _, _ = build("experiment=smoke")
+    assert [p.name for p in bench.generator.extensions] == ["fake_video_tools.ts"]
+    assert bench.generator.timeout_seconds <= 900
+    assert bench.run.max_seeds == 1
+
+
 def test_run_selection_overrides():
     bench, _, _ = build("run.category=marketing", "run.max_seeds=1")
     assert bench.run.category == "marketing"
@@ -129,12 +166,29 @@ def test_skills_with_read_are_accepted(tmp_path):
     assert cfg.skills.paths == [skill]
 
 
+def test_extension_without_declared_tools_is_refused(tmp_path):
+    """
+    The symptom is silent: the extension loads, its tools are filtered out of
+    the allowlist, and the agent is never told they exist.
+    """
+    ext = tmp_path / "video.ts"
+    ext.write_text("// stub")
+    with pytest.raises(ValidationError, match="extension_tools is empty"):
+        PiGeneratorConfig(
+            model=ModelConfig(name="m"),
+            system_prompt=PromptConfig(system_text="s", task_text="t"),
+            tools=ToolsConfig(builtin=["read", "bash"]),
+            extensions=[ext],
+        )
+
+
 def test_missing_referenced_file_is_refused(tmp_path):
     with pytest.raises(ValidationError, match="do not exist"):
         PiGeneratorConfig(
             model=ModelConfig(name="m"),
             system_prompt=PromptConfig(system_text="s", task_text="t"),
             extensions=[tmp_path / "nope.ts"],
+            extension_tools=["generate_video"],
         )
 
 

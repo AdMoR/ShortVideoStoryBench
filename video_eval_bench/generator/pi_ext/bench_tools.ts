@@ -60,11 +60,14 @@ export default function benchTools(pi: ExtensionAPI) {
 		name: "submit_video",
 		label: "Submit Video",
 		description:
-			"Deliver the finished video for this brief. Pass the path of the video file you " +
-			"produced. This ends the task, so call it only once, on your final video.",
-		promptSnippet: "Deliver the finished video file as the final result",
+			"Deliver a finished video for this brief. Pass the path of the video file you " +
+			"produced. You may call this more than once — the most recent successful " +
+			"submission is the one that counts — so submit as soon as you have something " +
+			"that satisfies the brief, and submit again if you improve it.",
+		promptSnippet: "Deliver a finished video file as the current result",
 		promptGuidelines: [
-			"Call submit_video with the path of your finished video as your final action — a file left in the working directory is not a submission.",
+			"Call submit_video with the path of your video — a file left in the working directory is not a submission.",
+			"Submit the first usable video you have before improving it, even a single raw clip, then submit again every time you have something better; the last submission wins and an early one costs you nothing.",
 			"If submit_video returns an error, fix the reported problem and call submit_video again.",
 		],
 		parameters: Type.Object({
@@ -111,12 +114,20 @@ export default function benchTools(pi: ExtensionAPI) {
 
 			// The copy is complete before this returns, and tool_execution_end is
 			// emitted after execute() resolves — so by the time the harness sees the
-			// event, the file is whole. That is what makes its early exit safe.
+			// event, the file is whole.
+			//
+			// Deliberately no `terminate`: submitting must not end the run. When it
+			// did, the agent faced an all-or-nothing choice between delivering and
+			// carrying on working, and a real run spent an hour polishing a finished
+			// video it never submitted at all. Now it can bank a result and keep
+			// going, and the harness always holds a scoreable artifact.
 			return {
 				content: [
 					{
 						type: "text" as const,
-						text: `Submitted ${source} (${size} bytes). The task is complete.`,
+						text:
+							`Submitted ${source} (${size} bytes). This is now the result of record. ` +
+							`You may keep working and call submit_video again to replace it.`,
 					},
 				],
 				details: {
@@ -126,7 +137,6 @@ export default function benchTools(pi: ExtensionAPI) {
 					bytes: size,
 					notes: params.notes ?? "",
 				},
-				terminate: true,
 			};
 		},
 	});

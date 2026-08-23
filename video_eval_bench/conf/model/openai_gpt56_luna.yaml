@@ -1,0 +1,11 @@
+# @package generator.model
+#
+# Hosted frontier arm: OpenAI GPT-5.6 Luna via pi's built-in `openai` provider.
+# 272K context, vision-capable. Needs OPENAI_API_KEY in the environment — and
+# unlike the local arms it costs money, so mind `generator.timeout_seconds`.
+
+provider: openai
+name: gpt-5.6-luna
+# Pinned, not null: a null here inherits ~/.pi/agent/settings.json's
+# defaultThinkingLevel, which makes the arm depend on the operator's box.
+thinking: medium

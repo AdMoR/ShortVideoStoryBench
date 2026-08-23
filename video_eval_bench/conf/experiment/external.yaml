@@ -1,0 +1,19 @@
+# @package _global_
+#
+# Judge videos produced outside the harness, or replay a previous run's videos
+# through a different judge.
+#
+#   veb experiment=external generator.manifest=videos.yaml
+#   veb experiment=external generator.manifest=runs/<ts>/videos.yaml judge=litellm
+#
+# The agent axes are dropped rather than left dangling: they all package into the
+# `generator` block, which for this arm has no model, prompt, skills or tools to
+# configure. The judge axis is deliberately kept — it is the whole point.
+
+defaults:
+  - override /generator: external
+  - override /model: null
+  - override /system_prompt: null
+  - override /skills: null
+  - override /tools: null
+  - override /video_backend: null

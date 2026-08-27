@@ -9,5 +9,5 @@ provider: gx10
 model: unsloth/Qwen3.8-27B-GGUF:Q8_0
 api_base: null
 api_key: null
-timeout_seconds: 120
+timeout_seconds: 360
 n_frames: 8

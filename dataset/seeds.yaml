@@ -6,6 +6,22 @@ seeds:
       kitchen table, warm morning light; (2) she walks through a rainy city
       street at night, following a stranger; (3) they meet in a dimly lit
       cafe, she smiles with relief. Same woman throughout, same red coat.
+    references:
+      - id: maya
+        role: character
+        label: "Maya"
+        description: >
+          The woman the story follows. Her face, her dark curly hair and her red
+          wool coat must be the same in all three scenes — this is the seed's
+          whole point.
+        path: references/entertainment_001/maya.png
+      - id: cafe
+        role: location
+        label: "The cafe"
+        description: >
+          The cafe of scene 3: a dim corner room with green tiled walls, warm
+          hanging bulbs and a wooden counter.
+        path: references/entertainment_001/cafe.jpg
 
   - seed_id: entertainment_002
     category: entertainment
@@ -35,6 +51,15 @@ seeds:
       clean white background with the brand logo; (2) a runner using it on a
       trail; (3) final frame with the bottle, logo, and "Buy Now" call to
       action. 16:9 aspect ratio.
+    references:
+      - id: bottle
+        role: prop
+        label: "the bottle"
+        description: >
+          The product: a deep blue water bottle with a darker cap and a round
+          white wave logo on the body. The logo must stay legible and the right
+          way up in the closing frame.
+        path: references/marketing_001/bottle.png
 
   - seed_id: social_media_001
     category: social_media

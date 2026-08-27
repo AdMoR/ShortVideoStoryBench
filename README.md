@@ -49,25 +49,35 @@ video_eval_bench/
 ├── bench.py            # run_bench(): generate + judge every seed
 ├── run.py              # `veb` — the entry point
 └── compare.py          # `veb-compare` — comparative table over reports
-dataset/                # seeds.yaml + rubric_{a,b,c,d}.yaml
+dataset/                # seeds.yaml + rubric_{a,b,c,d}.yaml + references/
 tests/                  # offline suite; tests/e2e/ is the opt-in live tier
 ```
 
 ## How it works
 
-1. **Dataset** — `seeds.yaml` lists generation briefs, each tagged with a category.
-   `rubric_a/b.yaml` are universal; `rubric_c.yaml` holds one rubric per genre;
-   `rubric_d.yaml` holds the safety veto checks.
+1. **Dataset** — `seeds.yaml` lists generation briefs, each tagged with a category
+   and optionally carrying [reference images](#references). `rubric_a/b.yaml` are
+   universal; `rubric_c.yaml` holds one rubric per genre; `rubric_d.yaml` holds
+   the safety veto checks.
 2. **Generate** — `PiGenerator` runs the `pi` agent once per seed in an isolated
    workspace, with the configured system prompt, tool allowlist, skills and
-   custom-tool extensions. The agent produces a video and calls `submit_video`.
-3. **Judge** — `VideoJudge` samples N frames, asks the vision LLM one focused
-   question per rubric criterion, and **recomputes the weighted total itself**
-   (it never trusts the model's arithmetic). A broken judge never aborts a run.
+   custom-tool extensions, plus the seed's references staged into the workspace.
+   The agent produces a video and calls `submit_video`.
+3. **Judge** — `VideoJudge` samples N frames, shows them to the vision LLM behind
+   the seed's reference images, asks one focused question per rubric criterion,
+   and **recomputes the weighted total itself** (it never trusts the model's
+   arithmetic). A broken judge never aborts a run.
 4. **Report** — per-seed verdicts, per-category aggregates, and the resolved
    config, written to `runs/<run_id>/report.json`.
 
 ## Running
+
+Keys and endpoints come from `.env`, which is read both by `veb` itself and by
+the agent's sandbox. Copy the template and fill in what the arms you run need:
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 veb                                  # defaults: pi agent on gx10, pi judge
@@ -91,12 +101,14 @@ earns a full 8-seed pass.
 Each config group is one axis. Swap one, keep the rest:
 
 ```bash
-veb skills=e2e_mock                  # give the agent a skill
+veb skills=h3_prompting              # teach it how to prompt the video model
 veb system_prompt=minimal            # strip the prompt back
 veb tools=no_bash                    # take the shell away
 veb model=amor_ms_qwen27b_q3         # smaller quant, shorter context
 veb model=openai_gpt56_luna          # hosted frontier arm (needs OPENAI_API_KEY)
+veb model=anthropic_sonnet5          # hosted frontier arm (needs a pi anthropic login)
 veb video_backend=wangp              # give it a real video generator
+veb sandbox=docker                   # run the agent in a container (see below)
 ```
 
 To judge videos you generated some other way, or to re-judge a previous run
@@ -129,11 +141,107 @@ veb -m skills=none,e2e_mock tools=full,no_bash
 ```
 
 **Adding an arm is a new file in a group directory** — no Python change.
-`conf/skills/e2e_mock.yaml` is the worked example: point `paths` at a directory
-containing a `SKILL.md`, and `skills=<name>` becomes a new arm.
+`conf/skills/h3_prompting.yaml` is the worked example: point `paths` at a
+directory containing a `SKILL.md`, and `skills=<name>` becomes a new arm. That
+one points at `skills/video-h3-prompting/`, which teaches the production-brief
+format MiniMax H3 actually wants — the contrast arm for `video_backend=wangp`,
+since an agent that writes a one-line prompt gets a visibly worse video.
 
 Available groups: `generator`, `model`, `system_prompt`, `skills`, `tools`,
-`video_backend`, `judge`, `experiment`.
+`video_backend`, `judge`, `sandbox`, `experiment`.
+
+### References
+
+A seed can hand the agent images to hold to — a character's face, a location, a
+product, a look:
+
+```yaml
+# dataset/seeds.yaml
+  - seed_id: entertainment_001
+    category: entertainment
+    prompt: >
+      A 5 seconds short story in 3 scenes: ...
+    references:
+      - id: maya
+        role: character          # character | location | style | prop
+        label: "Maya"
+        description: >
+          The woman the story follows. Her face, her dark curly hair and her red
+          wool coat must be the same in all three scenes.
+        path: references/entertainment_001/maya.png
+```
+
+`path` is relative to `dataset/`; the files live in
+`dataset/references/<seed_id>/` so the dataset stays self-contained. **The images
+committed today are placeholder illustrations** — see
+`dataset/references/README.md` before quoting a number from them.
+
+The order of the list is meaningful: it is the order the agent is shown them in,
+and MiniMax H3 labels its references `<Picture 1>`, `<Picture 2>`, … by their
+position in `image_refs`. `role` is what tells identity work from style work,
+a distinction `skills/video-h3-prompting` leans on hard.
+
+**What the agent gets.** Each image is copied into `<workspace>/references/<id>`
+before `pi` starts, and the brief names them by that relative path with their
+role, label and description. Nothing new is mounted under `sandbox=docker`: the
+workspace is already the container's `/workspace`, so the references arrive
+inside it and `generate_video`'s "must be in the working directory" check passes
+unchanged. Whether the agent then *uses* `mode: "ref2va"` or just describes the
+images in words is exactly the thing being measured.
+
+**What the judge gets.** The same images, ahead of the clip's frames, described
+in the prompt header — and one more criterion, `S5 — Reference Adherence`. A seed
+carrying no references passes S5 without a model call: skipping it instead would
+quietly cost that seed 3 of Section B's 13 points, since a section scores as a
+percentage of its own weight. `requires_references: true` in the rubric YAML is
+what marks a criterion that way.
+
+References reach the judge from the dataset, not from the generator, so an
+imported video (`generator=external`) is scored on S5 too.
+
+### Sandboxing the agent
+
+`sandbox=docker` runs the agent's `pi` in a throwaway container per seed, holding
+that seed's workspace and nothing else.
+
+```bash
+docker/build.sh                      # once
+veb sandbox=docker video_backend=wangp
+```
+
+This is a correctness setting, not a deployment one. On the host the agent's
+workspace sits four levels under the project root and `tools=full` puts no path
+restriction on `read` or `bash` — and a real run used that to walk up and read
+`dataset/rubric_c.yaml`, working out from its own reasoning that it was under
+evaluation, before being scored against that rubric. A number from such a run
+measures rubric-reading. See `runs/FINDINGS.md` §4.
+
+What the agent gets:
+
+| | |
+|---|---|
+| `/workspace` | its own workspace, read-write, the only writable place |
+| `/out` | an empty directory it delivers into; the harness moves the video out |
+| `/opt/veb/ext`, `/opt/veb/skills` | its tools and skills, read-only |
+| network | `bridge`, plus `--add-host` for the generation servers |
+
+The repo, `dataset/`, the run directory and every other seed are not mounted, so
+there is nothing above `/workspace` to walk up into. Paths are neutral, so the
+command line does not describe the host either.
+
+Two things about the image are part of the measurement rather than packaging.
+**The pi version is pinned** — `build_argv` is written against one CLI contract.
+And **the installed package list is the benchmark floor**: `video_backend=none`
+means "bash and whatever is on the box", so `ffmpeg`, `curl` and `python3` being
+in `docker/Dockerfile.pi` is a statement about what the baseline arm can reach.
+Adding a tool there changes what every `video_backend=none` run measures.
+
+Credentials reach the container as `--env-file .env`, which means every key in
+that file, not only the ones the arm needs — the same exposure the agent has on
+the host, where it inherits the whole environment. `sandbox.env_passthrough`
+forwards named variables instead, if you want it tighter.
+
+The judge is not sandboxed. It runs `--no-tools`, so it has nothing to jail.
 
 ### Reading a run
 

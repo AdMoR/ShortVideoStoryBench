@@ -15,7 +15,11 @@ import pytest
 
 from video_eval_bench.config import BENCH_TOOLS_EXTENSION
 from video_eval_bench.dataset.seed import Seed
-from video_eval_bench.generator.pi_generator import PiGenerationError, PiGenerator
+from video_eval_bench.generator.pi_generator import (
+    PiGenerationError,
+    PiGenerator,
+    _SeedPaths,
+)
 from video_eval_bench.judge.frames import video_frame_count
 
 
@@ -23,11 +27,24 @@ def make_seed(seed_id: str = "marketing_001") -> Seed:
     return Seed(seed_id=seed_id, category="marketing", prompt="A 30-second product ad.")
 
 
+def paths_for(config, run_dir: Path, seed_id: str = "marketing_001") -> _SeedPaths:
+    """The host/agent path pairs for one seed, as __call__ derives them."""
+    return _SeedPaths(config, run_dir / seed_id, run_dir / f"{seed_id}.mp4")
+
+
+def argv_for(config, run_dir: Path) -> list:
+    return PiGenerator(config).build_argv(make_seed(), paths_for(config, run_dir))
+
+
+def task_for(config, run_dir: Path) -> str:
+    return PiGenerator(config).render_task(make_seed(), paths_for(config, run_dir))
+
+
 # ── argv ──────────────────────────────────────────────────────────────────────
 
 
 def test_argv_carries_model_and_mode(pi_config, tmp_path):
-    argv = PiGenerator(pi_config()).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+    argv = argv_for(pi_config(), tmp_path)
     assert argv[1:5] == ["--provider", "gx10", "--model", "test-model"]
     assert "--print" in argv and "--no-session" in argv
     assert argv[argv.index("--mode") + 1] == "json"
@@ -35,13 +52,13 @@ def test_argv_carries_model_and_mode(pi_config, tmp_path):
 
 def test_argv_always_loads_the_handoff_extension(pi_config, tmp_path):
     """Without submit_video the agent has no way to deliver a result at all."""
-    argv = PiGenerator(pi_config()).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+    argv = argv_for(pi_config(), tmp_path)
     assert str(BENCH_TOOLS_EXTENSION) in argv
     assert argv[argv.index(str(BENCH_TOOLS_EXTENSION)) - 1] == "-e"
 
 
 def test_argv_tools_and_discovery_flags(pi_config, tmp_path):
-    argv = PiGenerator(pi_config()).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+    argv = argv_for(pi_config(), tmp_path)
     assert "--no-skills" in argv  # discovery off by default
     assert "--no-extensions" in argv
     assert "--no-context-files" in argv
@@ -53,7 +70,7 @@ def test_tool_allowlist_keeps_the_handoff_tool(pi_config, tmp_path):
     of it lets the agent generate a video and then discover it has no way to
     deliver it — which is exactly what happened before this was fixed.
     """
-    argv = PiGenerator(pi_config()).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+    argv = argv_for(pi_config(), tmp_path)
     allowed = argv[argv.index("--tools") + 1].split(",")
     assert allowed[:4] == ["read", "write", "edit", "bash"]
     assert "submit_video" in allowed
@@ -67,9 +84,9 @@ def test_extension_tools_reach_the_allowlist(pi_config, tmp_path):
     """
     ext = tmp_path / "video.ts"
     ext.write_text("// stub")
-    argv = PiGenerator(
-        pi_config(extensions=[ext], extension_tools=["generate_video"])
-    ).build_argv(make_seed(), tmp_path, tmp_path / "o.mp4")
+    argv = argv_for(
+        pi_config(extensions=[ext], extension_tools=["generate_video"]), tmp_path
+    )
 
     allowed = argv[argv.index("--tools") + 1].split(",")
     assert "generate_video" in allowed
@@ -81,9 +98,7 @@ def test_no_builtin_tools_still_leaves_the_handoff_tool(pi_config, tmp_path):
     """--no-builtin-tools keeps extension tools, so no allowlist is needed."""
     from video_eval_bench.config import ToolsConfig
 
-    argv = PiGenerator(pi_config(tools=ToolsConfig(no_builtin=True))).build_argv(
-        make_seed(), tmp_path, tmp_path / "o.mp4"
-    )
+    argv = argv_for(pi_config(tools=ToolsConfig(no_builtin=True)), tmp_path)
     assert "--no-builtin-tools" in argv
     assert "--tools" not in argv
 
@@ -93,14 +108,12 @@ def test_argv_lists_each_configured_skill(pi_config, tmp_path):
 
     skill = tmp_path / "a-skill"
     skill.mkdir()
-    argv = PiGenerator(pi_config(skills=SkillsConfig(paths=[skill]))).build_argv(
-        make_seed(), tmp_path, tmp_path / "o.mp4"
-    )
+    argv = argv_for(pi_config(skills=SkillsConfig(paths=[skill])), tmp_path)
     assert argv[argv.index("--skill") + 1] == str(skill.resolve())
 
 
 def test_task_prompt_carries_the_brief(pi_config, tmp_path):
-    task = PiGenerator(pi_config()).render_task(make_seed(), tmp_path, tmp_path / "o.mp4")
+    task = task_for(pi_config(), tmp_path)
     assert "A 30-second product ad." in task
     assert "marketing" in task
     assert str(tmp_path) in task
@@ -114,7 +127,7 @@ def test_bad_template_placeholder_names_itself(pi_config, tmp_path):
         system_prompt=PromptConfig(system_text="s", task_text="run ${HOME}/x {prompt}")
     )
     with pytest.raises(PiGenerationError, match="Literal braces must be doubled"):
-        PiGenerator(config).render_task(make_seed(), tmp_path, tmp_path / "o.mp4")
+        PiGenerator(config).render_task(make_seed(), paths_for(config, tmp_path))
 
 
 # ── happy path ────────────────────────────────────────────────────────────────

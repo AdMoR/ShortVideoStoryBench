@@ -17,11 +17,12 @@ Scoring (normalized to 0-100):
 
 import json
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from video_eval_bench.dataset import Dataset
 from video_eval_bench.dataset.dataset_schemas import RubricCriterion
-from video_eval_bench.judge.frames import extract_frames
+from video_eval_bench.dataset.seed import SeedReference
+from video_eval_bench.judge.frames import extract_frames, load_image
 from video_eval_bench.judge.llm import VisionLLM
 from video_eval_bench.judge.prompt import build_criterion_prompt, build_safety_prompt
 from video_eval_bench.schemas import (
@@ -33,7 +34,7 @@ from video_eval_bench.schemas import (
 
 logger = logging.getLogger(__name__)
 
-USER_MESSAGE = "Judge the following video frames against the rubric criterion above."
+USER_MESSAGE = "Judge the images above against the rubric criterion, as the header describes them."
 
 
 def parse_verdict_json(text: str) -> Optional[dict]:
@@ -81,6 +82,16 @@ class VideoJudge:
                 seed.seed_id, seed.category, f"no frames extracted from {video_path}"
             )
 
+        # References first, frames second, in one flat list: `VisionLLM.complete`
+        # takes a single `images` sequence and every backend flattens it further
+        # (base64 parts, or @-mentioned temp files). The prompt header is the only
+        # thing telling the model where the references end and the clip begins,
+        # so it is built from `references` — the ones that actually loaded — and
+        # never from `seed.references`.
+        references = self._reference_images(seed)
+        images = [*(data for _, data in references), *frames]
+        sent = [ref for ref, _ in references]
+
         try:
             criteria = [
                 *self.dataset.rubric_a.criteria,
@@ -89,11 +100,15 @@ class VideoJudge:
             ]
             scores, safety, n_failed = [], [], 0
             for criterion in criteria:
-                score, ok = await self._judge_criterion(seed, category, criterion, frames)
+                score, ok = await self._judge_criterion(
+                    seed, category, criterion, images, len(frames), sent
+                )
                 scores.append(score)
                 n_failed += not ok
             for check in self.dataset.safety_checks:
-                result, ok = await self._judge_safety(seed, category, check, frames)
+                result, ok = await self._judge_safety(
+                    seed, category, check, images, len(frames), sent
+                )
                 safety.append(result)
                 n_failed += not ok
 
@@ -109,13 +124,59 @@ class VideoJudge:
             logger.error(f"[VideoJudge] judge failed for {seed.seed_id}: {exc}", exc_info=True)
             return JudgeVerdict.permissive_default(seed.seed_id, seed.category, str(exc))
 
+    def _reference_images(self, seed: Seed) -> List[Tuple[SeedReference, bytes]]:
+        """
+        The seed's references paired with their JPEG bytes, dropping any that
+        will not load.
+
+        Dropping rather than raising: a reference the judge cannot open is a
+        dataset problem, and failing the whole verdict over it would turn a bad
+        image into a missing score. `load_seeds` already refused a reference whose
+        file does not exist, so reaching here means an unreadable one.
+
+        The pair is what matters — a dropped image must also vanish from the
+        prompt, or "Image 2" in the header names "Image 1" in the payload.
+        """
+        loaded: List[Tuple[SeedReference, bytes]] = []
+        for ref in seed.references:
+            data = load_image(str(ref.path))
+            if data:
+                loaded.append((ref, data))
+            else:
+                logger.warning(
+                    f"[VideoJudge] {seed.seed_id}: reference {ref.id!r} could not be "
+                    f"loaded from {ref.path}; judging without it"
+                )
+        return loaded
+
     async def _judge_criterion(
-        self, seed, category, criterion: RubricCriterion, frames
+        self, seed, category, criterion: RubricCriterion, images, n_frames: int, references
     ) -> tuple[JudgeScore, bool]:
         """One backend call for a single rubric criterion. Returns (score, ok)."""
-        system = build_criterion_prompt(seed, category, criterion, n_frames=len(frames))
+        if criterion.requires_references and not references:
+            # Passed, not skipped: a section scores as a percentage of its full
+            # weight, so leaving the criterion out would cost the seed points it
+            # had no way to earn. Answered here rather than by the model because
+            # no reference image reached the payload — there is nothing to look at.
+            reason = (
+                "No references were supplied with this brief."
+                if not seed.references
+                else "None of this seed's reference images could be loaded."
+            )
+            return (
+                JudgeScore(
+                    criterion=criterion.id,
+                    passed=True,
+                    score=criterion.weight,
+                    comment=reason,
+                ),
+                True,
+            )
+        system = build_criterion_prompt(
+            seed, category, criterion, n_frames=n_frames, references=references
+        )
         try:
-            raw = await self.backend.complete(system, USER_MESSAGE, frames)
+            raw = await self.backend.complete(system, USER_MESSAGE, images)
             data = parse_verdict_json(raw)
             if data is None:
                 raise ValueError(f"unparseable judge output: {raw[:200]!r}")
@@ -133,11 +194,15 @@ class VideoJudge:
         )
         return score, ok
 
-    async def _judge_safety(self, seed, category, check, frames) -> tuple[SafetyResult, bool]:
+    async def _judge_safety(
+        self, seed, category, check, images, n_frames: int, references
+    ) -> tuple[SafetyResult, bool]:
         """One backend call for a single Section D safety check. Returns (result, ok)."""
-        system = build_safety_prompt(seed, category, check, n_frames=len(frames))
+        system = build_safety_prompt(
+            seed, category, check, n_frames=n_frames, references=references
+        )
         try:
-            raw = await self.backend.complete(system, USER_MESSAGE, frames)
+            raw = await self.backend.complete(system, USER_MESSAGE, images)
             data = parse_verdict_json(raw)
             if data is None:
                 raise ValueError(f"unparseable judge output: {raw[:200]!r}")

@@ -1,0 +1,17 @@
+# @package generator.skills
+#
+# The H3 prompting guide: how to write the production brief `generate_video`
+# wants, plus the format specification it is built on.
+#
+# The point of the arm. H3 is prompted with a structured brief — shots with
+# timestamps, explicit camera motion, `<d>[Language]…</d>` dialogue tags — and an
+# agent that does not know that writes a one-line description and gets a visibly
+# worse video. Pair it with `video_backend=wangp`, and compare against
+# `skills=none` to find out how much of the score is knowing the medium versus
+# knowing this particular model.
+#
+#   veb -m skills=none,h3_prompting video_backend=wangp
+
+paths:
+  - ${paths.root}/skills/video-h3-prompting
+discover: false

@@ -9,7 +9,7 @@
 
 Produce one video that satisfies the brief above, then call `submit_video` with its
 path. Work inside the working directory.
-
+{references}
 ## Time
 
 You have about {budget_minutes} minutes of wall-clock time for this task, and no

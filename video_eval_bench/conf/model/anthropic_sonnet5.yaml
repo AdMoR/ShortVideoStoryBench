@@ -1,0 +1,18 @@
+# @package generator.model
+#
+# Hosted frontier arm: Claude Sonnet 5 via pi's built-in `anthropic` provider.
+# 1M context, vision-capable. Either way the arm consumes quota, so mind
+# `generator.timeout_seconds`.
+#
+# Auth depends on where the agent runs. On the host it comes from
+# ~/.pi/agent/auth.json — this box is signed in with the Claude subscription
+# connector, so no ANTHROPIC_API_KEY is needed. Under `sandbox=docker` that file
+# is deliberately not mounted (it is a refresh token, and the agent under test
+# can read its own filesystem), so the arm needs ANTHROPIC_API_KEY in .env and
+# bills the API account rather than the subscription.
+
+provider: anthropic
+name: claude-sonnet-5
+# Pinned, not null: a null here inherits ~/.pi/agent/settings.json's
+# defaultThinkingLevel, which makes the arm depend on the operator's box.
+thinking: medium

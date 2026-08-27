@@ -1,0 +1,30 @@
+# @package generator.sandbox
+#
+# The agent's pi runs in a throwaway container per seed, holding its own
+# workspace and nothing else. The repo, the dataset and the other seeds are not
+# mounted, so there is nothing above /workspace to walk up into.
+#
+# Build the image first: `docker/build.sh`.
+
+kind: docker
+image: veb-pi:latest
+
+# bridge, not host: the agent has no business on the operator's loopback, where
+# the Virtual Streamer API and other local services live. Verified to still reach
+# both generation endpoints through the Tailscale address below.
+network: bridge
+
+# Docker drops the host's loopback resolver (systemd-resolved's 127.0.0.53 stub)
+# when it writes a container's resolv.conf, and gx10-cbc5 resolves nowhere else —
+# it is IPv6-only over mDNS, on an IPv4-only bridge network. The Tailscale address
+# needs no DNS at all. Override with VEB_GX10_IP when the node moves.
+extra_hosts:
+  gx10-cbc5: ${oc.env:VEB_GX10_IP,100.114.182.89}
+
+# The container starts with an empty environment; this is where the model
+# provider and generation-server credentials come from. Copy .env.example to .env.
+env_file: ${paths.root}/.env
+env_passthrough: []
+
+extra_mounts: []
+docker_args: []

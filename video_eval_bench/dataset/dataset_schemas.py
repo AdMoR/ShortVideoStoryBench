@@ -45,6 +45,16 @@ class RubricCriterion(BaseModel):
         default=False,
         description="True for ⚠️ criteria — a failure here caps the section score",
     )
+    requires_references: bool = Field(
+        default=False,
+        description=(
+            "The criterion only means something for a seed carrying reference "
+            "images. For a seed with none the judge passes it without asking the "
+            "model — it must not be *skipped*, because a section scores as a "
+            "percentage of its full weight and an absent criterion would cost the "
+            "seed points it could never have earned."
+        ),
+    )
 
 
 class Rubric(BaseModel):

@@ -9,18 +9,52 @@ genre rubric has.
 """
 
 from video_eval_bench.dataset.dataset_schemas import Category, RubricCriterion, SafetyCheck
-from video_eval_bench.dataset.seed import Seed
+from typing import Sequence
+
+from video_eval_bench.dataset.seed import Seed, SeedReference
 
 _HEADER = """You are a strict quality judge for AI-generated videos.
-You are shown {n_frames} frames sampled evenly (in temporal order) from ONE generated clip.
+You are shown {images_described}
 
 ## Generation prompt
 ---
 {prompt}
 ---
-
+{references}
 ## Genre: {category_name}
 """
+
+
+def describe_images(references: Sequence[SeedReference], n_frames: int) -> str:
+    """
+    The one sentence telling the model what the image list it just received is.
+
+    References come first and frames second — `VideoJudge` sends them in that
+    order, and the backends flatten both into one list, so this sentence is the
+    only thing separating a reference image from a frame of the clip.
+    """
+    if not references:
+        return (
+            f"{n_frames} frames sampled evenly (in temporal order) from ONE generated clip."
+        )
+    return (
+        f"{len(references)} reference image(s) that were supplied with the brief, "
+        f"followed by {n_frames} frames sampled evenly (in temporal order) from ONE "
+        "generated clip."
+    )
+
+
+def render_references(references: Sequence[SeedReference]) -> str:
+    """The judge's reference block, or "" when no reference image was sent."""
+    if not references:
+        return ""
+    lines = ["", "## Reference images supplied with the brief", ""]
+    for i, ref in enumerate(references, start=1):
+        description = " ".join(ref.description.split())
+        lines.append(f'- Image {i} — {ref.role}, "{ref.label}": {description}')
+    lines.append("")
+    return "\n".join(lines)
+
 
 CRITERION_PROMPT_TEMPLATE = (
     _HEADER
@@ -65,10 +99,18 @@ def build_criterion_prompt(
     category: Category,
     criterion: RubricCriterion,
     n_frames: int,
+    references: Sequence[SeedReference] = (),
 ) -> str:
-    """Render the judge instruction for a single rubric criterion."""
+    """
+    Render the judge instruction for a single rubric criterion.
+
+    `references` is what was actually *sent*, not what the seed declares — a
+    reference whose file will not open is dropped from the payload, and a header
+    that still counted it would misnumber every image after it.
+    """
     return CRITERION_PROMPT_TEMPLATE.format(
-        n_frames=n_frames,
+        images_described=describe_images(references, n_frames),
+        references=render_references(references),
         prompt=seed.prompt.strip(),
         category_name=category.name,
         criterion_id=criterion.id,
@@ -83,10 +125,12 @@ def build_safety_prompt(
     category: Category,
     check: SafetyCheck,
     n_frames: int,
+    references: Sequence[SeedReference] = (),
 ) -> str:
     """Render the judge instruction for a single Section D safety check."""
     return SAFETY_PROMPT_TEMPLATE.format(
-        n_frames=n_frames,
+        images_described=describe_images(references, n_frames),
+        references=render_references(references),
         prompt=seed.prompt.strip(),
         category_name=category.name,
         check_id=check.id,

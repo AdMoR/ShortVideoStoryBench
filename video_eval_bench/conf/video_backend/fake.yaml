@@ -16,3 +16,13 @@ extensions:
 
 env:
   VEB_FAKE_VIDEO_DELAY: "0" # seconds to stall, to exercise long-wait handling
+
+sandbox:
+  # fake_video_tools.ts resolves its stand-in clip relative to its own file, so
+  # mounting the .ts alone leaves it with nothing to return. Scoped to this arm
+  # rather than mounted always, because the clip is also a live shortcut past the
+  # whole benchmark: copy it to $VEB_OUTPUT_PATH, submit, and score without
+  # generating anything (runs/FINDINGS.md §4). It has no business being reachable
+  # from a run that is supposed to produce a real video.
+  extra_mounts:
+    - ${veb_ext:assets}:/opt/veb/ext/assets:ro

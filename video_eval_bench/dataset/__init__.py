@@ -1,13 +1,13 @@
 """
 Dataset package: seeds + rubrics (Sections A/B/C/D) loaded from YAML files.
 
-Re-exports the schema types (Seed, Category, Rubric, RubricCriterion,
-SafetyCheck, Dataset) and the load_*() loaders so callers can do:
+Re-exports the schema types (Seed, SeedReference, Category, Rubric,
+RubricCriterion, SafetyCheck, Dataset) and the load_*() loaders so callers can do:
 
     from video_eval_bench.dataset import load_dataset
 """
 
-from video_eval_bench.dataset.seed import Seed
+from video_eval_bench.dataset.seed import Seed, SeedReference
 from video_eval_bench.dataset.dataset_schemas import (
     DEFAULT_DATASET_DIR,
     Category,
@@ -27,6 +27,7 @@ from video_eval_bench.dataset.dataset_utils import (
 
 __all__ = [
     "Seed",
+    "SeedReference",
     "Category",
     "Dataset",
     "Rubric",

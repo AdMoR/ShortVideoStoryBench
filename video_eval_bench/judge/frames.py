@@ -97,12 +97,26 @@ def video_frame_count(video_path: str) -> int:
 
 
 def load_image(image_path: str, max_width: int = 1024) -> bytes:
-    """Load a still image (reference frame, etc.) and return JPEG bytes."""
+    """
+    Load a still image (a seed's reference image) and return JPEG bytes.
+
+    Empty bytes on any failure, never an exception. A caller is deciding whether
+    to *include* an image in a payload, and one unreadable file should cost that
+    image — not the whole verdict, which is what an exception out of here would
+    do: `VideoJudge.judge` would catch it above the per-criterion loop and fall
+    back to the permissive default for every criterion in the rubric.
+    """
     path = Path(image_path)
     if not path.exists():
         logger.warning(f"Image not found: {image_path}")
         return b""
-    img = Image.open(path).convert("RGB")
+    try:
+        img = Image.open(path)
+        img.load()
+        img = img.convert("RGB")
+    except Exception as exc:
+        logger.warning(f"Could not read image {image_path}: {exc}")
+        return b""
     if img.width > max_width:
         scale = max_width / img.width
         img = img.resize((max_width, int(img.height * scale)), Image.LANCZOS)

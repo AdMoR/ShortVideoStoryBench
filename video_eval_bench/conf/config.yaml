@@ -17,6 +17,9 @@ defaults:
   # The generator block next; the axis groups after it package into it and
   # therefore override its placeholders.
   - generator: pi
+  # Where the agent's pi actually runs. Before video_backend, so a backend arm
+  # can add the mounts its extension needs on top of the chosen sandbox.
+  - sandbox: none
   - model: gx10_qwen27b_q8
   - system_prompt: director
   - skills: none

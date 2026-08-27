@@ -2,7 +2,8 @@
 #
 # Fully offline: synthetic videos, fake verdicts, no model and no network.
 # Replaces the old `--mock` flag. The generator axes do not apply, so they are
-# dropped rather than left dangling.
+# dropped rather than left dangling — sandbox included: there is no agent here to
+# jail, only a few frames of OpenCV.
 
 defaults:
   - override /generator: mock
@@ -12,3 +13,4 @@ defaults:
   - override /skills: null
   - override /tools: null
   - override /video_backend: null
+  - override /sandbox: null

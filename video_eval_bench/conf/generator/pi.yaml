@@ -10,14 +10,15 @@ offline: true
 # Custom-tool extensions (.ts). The handoff tool is always loaded on top of these.
 extensions: []
 discover_extensions: false
-
+system_prompt:
+  system_text:
 context_files: false
 prompt_templates: false
 approve_project: false
 
 # Timing. There is deliberately no inactivity timeout anywhere: pi puts no default
 # timeout on bash, so a legitimate generation may block silently for many minutes.
-timeout_seconds: 3600 # hard per-seed budget
+timeout_seconds: 7200 # hard per-seed budget
 exit_grace_seconds: 15 # how long to let pi exit itself after submit_video
 heartbeat_seconds: 60 # progress logging while the agent works
 

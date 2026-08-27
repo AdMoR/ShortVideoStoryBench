@@ -17,8 +17,9 @@ result attributed to the wrong configuration.
 """
 
 import logging
+import os
 from pathlib import Path
-from typing import Annotated, List, Literal, Optional, Union
+from typing import Annotated, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -93,6 +94,98 @@ class SkillsConfig(_Base):
     )
 
 
+class SandboxConfig(_Base):
+    """
+    Where the agent's `pi` process runs — on the host, or jailed in a container.
+
+    This is not an ablation axis; it is a correctness one. With `kind="none"` the
+    agent has the operator's whole filesystem, its workspace sits four levels
+    under the repo root, and a real run walked up and read `dataset/rubric_c.yaml`
+    before scoring itself (runs/FINDINGS.md §4). `kind="docker"` mounts the seed's
+    workspace and nothing else, so there is nothing above it to walk into.
+
+    Only the *generator's* pi is sandboxed. The judge runs `--no-tools`, so it has
+    no filesystem reach worth jailing.
+    """
+
+    kind: Literal["none", "docker"] = "none"
+    docker_bin: str = "docker"
+    image: str = Field(
+        default="veb-pi:latest", description="Built by docker/build.sh."
+    )
+    network: str = Field(
+        default="bridge",
+        description=(
+            "Docker network mode. `bridge` keeps the agent off the host's loopback; "
+            "`host` is the fallback if the generation endpoints turn out to be "
+            "unroutable from a bridge network."
+        ),
+    )
+    extra_hosts: Dict[str, str] = Field(
+        default_factory=dict,
+        description=(
+            "name -> address, as --add-host. The generation hosts usually need this: "
+            "Docker strips the host's loopback resolver from a container's "
+            "resolv.conf, so a name that only resolves there is unreachable inside."
+        ),
+    )
+    env_file: Optional[Path] = Field(
+        default=None,
+        description="Passed as --env-file. Where the LLM and generation-server keys come from.",
+    )
+    env_passthrough: List[str] = Field(
+        default_factory=list,
+        description=(
+            "Names forwarded from the harness's own environment, on top of env_file. "
+            "The tighter alternative to putting every key in env_file."
+        ),
+    )
+    user: Optional[str] = Field(
+        default=None,
+        description=(
+            "--user value. Defaults to the harness's own uid:gid, so files the agent "
+            "writes into the mounted workspace come back owned by the operator."
+        ),
+    )
+    extra_mounts: List[str] = Field(
+        default_factory=list,
+        description=(
+            'Raw "src:dst[:ro]" bind mounts, on top of the ones the harness derives. '
+            "A video_backend arm whose extension needs a data file adds it here."
+        ),
+    )
+    docker_args: List[str] = Field(
+        default_factory=list,
+        description="Escape hatch appended to `docker run` — --memory, --pids-limit, ...",
+    )
+
+    def run_as(self) -> str:
+        return self.user or f"{os.getuid()}:{os.getgid()}"
+
+    @model_validator(mode="after")
+    def _docker_needs_env_file(self) -> "SandboxConfig":
+        """
+        A sandboxed run with no env file reaches no model and no generation server.
+
+        Caught here rather than at runtime because the symptom is a per-seed
+        authentication failure many minutes in, once per seed, with the real cause
+        several layers down in pi's stderr.
+        """
+        if self.kind == "docker" and self.env_file is None:
+            raise ValueError(
+                "sandbox.kind='docker' needs sandbox.env_file: the container starts "
+                "with an empty environment, so the model provider and the generation "
+                "server credentials have to come from somewhere. Copy .env.example to "
+                ".env, or set sandbox.env_passthrough and point env_file at an empty file."
+            )
+        if self.env_file is not None and not Path(self.env_file).exists():
+            raise ValueError(
+                f"sandbox.env_file does not exist: {self.env_file}. "
+                "Copy .env.example to .env and fill in the keys you need."
+            )
+        return self
+
+
 class PromptConfig(_Base):
     """
     The system prompt and the per-seed task template.
@@ -140,6 +233,7 @@ class PiGeneratorConfig(_Base):
     system_prompt: PromptConfig
     tools: ToolsConfig = Field(default_factory=ToolsConfig)
     skills: SkillsConfig = Field(default_factory=SkillsConfig)
+    sandbox: SandboxConfig = Field(default_factory=SandboxConfig)
 
     extensions: List[Path] = Field(
         default_factory=list,
@@ -190,6 +284,23 @@ class PiGeneratorConfig(_Base):
         default_factory=list, description="Files staged into each seed's workspace."
     )
     extra_args: List[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _pi_bin_is_resolvable_where_it_runs(self) -> "PiGeneratorConfig":
+        """
+        Sandboxed, `pi_bin` is looked up inside the image, not on the host.
+
+        A host path here — the natural thing to write, and what the test fixtures
+        use — would exec-fail once per seed with docker's own error, several
+        layers away from the setting that caused it.
+        """
+        if self.sandbox.kind == "docker" and Path(self.pi_bin).name != self.pi_bin:
+            raise ValueError(
+                f"pi_bin={self.pi_bin!r} is a host path, but sandbox.kind='docker' runs pi "
+                "inside the image, where that path does not exist. Use a bare name on PATH "
+                "in the image (the default, 'pi')."
+            )
+        return self
 
     @model_validator(mode="after")
     def _skills_need_read(self) -> "PiGeneratorConfig":

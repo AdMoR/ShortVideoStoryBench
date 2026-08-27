@@ -1,0 +1,65 @@
+# The jail the agent under test runs in.
+#
+# Only the generator's `pi` process lives here — `veb` and the judge stay on the
+# host. One throwaway container per seed, holding nothing but the seed's own
+# workspace. See runs/FINDINGS.md §4: with `tools=full` on the host the agent
+# walked up out of its workspace and read `dataset/rubric_c.yaml`, which makes
+# the score a measure of rubric-reading rather than video quality.
+#
+# Two things here are part of the measurement, not incidental packaging:
+#
+#   * PI_VERSION is pinned. `PiGenerator.build_argv` is written against a
+#     specific pi CLI contract, and npm already serves a newer patch. A silent
+#     bump changes what the flags mean, on a run whose whole output is a number.
+#
+#   * The apt list below IS the benchmark floor. `video_backend=none` is defined
+#     as "bash and whatever is on the box", so ffmpeg, curl and python3 being
+#     here is a deliberate statement about what the baseline arm can reach.
+#     Adding a tool here changes what every `video_backend=none` run measures.
+
+FROM node:22-bookworm-slim
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		bash \
+		ca-certificates \
+		curl \
+		ffmpeg \
+		git \
+		jq \
+		python3 \
+		ripgrep \
+	&& rm -rf /var/lib/apt/lists/*
+
+ARG PI_VERSION=0.84.2
+RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent@${PI_VERSION}
+
+# The container runs as the host user so files the agent writes into the mounted
+# workspace stay owned by the operator, and $HOME stays writable for pi's own
+# state (models.json, the catalog cache) — which is container-local and dies
+# with --rm.
+ARG UID=1000
+ARG GID=1000
+# The node base image already ships a `node` user at 1000:1000, which is the
+# usual host uid too — so take over whatever already holds the ids rather than
+# failing on a collision, and only create the user when the ids are free.
+RUN set -eux; \
+	if getent group "${GID}" >/dev/null; then \
+		groupmod -n agent "$(getent group "${GID}" | cut -d: -f1)"; \
+	else \
+		groupadd -g "${GID}" agent; \
+	fi; \
+	if getent passwd "${UID}" >/dev/null; then \
+		usermod -l agent -g "${GID}" -d /home/agent -m "$(getent passwd "${UID}" | cut -d: -f1)"; \
+	else \
+		useradd -u "${UID}" -g "${GID}" -m -d /home/agent agent; \
+	fi
+
+COPY pi-entrypoint.sh /usr/local/bin/pi-entrypoint.sh
+RUN chmod 0755 /usr/local/bin/pi-entrypoint.sh
+
+USER agent
+ENV HOME=/home/agent
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/pi-entrypoint.sh"]

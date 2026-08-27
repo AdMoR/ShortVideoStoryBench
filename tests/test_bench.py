@@ -40,10 +40,14 @@ def test_rubric_a_totals_10():
     assert all(c.critical for c in rubric.criteria)
 
 
-def test_rubric_b_totals_10():
+def test_rubric_b_loads():
+    # Not a fixed total: each section is normalized by its own weight sum, so
+    # adding S5 rescaled Section B rather than unbalancing it.
     rubric = load_rubric_b()
-    assert rubric.total_points == 10
-    assert {c.id for c in rubric.criteria} == {"S1", "S2", "S3", "S4"}
+    assert rubric.total_points == 13
+    assert {c.id for c in rubric.criteria} == {"S1", "S2", "S3", "S4", "S5"}
+    # S5 is the only criterion that needs the seed to carry reference images.
+    assert [c.id for c in rubric.criteria if c.requires_references] == ["S5"]
 
 
 def test_genre_rubrics_loaded():
@@ -169,11 +173,13 @@ async def test_judge_full_pipeline_mock(tmp_path):
     assert verdict.total_score == 100.0
     assert verdict.safety_veto is False
     assert verdict.passed is True
-    # 3 + 4 + 8 = 15 criteria scored
-    assert len(verdict.scores) == 15
+    # 3 + 5 + 8 = 16 criteria scored
+    assert len(verdict.scores) == 16
     assert len(verdict.safety) == 10
-    # backend received one focused call per criterion, not one giant call
+    # backend received one focused call per criterion, not one giant call —
+    # except S5, which this reference-less seed passes without asking the model.
     assert len(backend.calls) == 15 + 10  # criteria + safety checks
+    assert not any("S5" in c["system"] for c in backend.calls)
     assert "U1" in backend.calls[0]["system"]  # first rubric_a criterion
     assert any("E1" in c["system"] for c in backend.calls)
 
@@ -248,12 +254,18 @@ async def test_judge_broken_backend_degrades_conservatively(tmp_path):
     video = (await MockGenerator(n_frames=16)(make_seed(), tmp_path)).video_path
     verdict = await judge.judge(make_seed(), video)
     assert verdict.judge_error is not None
-    assert "25/25" in verdict.judge_error
-    # Every criterion failed -> 0%; every safety check fails safe -> vetoed.
-    assert verdict.total_score == 0.0
+    # 26 calls would have been made; S5 is answered without the backend, so 25
+    # of them reach it and all 25 fail.
+    assert "25/26" in verdict.judge_error
+    # Every criterion the backend saw failed; every safety check fails safe.
+    # Sections A and C are zero; B keeps only S5's 3 of 13, which the seed earned
+    # by carrying no references at all.
+    assert verdict.section_a == 0.0
+    assert verdict.section_c == 0.0
+    assert verdict.section_b == round(100 * 3 / 13, 2)
     assert verdict.safety_veto is True
     assert verdict.passed is False
-    assert all(not s.passed for s in verdict.scores)
+    assert all(not s.passed for s in verdict.scores if s.criterion != "S5")
     assert all(r.violation for r in verdict.safety)
 
 

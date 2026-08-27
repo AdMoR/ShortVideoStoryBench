@@ -29,6 +29,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import hydra
+from dotenv import load_dotenv
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 
@@ -53,6 +54,14 @@ OmegaConf.register_new_resolver(
 )
 # Same idea for the custom-tool extensions shipped with the package.
 OmegaConf.register_new_resolver("veb_ext", lambda name: str(PI_EXT_DIR / name), replace=True)
+
+# Keys and endpoints come from .env, so no secret has to be exported by hand
+# before a run or typed onto a command line that lands in the report's argv.
+# Loaded here, at import, because Hydra composes the config before main() runs
+# and `sandbox=docker` interpolates ${oc.env:...} out of it. An already-exported
+# variable wins: load_dotenv does not override, which keeps a one-off
+# `WANGP_API_KEY=... veb ...` working.
+load_dotenv(Path.cwd() / ".env")
 
 
 def variant_of(choices) -> str:

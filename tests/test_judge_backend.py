@@ -9,6 +9,7 @@ These tests pin the retry that stops one slow call from rewriting the result.
 """
 
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -78,3 +79,38 @@ async def test_exhausting_attempts_reports_the_last_error(backend, monkeypatch):
         await backend(attempts=3).complete("system", "user", [])
 
     assert calls["n"] == 3
+
+
+async def test_every_image_reaches_the_prompt_in_order(backend, monkeypatch):
+    """
+    References are prepended to the frames as one flat list, and the prompt
+    header numbers them. This backend attaches images as @-mentioned files, so a
+    dropped or reordered one would silently mislabel every image after it — the
+    judge would be told "Image 2 is the cafe" while looking at a frame.
+    """
+    seen = {}
+
+    async def fake_run(self, system, prompt):
+        seen["prompt"] = prompt
+        return '{"passed": true, "comment": "ok"}'
+
+    monkeypatch.setattr(PiBackend, "_run_pi", fake_run)
+
+    images = [f"image-{i}".encode() for i in range(3)]
+    await backend().complete("system", "user text", images)
+
+    mentions = [w[1:] for w in seen["prompt"].split() if w.startswith("@")]
+    assert len(mentions) == 3
+    assert [Path(m).name for m in mentions] == ["img_01.jpg", "img_02.jpg", "img_03.jpg"]
+
+
+async def test_a_call_with_no_images_attaches_nothing(backend, monkeypatch):
+    seen = {}
+
+    async def fake_run(self, system, prompt):
+        seen["prompt"] = prompt
+        return '{"passed": true, "comment": "ok"}'
+
+    monkeypatch.setattr(PiBackend, "_run_pi", fake_run)
+    await backend().complete("system", "user text", [])
+    assert seen["prompt"] == "user text"

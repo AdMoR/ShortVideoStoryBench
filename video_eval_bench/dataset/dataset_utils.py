@@ -51,6 +51,7 @@ def _load_rubric(path: Path) -> Rubric:
                 "description": c.get("description", ""),
                 "weight": c["weight"],
                 "critical": c.get("critical", False),
+                "requires_references": c.get("requires_references", False),
             }
             for c in data["criteria"]
         ],
@@ -100,6 +101,7 @@ def load_categories(dataset_dir: Optional[Path] = None) -> Dict[str, Category]:
                         "description": c.get("description", ""),
                         "weight": c["weight"],
                         "critical": c.get("critical", False),
+                        "requires_references": c.get("requires_references", False),
                     }
                     for c in entry["criteria"]
                 ],
@@ -111,13 +113,45 @@ def load_categories(dataset_dir: Optional[Path] = None) -> Dict[str, Category]:
     return categories
 
 
+def _resolve_references(seed: Seed, dataset_dir: Path) -> None:
+    """
+    Make a seed's reference paths absolute, and refuse a seed we cannot honour.
+
+    This is the only place that knows both the seed and the dataset directory, so
+    it is where relative paths become openable ones. The two checks fail the
+    whole load rather than the seed, matching how `load_dataset` treats an
+    unknown genre: a dataset either loads whole or fails before any generation is
+    paid for.
+
+    Duplicate ids are rejected because the id *is* the filename the generator
+    stages the image under — two references called `maya` would silently become
+    one image, and the brief would describe an image the agent never got.
+    """
+    seen: set[str] = set()
+    for ref in seed.references:
+        if ref.id in seen:
+            raise ValueError(
+                f"seed {seed.seed_id!r} has two references with id {ref.id!r}; "
+                "ids are used as filenames and must be unique within a seed"
+            )
+        seen.add(ref.id)
+        ref.path = (dataset_dir / ref.path).resolve()
+        if not ref.path.is_file():
+            raise FileNotFoundError(
+                f"seed {seed.seed_id!r} reference {ref.id!r}: no such file: {ref.path}"
+            )
+
+
 def load_seeds(
     dataset_dir: Optional[Path] = None,
     category: Optional[str] = None,
 ) -> List[Seed]:
     """Load seeds, optionally filtered to one genre."""
-    data = _load_yaml((dataset_dir or DEFAULT_DATASET_DIR) / "seeds.yaml")
+    dataset_dir = dataset_dir or DEFAULT_DATASET_DIR
+    data = _load_yaml(dataset_dir / "seeds.yaml")
     seeds = [Seed(**s) for s in data.get("seeds", [])]
+    for seed in seeds:
+        _resolve_references(seed, dataset_dir)
     if category:
         seeds = [s for s in seeds if s.category == category]
     logger.info(f"Loaded {len(seeds)} seeds" + (f" (category={category})" if category else ""))

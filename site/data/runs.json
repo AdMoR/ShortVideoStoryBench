@@ -1,0 +1,4777 @@
+{
+ "generated_at": "2026-08-30T10:35:42.665932+00:00",
+ "runs": [
+  {
+   "run_id": "20260823-190104",
+   "variant": "model=gx10_qwen27b_q8,system_prompt=director,skills=none,tools=full,generator=pi,judge=pi",
+   "choices": {
+    "judge": "pi",
+    "video_backend": "none",
+    "tools": "full",
+    "skills": "none",
+    "system_prompt": "director",
+    "model": "gx10_qwen27b_q8",
+    "generator": "pi"
+   },
+   "note": "",
+   "started_at": "2026-08-23T17:01:04.403822+00:00",
+   "summary": {
+    "n_seeds": 8,
+    "n_ok": 1,
+    "n_skipped": 0,
+    "n_generation_errors": 7,
+    "n_judge_errors": 1,
+    "mean_score": 51.67,
+    "n_passed": 0,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 29109.9
+   },
+   "per_category": {
+    "entertainment": {
+     "n_seeds": 2,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 51.67,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "educational": {
+     "n_seeds": 2,
+     "n_judged": 0,
+     "n_skipped": 0,
+     "mean_score": null,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "marketing": {
+     "n_seeds": 1,
+     "n_judged": 0,
+     "n_skipped": 0,
+     "mean_score": null,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "social_media": {
+     "n_seeds": 1,
+     "n_judged": 0,
+     "n_skipped": 0,
+     "mean_score": null,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "gaming": {
+     "n_seeds": 1,
+     "n_judged": 0,
+     "n_skipped": 0,
+     "mean_score": null,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "event": {
+     "n_seeds": 1,
+     "n_judged": 0,
+     "n_skipped": 0,
+     "mean_score": null,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "entertainment_001",
+     "category": "entertainment",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "entertainment_002",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 51.67,
+     "passed": false,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "judge call failed: all 3 judge attempts failed; last error: pi run timed out after 120.0s"
+      },
+      {
+       "criterion": "U2",
+       "passed": false,
+       "comment": "judge call failed: all 3 judge attempts failed; last error: pi run timed out after 120.0s"
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "Cannot clearly confirm artifact-free continuity across the shot transitions and close-up hand actions."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No geographical landmarks are present or required, so the criterion is not applicable and passes."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is requested, and the restaurant setting and attire appear contemporary with no evident anachronisms."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols are present or required, so the criterion is satisfied."
+      },
+      {
+       "criterion": "S4",
+       "passed": false,
+       "comment": "judge call failed: all 3 judge attempts failed; last error: pi run timed out after 120.0s"
+      },
+      {
+       "criterion": "E1",
+       "passed": false,
+       "comment": "judge call failed: all 3 judge attempts failed; last error: pi run timed out after 120.0s"
+      },
+      {
+       "criterion": "E2",
+       "passed": false,
+       "comment": "judge call failed: all 3 judge attempts failed; last error: pi run timed out after 120.0s"
+      },
+      {
+       "criterion": "E3",
+       "passed": true,
+       "comment": "The warm, soft lighting stays consistent in direction and intensity across the plating close-up, the serving medium shot, and the guest reaction frames."
+      },
+      {
+       "criterion": "E4",
+       "passed": true,
+       "comment": "The frames show the requested close-up plating, medium serving, and guest reaction shots in sequence."
+      },
+      {
+       "criterion": "E5",
+       "passed": true,
+       "comment": "The frames maintain a warm amber palette consistent with a cosy restaurant mood."
+      },
+      {
+       "criterion": "E6",
+       "passed": true,
+       "comment": "The plated dish, tweezers, and chef's white coat remain visually consistent across all frames from plating through serving and tasting."
+      },
+      {
+       "criterion": "E7",
+       "passed": true,
+       "comment": "The guests' facial expressions in the tasting frames clearly show delight with smiles and positive reactions."
+      },
+      {
+       "criterion": "E8",
+       "passed": true,
+       "comment": "Backgrounds remain stable within each shot (plating close-up, serving medium, guest table), with changes occurring only at the intended scene cuts."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_001",
+     "category": "educational",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "educational_002",
+     "category": "educational",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "social_media_001",
+     "category": "social_media",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "gaming_001",
+     "category": "gaming",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "event_001",
+     "category": "event",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    }
+   ]
+  },
+  {
+   "run_id": "20260825-072222",
+   "variant": "model=gx10_qwen27b_q8,system_prompt=director,skills=none,tools=full,generator=pi,judge=pi",
+   "choices": {
+    "judge": "pi",
+    "video_backend": "none",
+    "tools": "full",
+    "skills": "none",
+    "system_prompt": "director",
+    "model": "gx10_qwen27b_q8",
+    "sandbox": "none",
+    "generator": "pi"
+   },
+   "note": "",
+   "started_at": "2026-08-25T05:22:22.353833+00:00",
+   "summary": {
+    "n_seeds": 8,
+    "n_ok": 7,
+    "n_skipped": 0,
+    "n_generation_errors": 1,
+    "n_judge_errors": 0,
+    "mean_score": 64.31,
+    "n_passed": 6,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 59870.89
+   },
+   "per_category": {
+    "entertainment": {
+     "n_seeds": 2,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 62.5,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "educational": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 64.45,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "marketing": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 60.0,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "social_media": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 64.17,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "gaming": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 68.33,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "event": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 66.25,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "entertainment_001",
+     "category": "entertainment",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "entertainment_002",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 62.5,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The chef's appearance changes noticeably between the close-up and serving shots, so the main subject is not consistently identical."
+      },
+      {
+       "criterion": "U2",
+       "passed": false,
+       "comment": "No flickering or morphing is visible (chef, plate, and kitchen persist stably), but the clip never advances through the prompted story\u2014there is no tweezers plating close-up, no serving to guests, and no guest reaction, so it fails the prompt-matching requirement."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "Cannot clearly confirm the absence of visual artifacts from the provided frames."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No geographical landmarks are present or required, so the criterion does not apply and passes."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is specified, so period-accuracy is not applicable and the modern restaurant setting is acceptable."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols such as flags, religious icons, or traditional dress appear, so this criterion is not applicable and passes."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The chef and both guests show normal human anatomy with correct numbers of arms and hands in all frames, and the clip matches the prompted plating/serving/tasting story."
+      },
+      {
+       "criterion": "E1",
+       "passed": true,
+       "comment": "Frames show the chef plating with tweezers in close-up first (frames 1-4), then the food at the table with the chef serving (frames 5-7), and finally a guest's hand reaching to taste the burger (frame 8), matching the required order."
+      },
+      {
+       "criterion": "E2",
+       "passed": true,
+       "comment": "The action flows logically: chef plates with tweezers in close-up, carries the same dish to the counter, places it on the guests' table, and the guests react with delight."
+      },
+      {
+       "criterion": "E3",
+       "passed": true,
+       "comment": "The warm, soft lighting stays consistent in tone, direction, and intensity across the plating close-up, serving medium shot, and guest reaction shots."
+      },
+      {
+       "criterion": "E4",
+       "passed": true,
+       "comment": "The frames show a close-up plating shot, a medium serving shot, and guest reaction shots matching the requested camera intent."
+      },
+      {
+       "criterion": "E5",
+       "passed": true,
+       "comment": "All frames maintain consistent warm amber and golden tones with soft lighting, matching the requested cosy restaurant mood."
+      },
+      {
+       "criterion": "E6",
+       "passed": true,
+       "comment": "The white plate and plated dish remain consistent from plating through serving and tasting, with no visible prop swaps or changes."
+      },
+      {
+       "criterion": "E7",
+       "passed": false,
+       "comment": "The guests' faces do not clearly convey delight in the sampled frames."
+      },
+      {
+       "criterion": "E8",
+       "passed": true,
+       "comment": "Within each shot the kitchen shelving and dining-room window backgrounds remain consistent with no visible drift or warping between consecutive frames."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_001",
+     "category": "educational",
+     "status": "completed",
+     "score": 77.04,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The engine diagram and on-screen labels do not remain visually consistent across the sampled steps."
+      },
+      {
+       "criterion": "U2",
+       "passed": true,
+       "comment": "The four engine steps (intake, compression, combustion, exhaust) transition cleanly with stable, legible labels and consistent diagram geometry across all frames, showing no flickering, morphing, or melting."
+      },
+      {
+       "criterion": "U3",
+       "passed": true,
+       "comment": "Text labels (INTAKE, COMPRESSION, COMBUSTION, EXHAUST) render cleanly and consistently across both loops, diagrams stay centered and coherent with no smearing, duplication, or clipping artifacts."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No geographical landmarks are present, so geographical accuracy does not apply."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is required for a general car engine explainer, so period accuracy does not apply."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols appear in the frames, so this criterion does not apply and passes."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The video depicts a car engine diagram with no animals or humans, so the biological/anatomical accuracy criterion does not apply and is marked passed."
+      },
+      {
+       "criterion": "ED1",
+       "passed": true,
+       "comment": "Frames progress in the correct sequence with matching numbered labels: 1. Intake \u2192 2. Compression \u2192 3. Combustion \u2192 4. Exhaust, with piston motion consistent with each stroke."
+      },
+      {
+       "criterion": "ED2",
+       "passed": false,
+       "comment": "The step labels are not clearly legible or consistently correct across the sampled frames."
+      },
+      {
+       "criterion": "ED3",
+       "passed": true,
+       "comment": "The frames show the four strokes in the correct factual order (intake, compression, combustion, exhaust) with a consistent centered cylinder/piston diagram and legible step labels matching each stage."
+      },
+      {
+       "criterion": "ED4",
+       "passed": true,
+       "comment": "The engine cylinder diagram remains centered on a plain background across all frames, with step labels (intake, compression, combustion, exhaust) placed clear of the diagram so the subject stays unobstructed."
+      },
+      {
+       "criterion": "ED5",
+       "passed": false,
+       "comment": "The diagrams and on-screen step labels show distortion/inconsistencies, so shape and label integrity cannot be confirmed."
+      },
+      {
+       "criterion": "ED6",
+       "passed": false,
+       "comment": "The combustion step appears in only one of eight evenly sampled frames, meaning it is shown for under a second, too brief to absorb its details in a step-by-step explainer."
+      },
+      {
+       "criterion": "ED7",
+       "passed": true,
+       "comment": "The on-screen step labels and centered diagrams remain clearly legible against the plain background."
+      },
+      {
+       "criterion": "ED8",
+       "passed": true,
+       "comment": "The clip contains only the centered engine diagram, the four step labels (intake, compression, combustion, exhaust), and relevant motion cues on a plain white background, with no irrelevant elements."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_002",
+     "category": "educational",
+     "status": "completed",
+     "score": 51.85,
+     "passed": false,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The teacher's facial features, hair, and clothing details visibly shift between frames, breaking identity consistency."
+      },
+      {
+       "criterion": "U2",
+       "passed": true,
+       "comment": "The teacher, blackboard with legible Weimar text, desks, and foreground student remain consistent across all frames with only natural gesturing motion, showing no flickering, morphing, or melting."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The frames do not allow clear confirmation of artifact-free rendering, so the critical check fails."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "The classroom scene contains no identifiable geographic landmarks, so geographical accuracy is not applicable."
+      },
+      {
+       "criterion": "S2",
+       "passed": false,
+       "comment": "The frames show anachronistic modern elements rather than a clearly period-accurate 1920s classroom."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "The frames show a consistent 1920s classroom with period-accurate attire and a blackboard; no flags, religious icons, or other cultural symbols appear that could be rendered incorrectly."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The visible figures show normal human limb counts and no clear anatomical malformations in the sampled frames."
+      },
+      {
+       "criterion": "ED1",
+       "passed": true,
+       "comment": "The clip presents a continuous classroom explanation scene without any multi-step sequence that could be out of order."
+      },
+      {
+       "criterion": "ED2",
+       "passed": false,
+       "comment": "The blackboard text is not clearly legible and appears garbled or obscured."
+      },
+      {
+       "criterion": "ED3",
+       "passed": true,
+       "comment": "The classroom, blackboard, and clothing are consistent with a 1920s period (e.g., suit-and-tie teacher, era-appropriate student attire), with no anachronistic modern objects visible."
+      },
+      {
+       "criterion": "ED4",
+       "passed": false,
+       "comment": "The teacher, the main subject, is consistently positioned at the left edge of the frame rather than centered, with the blackboard and students dominating the center and right."
+      },
+      {
+       "criterion": "ED5",
+       "passed": false,
+       "comment": "The chalkboard diagram elements are warped and illegible \u2014 lines are wavy, shapes do not close cleanly, and labels are garbled rather than correct."
+      },
+      {
+       "criterion": "ED6",
+       "passed": true,
+       "comment": "The evenly spaced frames show a steady classroom lecture with only small teacher movements, allowing the period setting to be absorbed in 5 seconds."
+      },
+      {
+       "criterion": "ED7",
+       "passed": false,
+       "comment": "The blackboard lettering is too faint and blurry to read clearly against the dark board."
+      },
+      {
+       "criterion": "ED8",
+       "passed": true,
+       "comment": "The frames show only the period classroom, teacher, blackboard, and students without irrelevant or anachronistic elements."
+      }
+     ]
+    },
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "completed",
+     "score": 60.0,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The bottle's design/logo and the runner's appearance are not clearly consistent across the product, trail, and final call-to-action scenes."
+      },
+      {
+       "criterion": "U2",
+       "passed": true,
+       "comment": "The three scenes (white-background bottle with logo, runner on trail, and 'Buy Now' end card) transition via clean cuts, and within each scene the bottle, logo, and runner persist without visible flickering, morphing, or melting."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The frames do not clearly confirm artifact-free logo/text and clean transitions required for a strict pass."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No specific geographical landmarks appear, so geographical accuracy is not applicable."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is specified for this modern product ad, and the frames show contemporary athletic gear and product styling with no anachronistic elements."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No flags, religious icons, or traditional dress appear in the frames, so cultural symbolism is not applicable."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The visible human runner appears anatomically normal with no obvious missing or extra limbs."
+      },
+      {
+       "criterion": "M1",
+       "passed": false,
+       "comment": "No clearly visible and correctly shaped brand logo can be confirmed in the frames."
+      },
+      {
+       "criterion": "M2",
+       "passed": true,
+       "comment": "The blue water bottle remains clearly visible and unobstructed throughout the key product, trail, and final call-to-action frames."
+      },
+      {
+       "criterion": "M3",
+       "passed": true,
+       "comment": "The bottle appears consistently blue across the sampled frames, matching the stated brand color."
+      },
+      {
+       "criterion": "M4",
+       "passed": false,
+       "comment": "The final frame does not clearly show a visible 'Buy Now' CTA."
+      },
+      {
+       "criterion": "M5",
+       "passed": false,
+       "comment": "The bottle's design (cap color/shape and logo) and the runner's outfit change between the white-background shots and the trail shots, so the product model is not consistent."
+      },
+      {
+       "criterion": "M6",
+       "passed": true,
+       "comment": "The frames are consistently in a 16:9 widescreen aspect ratio."
+      },
+      {
+       "criterion": "M7",
+       "passed": true,
+       "comment": "The frames show consistently soft, commercial-style lighting with no obvious harsh shadows or clipped highlights."
+      },
+      {
+       "criterion": "M8",
+       "passed": false,
+       "comment": "The required 'Buy Now' promotional text is not clearly legible or correctly rendered in the final frame."
+      }
+     ]
+    },
+    {
+     "seed_id": "social_media_001",
+     "category": "social_media",
+     "status": "completed",
+     "score": 64.17,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": true,
+       "comment": "The person in the olive top and dark pants remains visually consistent across all scenes, from messy kitchen through product reveal to clean after shots."
+      },
+      {
+       "criterion": "U2",
+       "passed": false,
+       "comment": "The cleaning bottle visibly morphs between frames (label art, color, and proportions change) and the kitchen set (countertop color, window view) shifts inconsistently across cuts, so object persistence is not stable."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The bottle label text in frames 5-6 is garbled/unreadable, and the small caption text at the top of frame 1 is broken/illegible, failing the artifact absence check."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "The video depicts an indoor kitchen cleaning scene with no geographical landmarks, so the geographical accuracy criterion does not apply and is considered passed."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is required, so period-accuracy concerns do not apply to this modern short-form kitchen video."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols are present or required in this kitchen cleaning video."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The clip is a kitchen cleaning short with no animals or humans, so biological/anatomical facts do not apply."
+      },
+      {
+       "criterion": "SM1",
+       "passed": true,
+       "comment": "The first 3s open with a split-screen BEFORE/AFTER comparison with on-screen text labels and a shifting divider, satisfying the visual-change/text hook requirement."
+      },
+      {
+       "criterion": "SM2",
+       "passed": true,
+       "comment": "The middle frames (covering the 3-8s window) clearly show a cluttered, messy kitchen with piled-up dishes, trash and grime, matching the required 'before' problem state."
+      },
+      {
+       "criterion": "SM3",
+       "passed": true,
+       "comment": "The 8-12s segment is a product reveal/before-after resolution rather than a required frustration moment, so the tension criterion is not applicable."
+      },
+      {
+       "criterion": "SM4",
+       "passed": false,
+       "comment": "The frames do not clearly show a distinct cleaning product/solution reveal, so the critical reveal check fails."
+      },
+      {
+       "criterion": "SM5",
+       "passed": false,
+       "comment": "No clear 'Link in bio' CTA text is visible in the final frames, so the required CTA in the last 6 seconds cannot be confirmed."
+      },
+      {
+       "criterion": "SM6",
+       "passed": false,
+       "comment": "Cuts are fast (scene changes nearly every 1.5s frame), but the clip never shows the clean after-state, product reveal, or CTA required by the prompt, so it fails."
+      },
+      {
+       "criterion": "SM7",
+       "passed": true,
+       "comment": "Frames show escalating messy kitchen, a spray-bottle product reveal, and a 'Link in bio' CTA, matching the intended curiosity/FOMO satisfaction trigger of the prompt."
+      },
+      {
+       "criterion": "SM8",
+       "passed": true,
+       "comment": "All frames are vertical 9:16 with the kitchen content filling the frame edge-to-edge, no black bars."
+      }
+     ]
+    },
+    {
+     "seed_id": "gaming_001",
+     "category": "gaming",
+     "status": "completed",
+     "score": 68.33,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The player character's appearance is not clearly consistent across the sampled frames."
+      },
+      {
+       "criterion": "U2",
+       "passed": true,
+       "comment": "The low-poly character, hexagonal arena, and HUD (health bar top-left, score top-right) persist consistently across frames with only plausible dodge motion, and the final frame's particle burst matches the prompted boss-defeat moment without flickering or melting."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The HUD text appears garbled/illegible, indicating broken text artifacts."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No real-world landmarks are present, so geographical accuracy is not applicable."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is required for this stylized low-poly game clip, so period accuracy is not applicable."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols are present, so this criterion does not apply and passes."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The low-poly characters and boss show no clearly incorrect number of limbs or anatomical features."
+      },
+      {
+       "criterion": "G1",
+       "passed": false,
+       "comment": "A score readout appears top-left, but no health indicator (HP bar/hearts) is visible in any frame, so the HUD is incomplete relative to the prompt."
+      },
+      {
+       "criterion": "G2",
+       "passed": true,
+       "comment": "The frames consistently show a stylized low-poly aesthetic with flat-shaded assets, a blocky HUD (health bar and score), and simple orange particle effects that match the game's visual style during the boss defeat."
+      },
+      {
+       "criterion": "G3",
+       "passed": true,
+       "comment": "The low-poly player character remains clearly visible and shifts position between frames to dodge, with the HUD and particles not obscuring the action."
+      },
+      {
+       "criterion": "G4",
+       "passed": true,
+       "comment": "HUD is legible (SCORE and 100/100 health bar) and the score correctly increases from 1250 to 2500/3000 at the boss defeat."
+      },
+      {
+       "criterion": "G5",
+       "passed": true,
+       "comment": "The frames maintain a consistent in-game low-poly perspective suitable for a gameplay highlight."
+      },
+      {
+       "criterion": "G6",
+       "passed": true,
+       "comment": "The boss-defeat burst uses simple flat red shards/particles and hit sparks that are consistent with the stylized low-poly aesthetic and match the boss's red core."
+      },
+      {
+       "criterion": "G7",
+       "passed": true,
+       "comment": "The character remains on the platform in every frame with no visible clipping through walls or geometry; overlap seen in mid-clip is only from boss-defeat particles."
+      },
+      {
+       "criterion": "G8",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a boss-defeat highlight moment with matching particle effects."
+      }
+     ]
+    },
+    {
+     "seed_id": "event_001",
+     "category": "event",
+     "status": "completed",
+     "score": 66.25,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The winner's jersey color/bib and facial features differ between the finish-line close-up and the podium ceremony shots, so the main subject is not visually consistent across scenes."
+      },
+      {
+       "criterion": "U2",
+       "passed": true,
+       "comment": "The runner, finish banner, and podium figures persist stably across frames with only expected confetti motion and clean angle changes; no flickering, morphing, or melting observed."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The clip matches the prompt (wide finish-line shot, close-up crossing, confetti podium), but close-up frames show smeared/garbled jersey and arch text and distorted runner faces/hands, failing the artifact-absence check."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No specific geographical landmarks are required or clearly identifiable, so geographical accuracy is not violated."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is required, and the visible modern marathon coverage shows no clear anachronistic technology or clothing."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols or flags are prominently present, so this criterion is satisfied."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The visible human figures in the marathon and podium shots have normal limb counts and anatomical structure."
+      },
+      {
+       "criterion": "EV1",
+       "passed": true,
+       "comment": "The sampled frames include the required finish-line wide shot, close-up of the winner crossing, and podium ceremony with confetti."
+      },
+      {
+       "criterion": "EV2",
+       "passed": true,
+       "comment": "The clip clearly shows multiple distinct camera angles: a wide finish-line shot, close-ups of the winner crossing, and separate podium ceremony angles."
+      },
+      {
+       "criterion": "EV3",
+       "passed": false,
+       "comment": "The frames do not clearly confirm the required marathon finish-line crowd and podium ceremony context."
+      },
+      {
+       "criterion": "EV4",
+       "passed": false,
+       "comment": "Audio-visual match cannot be confirmed from the provided frames alone."
+      },
+      {
+       "criterion": "EV5",
+       "passed": true,
+       "comment": "Framing remains consistent in both the finish-line wide shot and the podium shot, with only subjects and confetti moving and no visible shake, tilt, or drift."
+      },
+      {
+       "criterion": "EV6",
+       "passed": true,
+       "comment": "The illumination appears consistent across the wide finish-line, close-up, and podium shots, matching a single outdoor venue setup."
+      },
+      {
+       "criterion": "EV7",
+       "passed": false,
+       "comment": "The cut from the wide shot to the close-up shows a different runner (different kit/position) as the winner, and the podium scene resets action rather than continuing it, so the edits create action jumps."
+      },
+      {
+       "criterion": "EV8",
+       "passed": true,
+       "comment": "Frames are sharp enough to discern individual crowd figures, facial features on the winner, and distinct confetti pieces, meeting the high-resolution detail bar."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "20260827-212536",
+   "variant": "model=gx10_qwen27b_q8,system_prompt=tooled,skills=none,tools=full,generator=pi,judge=pi",
+   "choices": {
+    "experiment": "smoke",
+    "judge": "pi",
+    "video_backend": "fake",
+    "tools": "full",
+    "skills": "none",
+    "system_prompt": "tooled",
+    "model": "gx10_qwen27b_q8",
+    "sandbox": "none",
+    "generator": "pi"
+   },
+   "note": "",
+   "started_at": "2026-08-27T19:25:36.734464+00:00",
+   "summary": {
+    "n_seeds": 1,
+    "n_ok": 1,
+    "n_skipped": 0,
+    "n_generation_errors": 0,
+    "n_judge_errors": 0,
+    "mean_score": 50.0,
+    "n_passed": 0,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 1971.58
+   },
+   "per_category": {
+    "marketing": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 50.0,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "completed",
+     "score": 50.0,
+     "passed": false,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": [
+      {
+       "criterion": "U1",
+       "passed": false,
+       "comment": "The runner\u2019s appearance and the bottle\u2019s logo/shape cannot be clearly confirmed as identical across the scene changes."
+      },
+      {
+       "criterion": "U2",
+       "passed": false,
+       "comment": "The bottle's body, cap, and logo visibly warp and melt across the white-background and closing frames rather than persisting as a stable object."
+      },
+      {
+       "criterion": "U3",
+       "passed": false,
+       "comment": "The closing call-to-action/logo text appears garbled or unstable, so artifact-free rendering cannot be confirmed."
+      },
+      {
+       "criterion": "S1",
+       "passed": true,
+       "comment": "No identifiable landmarks are present, so geographical accuracy is not applicable and passes."
+      },
+      {
+       "criterion": "S2",
+       "passed": true,
+       "comment": "No specific historical period is required for this modern product ad, so period-accuracy is not applicable."
+      },
+      {
+       "criterion": "S3",
+       "passed": true,
+       "comment": "No cultural symbols appear, so the criterion does not apply and passes."
+      },
+      {
+       "criterion": "S4",
+       "passed": true,
+       "comment": "The runner's visible anatomy appears normal with no extra or missing limbs."
+      },
+      {
+       "criterion": "S5",
+       "passed": true,
+       "comment": "The deep blue bottle with dark cap and white wave logo matches the reference consistently across the studio and trail shots, and the closing frame keeps the logo legible and upright."
+      },
+      {
+       "criterion": "M1",
+       "passed": true,
+       "comment": "The round white wave logo is present on the blue bottle throughout the clip and remains legible and right-side up in the closing frame with the Buy Now call to action."
+      },
+      {
+       "criterion": "M2",
+       "passed": false,
+       "comment": "The sampled frames do not clearly confirm the blue water bottle is consistently visible and unobstructed."
+      },
+      {
+       "criterion": "M3",
+       "passed": true,
+       "comment": "The bottle in the frames maintains the reference deep blue body with a darker cap, clearly matching the brand color."
+      },
+      {
+       "criterion": "M4",
+       "passed": false,
+       "comment": "The final frame does not clearly show a visible 'Buy Now' call to action."
+      },
+      {
+       "criterion": "M5",
+       "passed": false,
+       "comment": "The runner\u2019s appearance is not consistently maintained across the trail shots."
+      },
+      {
+       "criterion": "M6",
+       "passed": true,
+       "comment": "The frames appear to be in the requested 16:9 landscape aspect ratio."
+      },
+      {
+       "criterion": "M7",
+       "passed": true,
+       "comment": "The lighting appears even and controlled across the product and trail shots, with no obvious clipped highlights or harsh shadows."
+      },
+      {
+       "criterion": "M8",
+       "passed": false,
+       "comment": "The required promotional text cannot be clearly confirmed as correct in the frames."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "20260827-224741",
+   "variant": "model=gx10_qwen27b_q8,system_prompt=director,skills=all,tools=full,generator=pi,judge=pi",
+   "choices": {
+    "judge": "pi",
+    "video_backend": "wangp",
+    "tools": "full",
+    "skills": "all",
+    "system_prompt": "director",
+    "model": "gx10_qwen27b_q8",
+    "sandbox": "docker",
+    "generator": "pi"
+   },
+   "note": "",
+   "started_at": "2026-08-27T20:47:41.066594+00:00",
+   "summary": {
+    "n_seeds": 8,
+    "n_ok": 8,
+    "n_skipped": 0,
+    "n_generation_errors": 0,
+    "n_judge_errors": 0,
+    "mean_score": 33.04,
+    "n_passed": 0,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 28421.77
+   },
+   "per_category": {
+    "entertainment": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 31.46,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "educational": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 22.37,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "marketing": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 37.21,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "social_media": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 43.24,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "gaming": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 42.86,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "event": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 33.33,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "entertainment_001",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 35.14,
+     "passed": false,
+     "critical_failures": [
+      "PROP1",
+      "ART1",
+      "REF1",
+      "ANAT1",
+      "SCENE1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 60.0
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 20.0
+      },
+      {
+       "dimension": "structure",
+       "score": 50.0
+      },
+      {
+       "dimension": "craft",
+       "score": 25.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The woman with dark curly hair and red coat remains recognisably the same person across the kitchen, rainy street, and cafe scenes, matching the reference character."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "Within each of the three scenes the woman, her dark curly hair and red coat, the letter, the rainy street, and the green-tiled cafe all persist stably across the sampled frames with only intended motion and clean scene cuts, no flickering, morphing or popping."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The mysterious letter visible in the woman's hands while she opens it at the kitchen table never reappears in the rainy street or cafe scenes, so the named prop does not stay in the place the action left it."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "Within-scene lighting flickers between adjacent frames (e.g., the kitchen morning light shifts in intensity/direction and the cafe bulb warmth varies), so lighting is not stable across shots of the same scene."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the absence of visual artifacts from the provided frames."
+      },
+      {
+       "criterion": "REF1",
+       "passed": false,
+       "comment": "The woman's face and hair change noticeably between the kitchen, street, and cafe scenes (and the cafe lacks the reference's green tiled walls and warm hanging bulbs), so the same-character/same-location references are not maintained."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm anatomical integrity from the provided frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "Across all three scenes the objects are properly supported (letter in hand, seated at table, figures standing on wet street), no elements pass through surfaces or teleport, and the table, street, and cafe geometry remain consistent frame-to-frame."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm a kitchen table with a woman opening a letter in warm morning light."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The clip clearly progresses in order: warm-lit table scene with the woman in her red coat (frames 1-2), rainy neon-lit night street (frames 3-5), then the dim green-tiled cafe where she smiles at the man (frames 6-8)."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "Between the rainy-street frames and the cafe frames the woman jumps from mid-stride on the sidewalk to already seated at the cafe table with no transition, and her hair/coat styling shifts between scenes, breaking action continuity."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": false,
+       "comment": "The prompt did not specify required shot sizes/angles, and the sampled frames do not clearly confirm a close-up/wide intent matching the brief."
+      },
+      {
+       "criterion": "MOOD1",
+       "passed": true,
+       "comment": "The grade shifts from warm morning kitchen tones to cool rainy-night city colors and a dim, low-key cafe palette, matching the requested moods."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the required facial expressions from the provided frames."
+      },
+      {
+       "criterion": "NATURAL1",
+       "passed": false,
+       "comment": "I cannot clearly confirm continuous natural movement from the provided frames."
+      }
+     ]
+    },
+    {
+     "seed_id": "entertainment_002",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 27.78,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "PROP1",
+      "ART1",
+      "ANAT1",
+      "PHYS1",
+      "SCENE1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 21.43
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 50.0
+      },
+      {
+       "dimension": "craft",
+       "score": 66.67
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The chef's appearance drifts between the plating close-ups and the serving/guest shots (hair and facial features differ), so the main subject is not consistently the same person across the clip."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The same small restaurant cannot be the same place across shots: the plating close-ups (frames 1-2) show a dark wood-shelved, brick-walled kitchen with no counter or dining area visible, yet the medium shots (frames 3-4) place the chef behind a light counter in front of that kitchen, and the dining shots (frames 5-8) show an entirely different dining room with large windows, a vase table and chair"
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "Objects and people (chef, plate, tweezers, guests) persist stably within each of the three shots, lighting stays consistently warm, and only intended scene cuts occur between plating, serving, and tasting."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "I cannot clearly confirm that the plate and tweezers maintain a consistent appearance and placement across the sampled frames."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "Cannot clearly confirm consistent lighting direction, colour temperature, and intensity across the provided frames."
+      },
+      {
+       "criterion": "PAL1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of a consistent warm colour grade across the clip."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "Cannot clearly confirm absence of visual artifacts from the provided frames."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm anatomical integrity from the provided frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The plate's position and the chef's hand/tweezers geometry shift inconsistently between the plating frames (garnish and tweezers appear to reposition without continuous motion, and the held plate changes size/orientation), so physical continuity cannot be confirmed."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the small cosy restaurant with a visible kitchen behind a counter and consistent warm lighting from the provided frames."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "Frames 1-3 show close-up plating with tweezers, frames 4-6 show a medium shot of the chef serving the plate to the table, and frames 7-8 show the guest tasting the dish, matching the required sequence."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "The plated dish in the plating/serving shots is a white plate topped with a large white dome/cloche-like mass, but in the tasting close-up the guest eats an open dark-colored dish with garnish from a plain white plate, so the object's state jumps unexplained across the cut."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip opens with a clear close-up of the chef plating with tweezers, shifts to a medium shot of him serving the table of guests, and ends on the guests' delighted reactions, matching the brief's specified shot sizes."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "I cannot clearly confirm legible delighted facial expressions in the provided frames."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each shot keeps its intended subject (tweezers/plate in close-up, chef serving in medium, guests' faces) sharp and well-framed under consistent warm light, with no competing elements."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_001",
+     "category": "educational",
+     "status": "completed",
+     "score": 34.48,
+     "passed": false,
+     "critical_failures": [
+      "TEMP1",
+      "ART1",
+      "FACT1",
+      "STEP1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 66.67
+      },
+      {
+       "dimension": "technical",
+       "score": 40.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 40.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The car engine diagram remains recognisably the same subject throughout: consistent single-cylinder cross-section style, colors, and layout across the intake/compression/combustion/exhaust steps, with the same 4-stroke overview returning consistently at the title frames."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The plain dark background and centered diagram layout remain consistent across all steps, with no contradictory environmental details between frames."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "Cannot clearly confirm temporal stability from the provided frames."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm artifact-free rendering of the diagrams and text labels, so the strict visual-artifact check fails."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "All on-screen labels (title, stroke name, and part labels) are sharp, correctly spelled, fully visible, and unobstructed throughout the clip."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a correct, labeled four-stroke engine sequence, so factual accuracy cannot be verified."
+      },
+      {
+       "criterion": "DIAG1",
+       "passed": false,
+       "comment": "I cannot clearly verify diagram integrity from the provided frames."
+      },
+      {
+       "criterion": "STEP1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm that intake, compression, combustion, and exhaust appear in the correct order."
+      },
+      {
+       "criterion": "PACE1",
+       "passed": false,
+       "comment": "The four engine steps change too rapidly across the 5-second clip, so labels do not remain long enough to be read and absorbed."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each frame centers a single clean engine diagram with one step label on a plain background, so the subject is clearly framed and nothing else competes for attention."
+      },
+      {
+       "criterion": "CONTRAST1",
+       "passed": false,
+       "comment": "I cannot clearly confirm that the text labels and key diagrams maintain sufficient contrast against the background in the provided frames."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the provided frames that the video is free of stray objects or irrelevant distractors."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_002",
+     "category": "educational",
+     "status": "completed",
+     "score": 10.26,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "PROP1",
+      "ART1",
+      "TEXT1",
+      "ANAT1",
+      "HIST1",
+      "FACT1",
+      "SCENE1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 0.0
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 66.67
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The teacher's appearance is not consistent across the clip: the figure alternates between light/white and dark clothing (and differing build/hair) between frames, so the subject drifts."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the classroom details remain consistent across the sampled frames."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "I cannot clearly confirm stable persistence across the sampled frames."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "I cannot clearly confirm that the blackboard and any hand-held props maintain consistent appearance and placement across the sampled frames."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of consistent light direction, colour temperature, and intensity across the clip."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the absence of visual artifacts from the provided frames."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The blackboard text is not clearly legible as sharp, correctly spelled, fully visible real words across the sampled frames."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm well-formed hands/facial anatomy across the frames, so it fails under the strict check."
+      },
+      {
+       "criterion": "HIST1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a period-accurate 1920s classroom without anachronisms."
+      },
+      {
+       "criterion": "CULT1",
+       "passed": false,
+       "comment": "The provided frames do not clearly show any flags, religious icons, or traditional dress to confirm correct cultural symbolism."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": false,
+       "comment": "The blackboard text is garbled/illegible and the period details (clothing, furniture, objects) cannot be clearly confirmed as historically accurate 1920s, so the lesson's factual content (Weimar Republic claims) cannot be verified as true."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the required 1920s classroom setting, blackboard, period clothing, and absence of modern objects from the provided frames."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "The teacher's pose and position relative to the blackboard, the woman's stance, and the number/position of seated pupils jump inconsistently between consecutive frames (e.g., an extra student and a different blackboard state appear mid-clip), so the action does not flow continuously."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": true,
+       "comment": "The teacher's face shows a steady, engaged lecturing expression with clear frame-to-frame mouth movement and gesturing, legibly conveying an explanatory history lesson."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The teacher at the blackboard remains the sharp, centered subject across all frames, with period-appropriate students and the blackboard supporting rather than competing for attention."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the absence of stray or anachronistic objects from the provided frames."
+      }
+     ]
+    },
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "completed",
+     "score": 37.21,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "ART1",
+      "REF1",
+      "ANAT1",
+      "LOGO1",
+      "CTA1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 18.18
+      },
+      {
+       "dimension": "technical",
+       "score": 57.14
+      },
+      {
+       "dimension": "fidelity",
+       "score": 33.33
+      },
+      {
+       "dimension": "structure",
+       "score": 60.0
+      },
+      {
+       "dimension": "craft",
+       "score": 40.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The bottle drifts between scenes \u2014 the cap, body proportions and wave logo change shape and legibility (e.g., the logo is distorted/illegible in the trail and closing frames), so the subject is not recognisably the same bottle throughout."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The trail shots contradict themselves: the path surface, vegetation, and lighting change between cuts (e.g., a wooded dirt track becomes an open grassy field with different sun direction), so the same location is not preserved."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The bottle's wave logo and cap shape visibly morph and waver between consecutive frames, and the runner's grip/hand on the bottle re-invents itself, so objects do not persist stably over time."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "Lighting is stable within each scene: soft overhead studio light on the white-background product shots, consistent bright hazy daylight across the trail shots, and a matching soft studio light in the final frame, with no noticeable shifts in direction, color temperature, or intensity."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the provided frames that the clip is free of visual artifacts or fully matches the prompt."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "The final frame's 'Buy Now' call to action is sharp, correctly spelled, fully visible, and unobstructed, and the wave logo on the bottle remains legible throughout."
+      },
+      {
+       "criterion": "AR1",
+       "passed": true,
+       "comment": "The generated frames appear to be 16:9 with no letterbox/pillarbox bars and no visible stretching."
+      },
+      {
+       "criterion": "REF1",
+       "passed": false,
+       "comment": "The bottle drifts from the reference: in the studio and closing frames the body is a lighter blue with a white disc logo (not the dark cap and legible round white wave logo), so it is not clearly the same product."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "The runner's anatomy cannot be clearly confirmed as well-formed across the trail frames."
+      },
+      {
+       "criterion": "LOGO1",
+       "passed": false,
+       "comment": "In the closing frame the round white wave logo on the blue bottle is warped and partially illegible compared to the crisp, upright logo in the reference image."
+      },
+      {
+       "criterion": "BRAND1",
+       "passed": true,
+       "comment": "The bottle appears in the same deep blue hue with darker cap and white wave logo across the product, trail, and closing frames, matching the reference."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": true,
+       "comment": "The blue bottle is the clear, unobstructed subject in the opening white-background frames and the closing 'Buy Now' frame, and it remains identifiable in the runner's hand during the trail scene."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": false,
+       "comment": "The closing frame's call-to-action text is not the exact 'Buy Now' wording requested by the brief (rendered as garbled/altered text), so the on-screen copy does not match the brief."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The numbered scenes appear in order: white-background product shot first, runner using the bottle on a trail second, and the closing frame with bottle, logo, and 'Buy Now' CTA last."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": false,
+       "comment": "Cannot clearly confirm a readable Buy Now call to action in the closing frames from the provided samples."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": false,
+       "comment": "Scene 2 shows a static close-up of the bottle with the runner only as a distant background figure, so the camera framing never captures the brief's intent of a runner actively using the bottle on the trail."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The blue bottle remains the clear, sharp subject in the white-background and closing frames, and is legibly featured in the runner shot without competing elements; the clip follows the three-beat prompt."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "Cannot clearly confirm controlled exposure without visible evidence of blown highlights or crushed shadows in the provided frames."
+      }
+     ]
+    },
+    {
+     "seed_id": "social_media_001",
+     "category": "social_media",
+     "status": "completed",
+     "score": 43.24,
+     "passed": false,
+     "critical_failures": [
+      "ENV1",
+      "TEMP1",
+      "TEXT1",
+      "PROD1",
+      "REVEAL1",
+      "CTA1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 33.33
+      },
+      {
+       "dimension": "technical",
+       "score": 71.43
+      },
+      {
+       "dimension": "fidelity",
+       "score": 57.14
+      },
+      {
+       "dimension": "structure",
+       "score": 16.67
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The kitchen (white cabinets, sink, window layout) and the cleaning product (white spray bottle with pink label) remain recognisably the same across all frames, with only the mess level changing as the brief requires."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The same kitchen is shown with a stainless-steel range in the split before/after shots (frames 1, 3, 8) but a black stovetop in the cleaning close-up (frame 6), and the window's position relative to the cabinets flips between angles (right in 1/3/4, left in 5), so the place does not survive the cuts."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The 8 evenly-sampled frames show a steady, tidy kitchen counter for six frames, then abruptly re-invent the scene into a close-up hand-wiping shot, with object positions (bottle, bowl, sponge) shifting between frames and no messy state or product reveal matching the prompt's fast-cut before/after structure."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "Across all eight frames the kitchen scenes, product reveal, and text overlays (BEFORE/AFTER, 'Link in bio') render coherently with legible text, no visible smearing, ghosting, duplicated textures, or object clipping."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "No on-screen text appears in any frame, including the required 'Link in bio' CTA in the final 9-12s segment, so the text legibility requirement cannot be confirmed."
+      },
+      {
+       "criterion": "AR1",
+       "passed": true,
+       "comment": "The frames are vertical 9:16 with full-frame content and no letterbox or pillarbox bars."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": false,
+       "comment": "The spray bottle only appears as a small, generic, unlabeled prop held mid-action; it is never shown clearly and unobstructed as the readable subject during the 8-9s product reveal."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": true,
+       "comment": "On-screen copy shows BEFORE/AFTER labels and the required 'LINK IN BIO' CTA, matching the brief's wording."
+      },
+      {
+       "criterion": "TRIG1",
+       "passed": true,
+       "comment": "The split before/after hook, escalating clutter close-ups (frustration), product reveal, and sparkling clean payoff with the 'Link in bio' CTA clearly deliver the brief's named emotional triggers in the right order."
+      },
+      {
+       "criterion": "HOOK1",
+       "passed": true,
+       "comment": "The opening frames show rapid before/after kitchen changes, giving a clear attention-grabbing hook rather than a static establishing shot."
+      },
+      {
+       "criterion": "SETUP1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm a distinct before/messy kitchen state, so the setup cannot be verified."
+      },
+      {
+       "criterion": "TENS1",
+       "passed": false,
+       "comment": "The frames do not clearly show escalating frustration or mess piling up, so the required tension is not confirmed."
+      },
+      {
+       "criterion": "REVEAL1",
+       "passed": false,
+       "comment": "At the 8-9s mark (frames 6-7) the video shows only clean-kitchen 'AFTER' shots; no cleaning product is ever revealed and no 'Link in bio' CTA appears, so the brief's product-reveal beat is missing."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": false,
+       "comment": "A readable closing call to action cannot be confirmed from the provided frames."
+      },
+      {
+       "criterion": "CUT1",
+       "passed": false,
+       "comment": "All eight frames show the same static messy-counter shot with no clean state, product reveal, CTA, or visibly distinct shots, indicating a single continuous take rather than the requested fast cuts."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each segment keeps its intended subject (kitchen, mess, product bottle, person with CTA) sharp, well-placed, and free of competing focal points, consistent with the prompt's fast-cut structure."
+      }
+     ]
+    },
+    {
+     "seed_id": "gaming_001",
+     "category": "gaming",
+     "status": "completed",
+     "score": 42.86,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "TEMP1",
+      "TEXT1",
+      "ASSET1",
+      "MOMENT1",
+      "MOTION1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 33.33
+      },
+      {
+       "dimension": "technical",
+       "score": 60.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 38.46
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 80.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The provided frames could not be viewed, so subject consistency across the clip cannot be confirmed."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The low-poly arena's ground, trees, rocks, flowers, and HUD elements remain consistent across all frames, with only character/boss motion and the final particle burst changing."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The low-poly geometry, character pose, and scene layout visibly re-invent themselves between frames (shapes morph and pop) rather than persisting, and the score/HUD jumps inconsistently, so temporal stability cannot be confirmed."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "Frames show consistent low-poly styling, legible HUD text (score/health/boss percentage), smooth character motion, and a coherent boss-defeat particle burst with no smearing, ghosting, clipping, or garbled elements."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation that the HUD text is sharp, fully legible, and correctly rendered."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "The low-poly arena, central cube, walls, and character/enemy sizes stay spatially consistent across frames; projectiles travel in arcs, the player's movement is continuous, and the boss-defeat particle burst is an in-style effect that does not break geometry or cause teleporting/clipping."
+      },
+      {
+       "criterion": "UI1",
+       "passed": true,
+       "comment": "A health bar (top-left) and score readout (top-right) are present in all 8 frames, stable in position, rendered as clean legible widgets rather than smears, matching the low-poly game style."
+      },
+      {
+       "criterion": "ASSET1",
+       "passed": false,
+       "comment": "Cannot clearly confirm a consistent stylized low-poly art style from the provided frames."
+      },
+      {
+       "criterion": "VFX1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm the requested low-poly-style particle, impact, or boss-defeat VFX."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": false,
+       "comment": "The frames do not clearly show a boss defeat moment with matching particle effects."
+      },
+      {
+       "criterion": "MOTION1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the required dodge and boss-defeat motion."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The frames maintain a consistent gameplay action camera with a medium-wide framing suitable for showing dodging, HUD, and the boss-defeat moment."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The low-poly player character stays centered and clearly the subject throughout, with the HUD confined to the frame edges and the boss-defeat particle burst well-placed at the climax without competing for attention."
+      },
+      {
+       "criterion": "HIGHL1",
+       "passed": false,
+       "comment": "The provided frames cannot be visually verified, so I cannot clearly confirm the clip stays focused on the requested gameplay highlight."
+      }
+     ]
+    },
+    {
+     "seed_id": "event_001",
+     "category": "event",
+     "status": "completed",
+     "score": 33.33,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "ART1",
+      "ANAT1",
+      "PHYS1",
+      "SCENE1",
+      "MOMENT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 27.27
+      },
+      {
+       "dimension": "technical",
+       "score": 20.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 0.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The winner's top changes from a short-sleeved white shirt during the finish crossing to a sleeveless white tank top on the podium, and the setting abruptly shifts from the bannered finish line to an unrelated columned plaza, so the subject is not consistently the same."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The finish-line shots show an open asphalt road under blue sky with a FINISH LINE arch and crowd, while the podium shots suddenly show an enclosed stage with LED screens, a red carpet, and no arch or road, so the same venue contradicts itself between the two setups."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The finish banner, crowd, jumbotron and podium persist consistently across frames; the wide-to-close-up and close-up-to-podium transitions are clean cuts with no flickering, melting or re-invented objects."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "The finish-line shots are in bright, neutral midday sun with a vivid blue sky, while the podium shots shift to a darker, warm golden-hour tone, breaking lighting consistency across the continuous live coverage."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The provided frames cannot be visually inspected, so visual artifacts and prompt match cannot be confirmed."
+      },
+      {
+       "criterion": "RES1",
+       "passed": false,
+       "comment": "Cannot clearly confirm sufficient resolution and detail from the provided frames."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": true,
+       "comment": "The three shot types (wide finish line, close-up cross, podium) each hold a steady framing with only smooth, deliberate reframing between cuts, showing no jitter or accidental drift."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "Cannot clearly confirm anatomical integrity of all figures, especially in crowd and podium shots."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The winner in the close-up (frames 3-4) is on the blue arena floor with no visible finish line to cross, and the same person abruptly reappears elevated on the numbered podium (frame 5) with a second competitor materializing, so the spatial setup and object placement don't hold together physically."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the required marathon finish-line setting with crowd, winner crossing, and podium ceremony."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm all required key moments: wide finish-line shot, winner crossing close-up, and podium ceremony with confetti."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "Frames progress in the required order: wide finish-line shot with crowd, then progressively closer shots of the winner crossing, ending with a confetti podium celebration."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The clip progresses logically from the wide finish-line shot to a close-up of the winner crossing, then to the confetti podium ceremony, with each cut continuing the prior action without unexplained jumps."
+      },
+      {
+       "criterion": "ANGLE1",
+       "passed": true,
+       "comment": "The clip opens on a wide shot from behind the runner looking down the finish chute, cuts to a front-facing close-up of the winner crossing the arch, and ends on a separate podium-with-confetti framing, confirming at least two genuinely distinct camera positions."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": false,
+       "comment": "All eight frames show the same static wide finish-line shot; the required close-up of the winner and the podium ceremony never appear, so the intended subjects are never clearly framed as in-focus subjects across the story."
+      },
+      {
+       "criterion": "CTX1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the required crowd and venue background for a live marathon finish."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "20260828-075318",
+   "variant": "generator=external,judge=video",
+   "choices": {
+    "experiment": "external",
+    "judge": "video",
+    "generator": "external",
+    "source": "20260827-224741"
+   },
+   "note": "re-judge of run 20260827-224741 with the video judge",
+   "started_at": "2026-08-28T05:53:18.743025+00:00",
+   "summary": {
+    "n_seeds": 8,
+    "n_ok": 8,
+    "n_skipped": 0,
+    "n_generation_errors": 0,
+    "n_judge_errors": 0,
+    "mean_score": 80.53,
+    "n_passed": 7,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 15983.86
+   },
+   "per_category": {
+    "entertainment": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 86.26,
+     "n_passed": 2,
+     "n_safety_vetoes": 0
+    },
+    "educational": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 83.25,
+     "n_passed": 2,
+     "n_safety_vetoes": 0
+    },
+    "marketing": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 37.21,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "social_media": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 75.68,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "gaming": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 100.0,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    },
+    "event": {
+     "n_seeds": 1,
+     "n_judged": 1,
+     "n_skipped": 0,
+     "mean_score": 92.31,
+     "n_passed": 1,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "entertainment_001",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 89.19,
+     "passed": true,
+     "critical_failures": [
+      "PROP1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 80.0
+      },
+      {
+       "dimension": "technical",
+       "score": 100.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 75.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The woman with dark curly hair and a red coat remains recognisably the same character across the kitchen, rainy street, and cafe scenes."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The woman in the red coat and the key objects (letter, table, lamp posts, cafe furniture) persist stably within each scene, with no flickering, melting, or popping between frames."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The white letter held in the woman's hands in the kitchen scene disappears entirely by the cafe scene, breaking prop continuity."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "Each scene maintains internally consistent lighting (warm morning light, cool blue night rain, dim warm cafe), with no conflicting direction or temperature within any scene."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "The three scenes render cleanly with consistent character and red coat, showing no smearing, ghosting, clipping, or garbled text."
+      },
+      {
+       "criterion": "REF1",
+       "passed": true,
+       "comment": "The woman's dark curly hair, simple face and red coat stay consistent across scenes, and the cafe's green tiled walls with warm hanging bulbs match the reference."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": true,
+       "comment": "The stylized characters have consistent, well-formed bodies with the correct number of limbs and no fused or duplicated parts across all three scenes."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "Objects are properly supported (seated figures, table, candles, hanging lamps), the street and cafe geometry stay consistent across frames, and nothing floats, teleports, or passes through solid surfaces."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": true,
+       "comment": "Scene 1 shows the woman in a red coat at a table reading a letter with warm morning light streaming through the window, matching the brief."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The three scenes appear in the briefed order: warm-lit letter at the table, rainy night street, then the dim green-tiled cafe."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The three scenes flow logically\u2014reading the letter, following the stranger through the rainy street, then meeting in the dim cafe\u2014with the same woman in the red coat, so the action carries across cuts without unexplained jumps."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The three scenes use coherent, intentional framing (medium shot at the table, wide rainy street, medium two-shot in the cafe) that suit each narrative beat and match the brief."
+      },
+      {
+       "criterion": "MOOD1",
+       "passed": true,
+       "comment": "The grade shifts deliberately per scene\u2014warm amber morning light, cold blue rainy night, and dim green-walled cafe with warm bulbs\u2014matching the named moods rather than a neutral look."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": true,
+       "comment": "The stylized faces read clearly: a focused/curious look while reading the letter in scene 1 and a distinct relieved smile when meeting the stranger in the cafe, matching the brief's emotional beats."
+      },
+      {
+       "criterion": "NATURAL1",
+       "passed": false,
+       "comment": "The figures remain locked in near-static poses across all three scenes with only trivial mouth/head shifts, lacking the continuous head turns, blinks, and gestures that read as alive."
+      }
+     ]
+    },
+    {
+     "seed_id": "entertainment_002",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 83.33,
+     "passed": true,
+     "critical_failures": [
+      "TEMP1",
+      "ART1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 78.57
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The chef remains recognisably the same throughout (white chef coat, dark navy apron, bearded man with matching hands/ring in the close-up), and the guest couple stays consistent across the serving and tasting shots."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The dining area (window, sconces, framed art, wainscoting, white tablecloths) and the kitchen remain consistent across the medium and close-up shots, with no contradictory layout or decor."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The guests' faces show clear ghosting/double-exposure morphing between frames, breaking temporal stability."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": true,
+       "comment": "The plate, tweezers, knife, and plated dish remain visually consistent across the plating, serving, and tasting shots."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "Warm colour temperature and soft directional lighting remain consistent across the plating close-up, the serving medium shot, and the tasting shot, matching the cosy restaurant mood."
+      },
+      {
+       "criterion": "PAL1",
+       "passed": true,
+       "comment": "The warm candlelit grade holds consistently across the plating close-up, the serving medium shot, and the tasting shots without swinging to unrelated palettes."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "Ghosting and duplicated figures of the chef and guests appear during the transition to the dining scene, indicating a generation glitch."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": true,
+       "comment": "Hands, faces, and limbs are well-formed with correct finger counts and natural joint motion throughout the plating, serving, and tasting shots."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "Objects remain supported and consistent across the plating, serving, and tasting shots, with no teleportation or pass-through of solid surfaces."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": true,
+       "comment": "The clip shows a cosy warm-lit restaurant with a kitchen behind a counter, a chef plating with tweezers in close-up, then serving a table of guests who react with delight, matching the brief's setting."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The clip shows the chef plating with tweezers (close-up), then serving the plate to the table (medium shot), then the guests tasting and reacting with delight, in the correct order."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The action flows logically across cuts: plating with tweezers, then serving the same plated dish to the table, then the guests tasting and reacting, with consistent warm lighting and no unexplained jumps."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip uses a close-up for the tweezers plating, a medium shot for the chef serving the table, and a tighter shot for the guests tasting, matching the brief's specified shot sizes."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": true,
+       "comment": "The guests' faces show clear, legible delight\u2014broad smiles and crinkled eyes\u2014as they taste the dish, matching the brief's emotional beat."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "In each shot the intended subject (the plated dish, the serving chef, the tasting guests) is sharply in focus and well framed, with a softly blurred background that does not compete for attention."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_001",
+     "category": "educational",
+     "status": "completed",
+     "score": 79.31,
+     "passed": true,
+     "critical_failures": [
+      "ART1",
+      "FACT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 100.0
+      },
+      {
+       "dimension": "technical",
+       "score": 40.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 40.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The same single-cylinder engine diagram (cylinder, piston, connecting rod, crankshaft, IN/OUT valves, spark plug) is maintained consistently across all four stroke stages, with only the expected gas color and piston position changing."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The centered engine diagram and plain background remain consistent in layout, labels, and structure across all four stroke steps, with only the intended gas color changing."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The engine diagram (cylinder, piston, crank, valves) persists stably across frames with smooth motion, and the only change is a clean crossfade of the step labels, with no flickering, melting, or popping."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "During the compression-to-combustion transition the two titles and subtitle lines overlap into garbled, ghosted text, a clear visual artifact."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "All on-screen text (title, step labels, descriptions, IN/OUT, progress line) is sharp, correctly spelled, and fully legible against the plain background."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": false,
+       "comment": "During the exhaust stroke the diagram shows the intake valve open with an inflow arrow, but the intake valve must be closed during exhaust."
+      },
+      {
+       "criterion": "DIAG1",
+       "passed": true,
+       "comment": "The engine diagram is well-formed throughout: straight connected lines, closed piston/cylinder shapes, properly attached IN/OUT labels, and arrows pointing at the correct valve ports across all four strokes."
+      },
+      {
+       "criterion": "STEP1",
+       "passed": true,
+       "comment": "The four strokes appear in the correct order (Intake \u2192 Compression \u2192 Combustion \u2192 Exhaust) with none missing or invented, matching the prompt."
+      },
+      {
+       "criterion": "PACE1",
+       "passed": true,
+       "comment": "Each of the four steps holds on screen for roughly a second with short, clear labels, giving enough time to read and absorb before moving on."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The centered engine diagram stays sharp and well-placed on a plain background, with clear top labels and no competing elements, so the subject is unambiguously in focus throughout."
+      },
+      {
+       "criterion": "CONTRAST1",
+       "passed": true,
+       "comment": "Bold colored step labels and dark body text stand out clearly against the plain light background, and the centered diagram uses distinct colors for good legibility."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": true,
+       "comment": "The clip shows only the intended engine diagram, step labels, and progress indicator on a plain background with no stray objects or characters competing for attention."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_002",
+     "category": "educational",
+     "status": "completed",
+     "score": 87.18,
+     "passed": true,
+     "critical_failures": [
+      "TEXT1",
+      "FACT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 100.0
+      },
+      {
+       "dimension": "technical",
+       "score": 60.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 75.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The teacher remains visually consistent throughout the clip with the same dark hair, period-appropriate dress, and build, and the 1920s classroom setting with blackboard is maintained from start to finish."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The video is a single continuous shot of a classroom with a blackboard and consistent room layout throughout; no environmental inconsistencies are observed."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The classroom scene with the teacher, blackboard, and period-appropriate elements remains temporally stable throughout the 5-second clip with no noticeable flickering, morphing, or object re-invention between frames."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": true,
+       "comment": "The blackboard, desks, and teacher's period clothing maintain consistent appearance and position throughout the clip with no prop discontinuities observed."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "The lighting remains consistent throughout the clip with stable warm colour temperature, uniform intensity, and a consistent light direction from the front, matching the 1920s classroom setting."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "The classroom scene shows stable rendering with no obvious smearing, ghosting, clipping, or garbled text; the teacher, blackboard, and period setting remain consistent throughout the clip."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The blackboard text appears as garbled, letter-shaped noise rather than sharp, legible, correctly spelled words."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": true,
+       "comment": "The teacher and student figures maintain correct limb counts, natural joint articulation, and well-formed hands throughout the clip, with no fused or duplicated anatomical parts visible."
+      },
+      {
+       "criterion": "HIST1",
+       "passed": true,
+       "comment": "The classroom features a blackboard, wooden desks, period-appropriate clothing (hats, suits), and no visible modern objects, consistent with a 1920s setting."
+      },
+      {
+       "criterion": "CULT1",
+       "passed": true,
+       "comment": "The 1920s classroom scene features period-appropriate clothing and no anachronistic or incorrectly rendered cultural symbols; the overall cultural context of a Weimar Republic-era lesson is consistently and respectfully depicted."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": false,
+       "comment": "The 5-second clip does not contain enough verifiable historical content to confirm the Weimar Republic lesson is factually accurate."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": true,
+       "comment": "The video clearly shows a 1920s-era classroom with a blackboard, period-appropriate formal clothing on the figures, and a teacher-student dynamic, matching the brief's described setting."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The clip is a single continuous shot with no cuts, and the teacher's subtle movements and the static classroom setting maintain smooth, logical action flow without any unexplained jumps in position or state."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": true,
+       "comment": "The teacher's facial expression is consistently engaged and instructional throughout the clip, with visible mouth movement and focused gaze appropriate for explaining a historical topic in a 1920s classroom setting."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The teacher is clearly the focal subject, well-centered and in sharp focus, with the blackboard providing context and foreground students slightly blurred to avoid competing for attention."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": true,
+       "comment": "The classroom scene contains only relevant elements\u2014teacher, students in period clothing, and a blackboard with Weimar Republic content\u2014with no stray objects, characters, or modern items visible."
+      }
+     ]
+    },
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "completed",
+     "score": 37.21,
+     "passed": false,
+     "critical_failures": [
+      "TEMP1",
+      "ART1",
+      "TEXT1",
+      "AR1",
+      "LOGO1",
+      "SEQ1",
+      "CTA1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 54.55
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 66.67
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 0.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The blue bottle with its darker cap and white circular wave logo remains recognisably the same product across the white-background, trail, and closing 'Buy Now' frames."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The white studio backdrop in the opening and closing shots is consistent, and the trail is a separate location, so no place contradicts itself across cuts."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "Only a single static reference frame is available, so temporal stability across the 8-second clip cannot be confirmed."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "No video frames were viewable to verify lighting direction, colour temperature, or intensity across the studio, trail, and closing shots, so lighting consistency cannot be confirmed."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "No video frames are visible to verify motion or check for smearing, ghosting, or clipping, so the absence of visual artifacts cannot be confirmed."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "No legible on-screen text (e.g., a readable 'Buy Now' CTA or brand name) is visible in the clip, so text legibility cannot be confirmed."
+      },
+      {
+       "criterion": "AR1",
+       "passed": false,
+       "comment": "The video frames are square (1:1), not the 16:9 aspect ratio required by the brief."
+      },
+      {
+       "criterion": "REF1",
+       "passed": true,
+       "comment": "The blue bottle with darker cap and white circular wave logo matches the reference image consistently across the studio, trail, and closing frames."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": true,
+       "comment": "The bottle is an inanimate object with no anatomical parts, and the runner in the trail scene has a well-formed body with correct limbs and no fused or duplicated parts."
+      },
+      {
+       "criterion": "LOGO1",
+       "passed": false,
+       "comment": "The closing frame's logo could not be clearly confirmed as the correct wave mark, right way up and unwarped, so the strict logo-accuracy check fails."
+      },
+      {
+       "criterion": "BRAND1",
+       "passed": true,
+       "comment": "The bottle in the clip is rendered in the same deep blue body with darker cap and white wave logo as the reference, matching the specified brand colour."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": true,
+       "comment": "The blue water bottle with its white wave logo is shown clearly and unobstructed as the central subject, remaining legible throughout the product-focused frames."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": false,
+       "comment": "The final frame shows only the bottle and logo with no 'Buy Now' call-to-action text, so the required on-screen copy is missing."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": false,
+       "comment": "The clip only shows the bottle on a white background; the runner-on-trail scene and the final 'Buy Now' frame are missing, so the required sequence is incomplete."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": false,
+       "comment": "No readable 'Buy Now' call to action appears in the closing frame; only the bottle and logo are shown."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": false,
+       "comment": "The clip does not clearly show the specified shot sizes/angles (e.g., a distinct trail wide shot and a properly framed closing product shot), so camera intent cannot be confirmed."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": false,
+       "comment": "No video frames were available to inspect, so focus clarity across the three scenes cannot be confirmed."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "No video frames were viewable to confirm exposure across the three scenes, so the clean-look exposure requirement cannot be verified."
+      }
+     ]
+    },
+    {
+     "seed_id": "social_media_001",
+     "category": "social_media",
+     "status": "completed",
+     "score": 75.68,
+     "passed": true,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "ART1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 33.33
+      },
+      {
+       "dimension": "technical",
+       "score": 57.14
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The kitchen is not the same throughout: the white-tile counter with coffee maker in the before/after shots is replaced by a different grey-cabinet kitchen with a microwave and a marble-backsplash sink in the product reveal and cleaning shots."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The kitchen contradicts itself across shots: the 'before' counter has a white subway-tile backsplash and white cabinets, while the product-reveal and 'after' cleaning shots show a gray marble backsplash, gray upper cabinets, and a microwave/stove not present before."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "Objects and surfaces remain stable within each shot, with transitions handled as clean cuts rather than flickers or morphs."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The cleaning-product reveal shows a ghosted/duplicated bottle silhouette with smearing, a generation artifact."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "The on-screen texts 'BEFORE -> AFTER' and 'LINK IN BIO' are sharp, correctly spelled, fully visible, and unobstructed throughout the clip."
+      },
+      {
+       "criterion": "AR1",
+       "passed": true,
+       "comment": "The video is consistently in vertical 9:16 format with no letterbox/pillarbox bars and no stretched content."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": true,
+       "comment": "The green spray-bottle cleaning product is shown centered in a spotlight during the reveal, fully in frame and unobstructed, clearly reading as the subject."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": true,
+       "comment": "On-screen text shows 'BEFORE -> AFTER' and the 'LINK IN BIO' CTA exactly as the brief requested."
+      },
+      {
+       "criterion": "TRIG1",
+       "passed": true,
+       "comment": "The piling mess and exasperated hand gesture convey frustration, while the smooth spray-and-wipe reveal delivers satisfying relief, matching the brief's emotional triggers."
+      },
+      {
+       "criterion": "HOOK1",
+       "passed": true,
+       "comment": "The opening immediately shows a cluttered kitchen with bold 'BEFORE -> AFTER' text and a quick cut to a clean counter, providing a clear visual-change hook rather than a static shot."
+      },
+      {
+       "criterion": "SETUP1",
+       "passed": true,
+       "comment": "The messy before state is clearly established with dirty dishes, splatters, crumbs, and a full trash bin before the cleaning payoff."
+      },
+      {
+       "criterion": "TENS1",
+       "passed": true,
+       "comment": "The messy 'before' is shown in detail\u2014cluttered counter, full sink, overflowing trash, and a hand gesturing at the mess\u2014conveying the frustration before the product reveal."
+      },
+      {
+       "criterion": "REVEAL1",
+       "passed": true,
+       "comment": "The green spray-bottle cleaning product is clearly revealed in a spotlighted close-up around the 8-9s mark, followed by the cleaning action and 'LINK IN BIO' CTA."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": true,
+       "comment": "The closing section clearly displays readable yellow 'LINK IN BIO' text with an arrow over the cleaning detail shots, matching the brief's CTA requirement."
+      },
+      {
+       "criterion": "CUT1",
+       "passed": true,
+       "comment": "The clip uses multiple visibly distinct shots in quick succession (messy counter, clean counter, trash bin, sink, product reveal, wiping), matching the requested fast-cut rhythm."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The intended subjects (the messy counter, the spotlighted green spray bottle, and the wiping hand) are each in focus and well-centered, with no competing focal element."
+      }
+     ]
+    },
+    {
+     "seed_id": "gaming_001",
+     "category": "gaming",
+     "status": "completed",
+     "score": 100.0,
+     "passed": true,
+     "critical_failures": [],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 100.0
+      },
+      {
+       "dimension": "technical",
+       "score": 100.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The blue low-poly player character with a cube head and blue suit remains recognisably the same subject from start to finish, matching the gameplay brief."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The arena, purple blocky buildings, gray floor, and blue perimeter railings remain consistent as the camera orbits the same location through the dodge and boss-defeat sequence."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The low-poly character, HUD, buildings, and boss persist coherently across frames with smooth motion; the explosion and particles are the intended boss-defeat moment rather than flicker or morphing."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "No smearing, ghosting, clipping, or garbled text; motion blur and particle effects are coherent and match the stylized low-poly game."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "The HUD score digits and the 'BOSS DEFEATED' banner are sharp, correctly spelled, and fully legible throughout the clip."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "The character stays grounded with a consistent shadow, projectiles and boss-defeat debris behave plausibly, and the low-poly environment geometry remains stable across frames."
+      },
+      {
+       "criterion": "UI1",
+       "passed": true,
+       "comment": "HUD is intact and stable: a pixel heart plus green health bar sit top-left and a crisp pixel-font score sits top-right throughout, with a clean 'BOSS DEFEATED' banner appearing as a real widget rather than a smear."
+      },
+      {
+       "criterion": "ASSET1",
+       "passed": true,
+       "comment": "Characters, voxel boss, blocky environment, and particle effects are all consistently rendered in a stylized low-poly style with no photorealistic elements."
+      },
+      {
+       "criterion": "VFX1",
+       "passed": true,
+       "comment": "The red laser trails, dodge puffs, and the blocky shard/spark explosion on boss defeat all read clearly as their intended effects and match the stylized low-poly game aesthetic."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": true,
+       "comment": "The boss defeat moment is clearly on screen with the 'BOSS DEFEATED' text, explosion, and matching low-poly particle effects, alongside the health/score HUD and dodging action."
+      },
+      {
+       "criterion": "MOTION1",
+       "passed": true,
+       "comment": "The low-poly character runs and dodges streaking red enemy fire, then the boss explodes with matching particle effects and a 'BOSS DEFEATED' banner, matching the prompt's described actions."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip uses a consistent third-person follow camera appropriate for a gameplay highlight, with no specific shot size in the brief that is violated."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The player character stays centered and sharp as the clear subject, with the boss and HUD placed so they support rather than compete with the focal point."
+      },
+      {
+       "criterion": "HIGHL1",
+       "passed": true,
+       "comment": "The clip stays on the action\u2014dodging laser fire and culminating in the 'BOSS DEFEATED' explosion with matching particle effects\u2014without filler."
+      }
+     ]
+    },
+    {
+     "seed_id": "event_001",
+     "category": "event",
+     "status": "completed",
+     "score": 92.31,
+     "passed": true,
+     "critical_failures": [
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 100.0
+      },
+      {
+       "dimension": "technical",
+       "score": 100.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 66.67
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The marathon runner in the red/maroon jersey remains recognisably the same subject across the wide finish-line shot and the closer podium/ceremony view, with consistent clothing, build, and appearance throughout the 5-second clip."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The finish line arch, barriers, crowd, and ground surface remain consistent across the different camera angles of the same venue, with no contradictory environmental details between shots."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The three scenes (wide finish line, close-up of winner, podium with confetti) maintain stable objects and people across frames without noticeable flickering, morphing, or popping artifacts."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "Lighting direction, colour temperature, and intensity remain consistent across the wide shot, close-up, and podium ceremony, matching a single venue lighting setup."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "The video shows clean transitions between the wide finish-line shot, close-up of the winner, and podium ceremony with confetti, with no visible smearing, ghosting, clipping, or garbled text artifacts."
+      },
+      {
+       "criterion": "RES1",
+       "passed": true,
+       "comment": "The video resolution is sufficient to clearly read the FINISH banner, distinguish individual runners, see the crowd, and identify confetti pieces during the podium ceremony, meeting the detail requirements of the brief."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": true,
+       "comment": "The camera remains stable throughout the clip with deliberate, smooth framing across the wide shot, close-up, and podium segments, with no noticeable jitter or accidental drift."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": true,
+       "comment": "The runner and crowd figures display correct limb counts, proper joint articulation during the running motion, and no visible fused or duplicated body parts across all three shots."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "The scene maintains consistent spatial geometry with people grounded, no floating objects or teleportation, and the finish line structure remains stable across the camera angle transitions."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": true,
+       "comment": "The scene clearly depicts a marathon finish line with a crowd, finish banner, confetti, and venue lighting, matching the described setting."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": true,
+       "comment": "All three key moments are clearly present: wide finish-line shot with crowd, close-up of the winner crossing, and podium ceremony with confetti."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The video clearly shows all three scenes in the correct order: wide shot of the finish line with crowd, close-up of the winner crossing, and podium ceremony with confetti."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "The transitions between the wide finish-line shot, the close-up crossing, and the podium ceremony create abrupt jumps in the runner's position and state (from running to standing on a podium) that break action continuity within the 5-second clip."
+      },
+      {
+       "criterion": "ANGLE1",
+       "passed": true,
+       "comment": "The video clearly shows at least two distinct camera angles: a wide shot of the finish line with crowd and a separate podium ceremony shot with confetti, satisfying the multi-angle requirement."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The finish line and runner are clearly framed as the central subject in the wide shot, with the crowd serving as background context, and the camera remains stable throughout the clip."
+      },
+      {
+       "criterion": "CTX1",
+       "passed": true,
+       "comment": "The background clearly shows a marathon finish line context with visible crowd, event banners, barriers, and venue infrastructure, providing appropriate contextual setting rather than an empty backdrop."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "20260828-222208",
+   "variant": "model=gx10_qwen27b_q8,system_prompt=director,skills=all,tools=full,generator=pi,judge=pi",
+   "choices": {
+    "judge": "pi",
+    "video_backend": "wangp",
+    "tools": "full",
+    "skills": "all",
+    "system_prompt": "director",
+    "model": "gx10_qwen27b_q8",
+    "sandbox": "docker",
+    "generator": "pi"
+   },
+   "note": "",
+   "started_at": "2026-08-28T20:22:08.102703+00:00",
+   "summary": {
+    "n_seeds": 14,
+    "n_ok": 13,
+    "n_skipped": 0,
+    "n_generation_errors": 1,
+    "n_judge_errors": 1,
+    "mean_score": 34.82,
+    "n_passed": 0,
+    "n_safety_vetoes": 0,
+    "total_duration_seconds": 66167.39
+   },
+   "per_category": {
+    "entertainment": {
+     "n_seeds": 3,
+     "n_judged": 3,
+     "n_skipped": 0,
+     "mean_score": 30.96,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "educational": {
+     "n_seeds": 3,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 26.09,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "marketing": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 41.59,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "social_media": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 50.12,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "gaming": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 16.37,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    },
+    "event": {
+     "n_seeds": 2,
+     "n_judged": 2,
+     "n_skipped": 0,
+     "mean_score": 45.73,
+     "n_passed": 0,
+     "n_safety_vetoes": 0
+    }
+   },
+   "seeds": [
+    {
+     "seed_id": "entertainment_001",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 18.92,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "TEMP1",
+      "PROP1",
+      "ART1",
+      "REF1",
+      "ANAT1",
+      "PHYS1",
+      "SEQ1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 20.0
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 30.0
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 25.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The woman's facial features and hair visibly change between the kitchen, rainy street, and cafe scenes (e.g., smoother/straighter hair and altered face in the night and cafe shots), so she is not recognisably the same subject throughout."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The 8 frames show abrupt scene cuts and the woman's face/coat styling re-invented between consecutive frames (e.g., hair volume and coat collar change mid-scene, and the letter/props shift shape), so temporal stability cannot be confirmed."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The letter's continuity cannot be clearly confirmed across the sampled frames, so the strict prop-continuity check fails."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "Each scene maintains internally consistent lighting (warm morning window light in the kitchen, cool night streetlamps with wet reflections in the rain scene, dim warm hanging bulbs in the cafe matching the reference), and the deliberate scene-to-scene shifts align with the prompt's morning/night/dim-cafe progression."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the clip is free of generation artifacts and fully matches the brief from the provided frames."
+      },
+      {
+       "criterion": "REF1",
+       "passed": false,
+       "comment": "The woman's face and hair visibly change between the kitchen, street, and cafe scenes, and the cafe interior lacks the reference's green tiled walls, so reference adherence fails."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm anatomical integrity across the sampled frames, so it fails under the strict standard."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of consistent object support, spatial continuity, or absence of pass-through/teleportation artifacts."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": true,
+       "comment": "Scene 1 clearly shows the woman at a table by a window in warm morning daylight opening a letter, with breakfast items (plate, mug) present, matching the brief's kitchen-table morning setting."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": false,
+       "comment": "Frames 1\u20134 show the rainy night street (scene 2) and frames 5\u20138 the cafe (scene 3), but the opening kitchen/morning-letter scene (scene 1) never appears, so the required three-scene sequence is incomplete."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "Scene 3 breaks action continuity: after arriving and meeting the stranger in the cafe, the final frames cut to a different table position/framing where she is not with the stranger and shows no smile of relief, an unexplained jump in position and state."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the brief\u2019s intended shot sizes/angles for the three scenes, so the camera-intent check cannot be passed strictly."
+      },
+      {
+       "criterion": "MOOD1",
+       "passed": true,
+       "comment": "The palette clearly tracks the brief's moods: golden warm morning light in the kitchen, cold desaturated blues with wet reflections on the rainy night street, and a dim, amber-glowing green-tiled cafe in the final scene."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "The kitchen and rainy-street frames are wide/medium shots where Maya's face is too small and shadowed to read any emotion, and the final cafe frames don't clearly show the required smile of relief, so the key emotional beats are not legibly landed."
+      },
+      {
+       "criterion": "NATURAL1",
+       "passed": false,
+       "comment": "I cannot clearly confirm continuous, natural movement from the provided frames, so the check must fail under strict review."
+      }
+     ]
+    },
+    {
+     "seed_id": "entertainment_002",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 36.11,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "TEMP1",
+      "PROP1",
+      "ART1",
+      "ANAT1",
+      "PHYS1",
+      "SCENE1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 21.43
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 100.0
+      },
+      {
+       "dimension": "craft",
+       "score": 66.67
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The chef's appearance is inconsistent across shots: his facial hair/build differs between the close-up plating shots and the medium serving shots, and the guests' faces also shift between the tasting frames, so the main subject is not recognisably the same person throughout."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "Kitchen shots (1-3) keep the same window, wood panelling and bottle shelves, and dining-room shots (4-8) consistently show the same arched window, wall frame and table setting, so the environment survives the cuts."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The server in the serving shot (dark hair, no hat) is a different person than the plating chef (white hair, toque), and the table/guest scene reinvents plate positions and introduces a new face, so people and objects are re-invented between segments rather than persisting stably."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The plated dish changes appearance between the plating close-ups and the serving/guest shots (the food arrangement and garnish no longer match what was assembled with the tweezers), breaking prop continuity."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm consistent lighting direction, colour temperature, and intensity across the shown frames."
+      },
+      {
+       "criterion": "PAL1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of a consistent warm colour grade across the clip."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the absence of visual artifacts from the provided frames, so the binary check fails."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm anatomical integrity from the provided frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The plated dish's contents change shape/size between the plating close-up and the dining-table shots, and the plate's position relative to the chef's hands and counter is inconsistent, so I cannot confirm physical continuity."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the small cosy restaurant setting with a kitchen behind a counter and warm lighting from the provided frames."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "Frames show the chef plating with tweezers in close-up, then serving the plated dish to the table in medium shot, and finally guests tasting with forks and smiling with delight, in the correct order."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The clip flows logically from close-up plating with tweezers, to the chef at the counter, to serving the plate to seated guests, and finally to the guests tasting and reacting with delight, with no unexplained jumps in position or state."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip opens with a tight close-up of the chef plating with tweezers, cuts to a medium shot of him serving the table, and ends on the guests' delighted reactions, matching the brief's specified shot sizes."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm legible delighted facial expressions at the tasting moment."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each of the three beats (tweezer plating close-up, serving medium shot, guest reaction) keeps its intended subject sharp, centered, and clearly separated from the softly blurred warm background."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_001",
+     "category": "educational",
+     "status": "errored",
+     "score": null,
+     "passed": null,
+     "critical_failures": [],
+     "dimensions": [],
+     "scores": []
+    },
+    {
+     "seed_id": "educational_002",
+     "category": "educational",
+     "status": "completed",
+     "score": 25.64,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "TEXT1",
+      "ANAT1",
+      "HIST1",
+      "SCENE1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 15.38
+      },
+      {
+       "dimension": "technical",
+       "score": 60.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 25.0
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 33.33
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The teacher's appearance drifts across frames (hair, dress color/cut and proportions change), so the main subject is not consistently the same person throughout the clip."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the provided frames that the same classroom environment remains consistent across shots."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The overall scene (classroom, blackboard text, students) is stable, but the teacher's hand-held book appears only in the middle frames and vanishes in the later ones, so an object pops in/out between frames."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": true,
+       "comment": "The blackboard (with 'Weimar Republic' text and diagram), desks, and classroom setting remain consistent across all frames, with no modern objects or prop changes visible."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "Cannot clearly confirm consistent lighting direction, color temperature, and intensity across the provided frames."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "Frames show a stable 1920s classroom with legible, consistent blackboard text ('WEIMAR REPUBLIC 1919-1933') and no smearing, ghosting, clipping, or warped edges; scene matches the period-accurate prompt."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The blackboard text is not clearly legible as sharp, correctly spelled words."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of correct anatomical integrity, so the critical check fails."
+      },
+      {
+       "criterion": "HIST1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the provided frames that all visible clothing, objects, and setting details are period-accurate for 1920s."
+      },
+      {
+       "criterion": "CULT1",
+       "passed": false,
+       "comment": "The German flag visible on the wall does not clearly show the correct Weimar-era black-red-gold tricolor with correct stripe order, and the students' clothing lacks clearly period-accurate 1920s details, so the cultural symbols cannot be confirmed as rendered correctly."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": true,
+       "comment": "The blackboard content is historically accurate (Weimar Republic 1919\u20131933, post-WWI democracy, hyperinflation crisis, rise of extremism) and the classroom is period-appropriate with no modern objects."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the 1920s classroom setting with blackboard and period-accurate details from the provided frames."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "The sampled frames do not clearly confirm a continuous, logically flowing action across the clip."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "The teacher's face is turned toward the blackboard or too small/indistinct across the sampled frames to legibly confirm an engaged, lecturing expression at the moment it should land."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The teacher remains the clear in-focus subject throughout, well-placed against the blackboard with the foreground students softly receding, and the scene matches the 1920s classroom prompt."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": false,
+       "comment": "The classroom framing is consistent, but the blackboard text and wall items render as illegible/foreign artifacts and a stray object appears on the desk, so I cannot clearly confirm a clean, brief-only scene."
+      }
+     ]
+    },
+    {
+     "seed_id": "marketing_001",
+     "category": "marketing",
+     "status": "completed",
+     "score": 27.91,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "ART1",
+      "TEXT1",
+      "REF1",
+      "ANAT1",
+      "LOGO1",
+      "CTA1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 0.0
+      },
+      {
+       "dimension": "technical",
+       "score": 28.57
+      },
+      {
+       "dimension": "fidelity",
+       "score": 20.0
+      },
+      {
+       "dimension": "structure",
+       "score": 60.0
+      },
+      {
+       "dimension": "craft",
+       "score": 80.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The bottle's appearance and/or logo markings are not consistently maintained across the clip, so the main subject drifts."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The repeated product-shot and trail environments cannot be clearly confirmed as consistent across the sampled frames."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "I cannot clearly confirm stable persistence of the bottle, logo, and scene elements across the sampled frames, so it fails."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm consistent lighting direction, colour temperature, and intensity across the provided frames."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The repeated tagline line under the 'AQUA' logo renders as garbled, illegible gibberish characters across most frames, and the mid-clip transition frame shows ghosting/melting artifacts, violating the no-garbled-text/no-ghosting requirement."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the on-screen text is sharp, correctly spelled, and unobstructed from the provided frames."
+      },
+      {
+       "criterion": "AR1",
+       "passed": true,
+       "comment": "The frames appear to fill a 16:9 frame without letterbox or pillarbox bars."
+      },
+      {
+       "criterion": "REF1",
+       "passed": false,
+       "comment": "The bottle's round white wave logo drifts and becomes illegible/misoriented in the closing frame, so the product does not stay recognisably the same as the reference."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "The runner's hand/arm interaction with the bottle is not clearly well-formed across the frames, so anatomical integrity cannot be confirmed."
+      },
+      {
+       "criterion": "LOGO1",
+       "passed": false,
+       "comment": "The round white wave logo is warped and partially redrawn (and illegible) in the runner and closing frames versus the clean reference, so logo accuracy fails."
+      },
+      {
+       "criterion": "BRAND1",
+       "passed": false,
+       "comment": "The bottle is rendered in a light sky-blue/teal rather than the deep navy blue specified in the reference image, so the brand colour does not match."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": true,
+       "comment": "The deep blue bottle is clearly visible and unobstructed in the opening white-background shots and the closing CTA frame, and remains identifiable in the runner trail scenes, so the product reads as the subject throughout."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": false,
+       "comment": "The closing frame's call-to-action text is garbled/illegible (not a clear 'Buy Now'), so the on-screen wording cannot be confirmed as the requested CTA."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The clip shows the numbered scenes in order: white-background product shot with HydraFlow logo, runner on a trail with the bottle, then the closing frame with bottle, logo, and 'Buy Now' CTA."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": false,
+       "comment": "I cannot clearly confirm a readable Buy Now call to action in the closing section from the provided frames."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip's shots match the brief's intent: a medium product shot on white, a wide trail shot with the runner, and a final product shot with logo and Buy Now."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each shot keeps its intended subject sharp and centered\u2014the blue bottle on the clean white background, the runner with the bottle against a blurred trail, and the closing bottle with legible upright logo and Buy Now button\u2014so the viewer's attention is never contested."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "Cannot clearly confirm controlled exposure from the provided frames, so it fails under the strict standard."
+      }
+     ]
+    },
+    {
+     "seed_id": "social_media_001",
+     "category": "social_media",
+     "status": "completed",
+     "score": 51.35,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "ART1",
+      "AR1",
+      "REVEAL1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 0.0
+      },
+      {
+       "dimension": "technical",
+       "score": 28.57
+      },
+      {
+       "dimension": "fidelity",
+       "score": 100.0
+      },
+      {
+       "dimension": "structure",
+       "score": 66.67
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The kitchen setting visibly changes between states: the bright white-cabinet kitchen with a double stainless sink in the clean frames differs from the darker, single-sink layout with different cabinet/front details in the messy frames, so the subject (the kitchen) is not recognisably the same throughout."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The kitchen contradicts itself across shots: the fridge sits on the left in the opening before shot but on the right in later shots, the cabinet color/style shifts between white and cream, the window placement changes (above sink vs. left side), and a microwave appears/disappears, so the same place does not survive the cuts."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "Objects pop in and out between frames (blue bowl vanishes in frame 5, yellow item appears only in frame 6, window lighting shifts from dark to bright blue), and the required product reveal and 'Link in bio' CTA are absent."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "Several frames show warped human anatomy and melted/blending edges (e.g., the crouching figure's arm merging into clutter, distorted faces in frames 1/5/7, and a smeared hand in frame 3), indicating generation glitches."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "On-screen text ('MESSY', 'BEFORE', 'AFTER', 'Link in bio') appears sharp, correctly spelled, and fully visible in the frames where it shows."
+      },
+      {
+       "criterion": "AR1",
+       "passed": false,
+       "comment": "The frames are in landscape (horizontal) orientation rather than the requested vertical 9:16, so the aspect ratio fails."
+      },
+      {
+       "criterion": "PROD1",
+       "passed": true,
+       "comment": "The spray-bottle product appears prominently and unobstructed on the clean counter during the reveal (frames 5-6, centered with the 'Watch till the end' text) and remains visible into the after segment, so it reads clearly as the subject."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": true,
+       "comment": "The on-screen copy reads 'LINK IN BIO' (plus a generic 'CLICK NOW!'), matching the CTA requested in the brief with no incorrect product names or claims."
+      },
+      {
+       "criterion": "TRIG1",
+       "passed": true,
+       "comment": "Cluttered counters and burnt-grime close-ups convey mounting frustration, while the sparkling clean final frame delivers the satisfying relief the brief calls for."
+      },
+      {
+       "criterion": "HOOK1",
+       "passed": true,
+       "comment": "The clip opens on a bold 'BEFORE/AFTER' split-screen with on-screen text and fast cuts to the messy state, providing a clear attention hook rather than a static establishing shot."
+      },
+      {
+       "criterion": "SETUP1",
+       "passed": true,
+       "comment": "The early frames clearly show a messy kitchen, establishing the before state needed for the later clean payoff."
+      },
+      {
+       "criterion": "TENS1",
+       "passed": false,
+       "comment": "The messy before-state is shown but remains static with no visible frustration, escalation, or stakes, so the tension the brief requires is not actually conveyed."
+      },
+      {
+       "criterion": "REVEAL1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a distinct product reveal at the specified 8-9 second point."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": true,
+       "comment": "The closing frame shows a legible 'Link in bio' text overlay at the bottom of the clean 'after' kitchen shot, satisfying the CTA requirement."
+      },
+      {
+       "criterion": "CUT1",
+       "passed": true,
+       "comment": "Frames 1\u20135 show distinctly different framings/angles (wide counter, bottle close-up, sink, counter, hand spraying) in ~1.7s increments, confirming quick-cut editing, while the final frames form a continuous detail shot as intended for the closing segment."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "In every frame the intended subject (the presenter, the mess close-ups, or the green product bottle) is sharp, centered or well-placed, with blurred backgrounds and text overlays that don't compete for attention."
+      }
+     ]
+    },
+    {
+     "seed_id": "gaming_001",
+     "category": "gaming",
+     "status": "completed",
+     "score": 5.71,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "ART1",
+      "TEXT1",
+      "PHYS1",
+      "UI1",
+      "ASSET1",
+      "MOMENT1",
+      "MOTION1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 0.0
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 40.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The player character's appearance drifts across the clip (its color scheme and silhouette change between the dodging shots and the post-boss frames), so it is not recognisably the same subject throughout."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the environment stays consistent across the sampled frames."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The low-poly character's body shape and pose morph and re-invent between frames, and no boss is ever present so the final particle burst pops in without a coherent defeat moment."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The frames show unstable/garbled HUD text and warped particle edges, so clean generation cannot be confirmed."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The HUD text cannot be clearly confirmed as sharp, correctly spelled, and fully legible across the sampled frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The low-poly platform geometry and character/boss positions warp and snap between frames (character appears to slide/teleport and clip through the ground plane, and the boss's position and size jump inconsistently), so physical plausibility cannot be confirmed."
+      },
+      {
+       "criterion": "UI1",
+       "passed": false,
+       "comment": "I cannot clearly confirm stable HUD widgets showing health and score from the provided frames."
+      },
+      {
+       "criterion": "ASSET1",
+       "passed": false,
+       "comment": "I cannot clearly confirm a consistent stylized low-poly art style from the provided frames."
+      },
+      {
+       "criterion": "VFX1",
+       "passed": false,
+       "comment": "Cannot clearly confirm the particle/VFX effects match the low-poly game style from the provided frames."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the boss defeat moment with particle effects on screen."
+      },
+      {
+       "criterion": "MOTION1",
+       "passed": false,
+       "comment": "The sampled frames do not clearly confirm the player dodging enemy fire and a boss-defeat particle moment in the required low-poly gameplay style."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The clip holds a consistent third-person medium-wide gameplay camera suited to a highlight reel, and the brief specified no conflicting shot size, so the camera intent is satisfied."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": false,
+       "comment": "The low-poly scene and corner HUD are readable, but the player character is small and drifts off-center while dodging, and the final boss-defeat particle burst is broad and unanchored, so no single subject is consistently framed as the clear focal point."
+      },
+      {
+       "criterion": "HIGHL1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the provided frames that the clip focuses on the boss-defeat highlight rather than filler."
+      }
+     ]
+    },
+    {
+     "seed_id": "event_001",
+     "category": "event",
+     "status": "completed",
+     "score": 35.9,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "ANAT1",
+      "SCENE1",
+      "MOMENT1",
+      "CONT1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 27.27
+      },
+      {
+       "dimension": "technical",
+       "score": 60.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 20.0
+      },
+      {
+       "dimension": "structure",
+       "score": 66.67
+      },
+      {
+       "dimension": "craft",
+       "score": 0.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The runner shown crossing the line in the close-up (jersey color, bib, and facial features) does not match the person shown on the podium in the later frames, so the main subject drifts across the clip."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The podium ceremony shots contradict the finish-line location: the finish arch/banner and street backdrop visible in the wide and close-up crossing shots are gone or altered in the podium frames, and the confetti/official arrangement is inconsistent, so the same venue does not survive the cut."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The wide finish-line shot, the closer crossing shot, and the podium/confetti segment each hold consistent scenery, people, and the FINISH arch across their frames, with only clean cuts between angles and no flicker or morphing."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": false,
+       "comment": "The first six frames show bright midday sunlight on the finish line, but the podium frames (7-8) abruptly switch to a dark night/indoor stage with artificial floodlighting, so color temperature and intensity are inconsistent across shots of the same venue and moment."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "Frames show a coherent finish-line wide shot, close-up of the winner, and podium with confetti; text on banners is legible and no smearing, ghosting, clipping, or duplicated textures are visible."
+      },
+      {
+       "criterion": "RES1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of sufficient resolution and detail."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": false,
+       "comment": "The shot-to-shot and frame-to-frame framing shifts (runner jumping from left to right across frames 1-3, then an abrupt angle/zoom change at frame 4 and inconsistent horizon/roll in the final close-ups) indicate drifting, jittery camera work rather than the stable, deliberate movement the brief requires."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "Anatomical integrity cannot be clearly confirmed from the provided frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "Runners and podium figures remain grounded and supported, the finish-line geometry and crowd layout stay consistent across the two camera angles, and confetti falls naturally in the podium shots."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the required marathon finish-line setting, winner crossing, and podium ceremony."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm the winner crossing the finish line is actually on screen."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "Frames 1-2 show a wide finish-line shot with crowd, frames 3-4 a close-up of the winner crossing, and frames 5-8 the podium ceremony with confetti, matching the required sequence and order."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": false,
+       "comment": "The winner's jersey changes between cuts (orange in the wide finish-line shots, navy in the close-up, and different attire on the podium), so the action does not continue as the same subject/state across cuts."
+      },
+      {
+       "criterion": "ANGLE1",
+       "passed": true,
+       "comment": "The clip clearly uses distinct camera positions: a wide finish-line view with stands, a closer low angle on the winner crossing, and separate podium ceremony framings with confetti, satisfying the multi-angle requirement."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": false,
+       "comment": "The winner is not clearly framed as the subject: in the wide finish-line shots the runner is a small, soft figure lost among the crowd, and in the podium shots the winner is partially obscured by dense confetti and a wide, cluttered composition, so the intended subject never dominates the frame with clear focus."
+      },
+      {
+       "criterion": "CTX1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a populated marathon venue background with crowd and event activity."
+      }
+     ]
+    },
+    {
+     "seed_id": "entertainment_003",
+     "category": "entertainment",
+     "status": "completed",
+     "score": 37.84,
+     "passed": false,
+     "critical_failures": [
+      "TEMP1",
+      "PROP1",
+      "ENTRY1",
+      "ART1",
+      "ANAT1",
+      "LIPSYNC1",
+      "ANIM1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 53.33
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 50.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The woman's face, gray bob, green top, and the yellowed envelope remain visually consistent across all eight frames, so the subject does not drift."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "The home-office setting, desk position, background furnishings, and window-light direction remain consistent across all sampled frames."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "I cannot clearly confirm stable temporal persistence from the provided frames."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The yellowed envelope is not consistently maintained: its appearance/position shifts between the lift, hold, and set-down, so prop continuity cannot be confirmed."
+      },
+      {
+       "criterion": "LIGHT1",
+       "passed": true,
+       "comment": "The soft window light from camera left, shadow fall-off on the right side of her face, and the warm-neutral color temperature remain stable in intensity and direction across all eight frames."
+      },
+      {
+       "criterion": "ENTRY1",
+       "passed": false,
+       "comment": "The sampled frames do not clearly show the envelope arriving from below with a continuous lead-in, so entrance continuity cannot be confirmed."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the absence of warping, clipping, or ghosting in the envelope/hand interaction from the provided frames."
+      },
+      {
+       "criterion": "RES1",
+       "passed": false,
+       "comment": "I cannot clearly confirm sufficient resolution and detail from the provided frames."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": false,
+       "comment": "I cannot clearly confirm a stable locked-off camera from the sampled frames."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm anatomical integrity of the hands and body from the provided frames."
+      },
+      {
+       "criterion": "LIPSYNC1",
+       "passed": false,
+       "comment": "The sampled frames do not show clear, consistent mouth-shape changes matching the spoken line, so lip sync cannot be confirmed."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The frames show a consistent locked-off medium framing at desk level, matching the intended shot size and angle."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "The sampled frames do not clearly confirm a legible, emotionally appropriate facial expression timed to the envelope reveal."
+      },
+      {
+       "criterion": "NATURAL1",
+       "passed": true,
+       "comment": "The sequence shows continuous natural movement: folded hands transition to reaching down, lifting the yellowed envelope, holding it, and setting it down, with subtle head tilts and gaze shifts across frames."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The woman stays sharply in focus and centered throughout, with the yellowed envelope also rendered crisply when lifted, and the softly blurred background keeping attention on the subject."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "Exposure control cannot be clearly confirmed from the provided frames."
+      },
+      {
+       "criterion": "ANIM1",
+       "passed": false,
+       "comment": "I cannot clearly confirm frame-to-frame motion from the sampled images."
+      }
+     ]
+    },
+    {
+     "seed_id": "marketing_002",
+     "category": "marketing",
+     "status": "completed",
+     "score": 55.26,
+     "passed": false,
+     "critical_failures": [
+      "TEXT1",
+      "AR1",
+      "ANAT1",
+      "GEO1",
+      "CTA1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 75.0
+      },
+      {
+       "dimension": "technical",
+       "score": 54.55
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 60.0
+      },
+      {
+       "dimension": "craft",
+       "score": 75.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The four shots (Colosseum, Trevi, Spanish Steps, St Peter's) persist coherently with only the expected cross-dissolve blends between shots, no flicker, morphing, or popping of objects or people."
+      },
+      {
+       "criterion": "PAL1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a consistent warm golden grade across all four shots."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "All four shots render cleanly with consistent geometry, legible end-card text, and no visible smearing, ghosting, clipping, or garbled backgrounds."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "I cannot clearly confirm from the frames that the required on-screen text is sharp, fully visible, and correctly rendered."
+      },
+      {
+       "criterion": "AR1",
+       "passed": false,
+       "comment": "Cannot clearly confirm a 16:9 frame with no letterbox/pillarbox bars from the provided images."
+      },
+      {
+       "criterion": "RES1",
+       "passed": true,
+       "comment": "Stone texture on the Colosseum, the Trevi Fountain's sculptural detail and crowds, the couple with gelato, and the end-card text are all clearly legible and sharp across all four shots."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm smooth, deliberate camera stability, so it fails under the strict standard."
+      },
+      {
+       "criterion": "TRANS1",
+       "passed": true,
+       "comment": "All eight sampled frames show single, fully-formed scenes (Colosseum, Trevi, piazza/steps, St Peter's with title) with no frame exhibiting a double-exposure blend of two whole scenes, so the shot seams are clean."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "Anatomical integrity cannot be clearly confirmed from the provided frames, so it fails under strict review."
+      },
+      {
+       "criterion": "GEO1",
+       "passed": false,
+       "comment": "Cannot clearly verify the named landmarks from the provided frames."
+      },
+      {
+       "criterion": "COPY1",
+       "passed": false,
+       "comment": "The required on-screen copy \u201cRome \u2014 book your escape\u201d is not clearly visible in the provided frames."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "Frames show the Colosseum at sunrise, then Trevi Fountain with crowds, then the couple eating gelato on the steps, then St Peter's dome at dusk with the 'Rome \u2014 book your escape' text, all in the correct order with visible cross-dissolves between shots."
+      },
+      {
+       "criterion": "CTA1",
+       "passed": false,
+       "comment": "The closing call-to-action text is not clearly visible or readable in the provided frames."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "The four shots match the brief's framing: an exterior wide of the Colosseum at sunrise, a wide of the Trevi Fountain with crowds, a medium on the couple with gelato on the Spanish Steps, and a wide on St Peter's dome at dusk holding the 'Rome \u2014 book your escape' text, all in a warm golden grade."
+      },
+      {
+       "criterion": "MOOD1",
+       "passed": true,
+       "comment": "The sampled frames show a consistent warm golden tone matching the requested mood."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each shot keeps its intended subject (Colosseum, Trevi Fountain, the couple, and the dome with the text overlay) sharp, centered, and visually dominant, with the only momentary competition occurring during the brief, prompt-requested cross-dissolves."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "Exposure cannot be clearly confirmed as controlled; bright sky areas and dusk/shot transitions risk blown highlights or inconsistent key light."
+      },
+      {
+       "criterion": "CTX1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm the required contextual background activity such as crowds or venue life."
+      },
+      {
+       "criterion": "ANIM1",
+       "passed": true,
+       "comment": "All four prompted shots appear with visible frame-to-frame changes (shifting crowd positions, subtle camera drift/push in each plate, and a stable text hold on the final shot), confirming genuine motion rather than a static slideshow."
+      }
+     ]
+    },
+    {
+     "seed_id": "social_media_002",
+     "category": "social_media",
+     "status": "completed",
+     "score": 48.89,
+     "passed": false,
+     "critical_failures": [
+      "ENV1",
+      "TEMP1",
+      "PROP1",
+      "ENTRY1",
+      "ART1",
+      "AR1",
+      "ANAT1",
+      "HOOK1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 21.43
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 66.67
+      },
+      {
+       "dimension": "structure",
+       "score": 75.0
+      },
+      {
+       "dimension": "craft",
+       "score": 100.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": true,
+       "comment": "The pocket knife's silhouette, handle proportions, and workbench setting remain recognisably the same from the rusted start to the polished finish, with only the expected rust-to-clean change."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The sampled frames do not clearly confirm that the workbench and surrounding environment remain the same throughout the clip."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The knife stays fully rusted through every working frame (2-7) and then pops to fully clean in the final frame, so the surface state discontinuously morphs instead of persisting/staging per the prompt."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The provided frames do not clearly confirm that the pocket knife and restoration tools remain consistent in appearance and placement throughout the clip."
+      },
+      {
+       "criterion": "SEC1",
+       "passed": false,
+       "comment": "The workbench surface and blurred background props visibly change in tone, texture and object placement between the opening and closing shots, so the secondary environment does not hold together across the clip."
+      },
+      {
+       "criterion": "ENTRY1",
+       "passed": false,
+       "comment": "Hands and tools are absent in frame 1 and already fully in mid-rub pose in frame 2, and vanish entirely by frame 8, with no visible lead-in or lead-out motion to explain their arrival or departure."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The clip matches the prompt progression, but the hands in the middle frames (4\u20137) show warped, blobby, indistinct fingers and the tool being held is an amorphous grey/white mass rather than a distinguishable sandpaper, wire brush, or cloth, constituting generation artifacts."
+      },
+      {
+       "criterion": "AR1",
+       "passed": false,
+       "comment": "The aspect ratio cannot be clearly confirmed from the provided frames."
+      },
+      {
+       "criterion": "RES1",
+       "passed": false,
+       "comment": "Cannot clearly confirm sufficient resolution and detail from the provided frames."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "The hands in the working frames are not clearly well-formed, so anatomical integrity cannot be confirmed."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "The knife remains supported on the workbench or held in the hands across all frames, rust progressively diminishes pass-by-pass, and object sizes and bench geometry stay consistent with no teleporting or interpenetration."
+      },
+      {
+       "criterion": "EFFECT1",
+       "passed": true,
+       "comment": "The blade visibly transitions from heavy orange rust (frames 1-2) through progressively cleaner metal under sandpaper, wire brush, and cloth (frames 3-6) to a mirror-bright finished blade on the workbench (frames 7-8), confirming the cleaning action produces the expected consequence."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The sequence flows logically: rusted knife on the bench, hands sanding with sandpaper, then wire brush, then polishing cloth, with rust visibly decreasing each stage, ending with the clean blade returned to the workbench \u2014 no unexplained jumps in position or state."
+      },
+      {
+       "criterion": "HOOK1",
+       "passed": false,
+       "comment": "The opening frames show a static close-up of the rusted knife with no visible motion, text, or distinctive visual change, so it opens on a static establishing shot rather than a hook."
+      },
+      {
+       "criterion": "SETUP1",
+       "passed": true,
+       "comment": "The opening frames clearly show a dull, dark, rusted pocket knife resting on a workbench, establishing the 'before' state for the restoration payoff."
+      },
+      {
+       "criterion": "REVEAL1",
+       "passed": true,
+       "comment": "The final frames at the 7-9s mark clearly show the restored, mirror-bright blade lying on the workbench, completing the payoff reveal as briefed."
+      },
+      {
+       "criterion": "CUT1",
+       "passed": false,
+       "comment": "The middle section (frames 2\u20137) reads as one continuous take with the same camera framing and hand position, so the sandpaper/wire-brush/cloth passes are not distinct quick-cut shots as the brief's rhythm implies."
+      },
+      {
+       "criterion": "PACE1",
+       "passed": true,
+       "comment": "The rusted close-up holds for the first ~2s, each tool (sandpaper, wire brush, cloth) gets a distinct beat of roughly 1.5-2s with visible progressive cleaning, and the finished mirror blade is held for the final seconds, so no element flashes by unreadably."
+      },
+      {
+       "criterion": "CAUSE1",
+       "passed": true,
+       "comment": "The rust visibly recedes across the frames while bare hands are shown actively sanding and polishing the blade on screen, so the transformation is caused by the work shown rather than a before/after cut."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "The pocket knife stays the sharp, centered subject in every frame, with hands entering only to work on it and a softly blurred workbench background that does not compete for attention."
+      },
+      {
+       "criterion": "HIGHL1",
+       "passed": true,
+       "comment": "The clip stays on the restoration highlight throughout: rusted knife close-up, hands sanding, brushing, and polishing with visible progressive cleaning, ending on the mirror-bright finished blade \u2014 no filler."
+      }
+     ]
+    },
+    {
+     "seed_id": "gaming_002",
+     "category": "gaming",
+     "status": "completed",
+     "score": 27.03,
+     "passed": false,
+     "critical_failures": [
+      "ENV1",
+      "TEMP1",
+      "ART1",
+      "TEXT1",
+      "PHYS1",
+      "UI1",
+      "MOTION1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 22.22
+      },
+      {
+       "dimension": "technical",
+       "score": 0.0
+      },
+      {
+       "dimension": "fidelity",
+       "score": 35.71
+      },
+      {
+       "dimension": "structure",
+       "score": 0.0
+      },
+      {
+       "dimension": "craft",
+       "score": 50.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The corridor layout contradicts itself between frames (wall panel patterns, light strips, floor grid, and vanishing-point geometry shift and flicker between consecutive shots), so the same place is not consistently depicted."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The corridor geometry and HUD elements (health bar, ammo counter, score) shift and re-render inconsistently between frames, and the drone's destruction/explosion sequence lacks stable continuity, so temporal stability cannot be confirmed."
+      },
+      {
+       "criterion": "SEC1",
+       "passed": false,
+       "comment": "The drone's body and lights visibly reconfigure between frames (e.g., single red eye/sphere early becomes a multi-light quadrotor later, then a different angular hull), and the corridor wall panels/lighting also shift, so secondary elements fail to hold together."
+      },
+      {
+       "criterion": "STYLE1",
+       "passed": true,
+       "comment": "All frames share the same dark 3D sci-fi game rendering, consistent corridor geometry, drone model, particle effects, and HUD styling from start to finish."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "The drone exhibits obvious generation glitches across frames \u2014 duplicated/ghosted body shapes, warped and melting edges, and smeared streaks that don't match clean motion blur \u2014 plus inconsistent HUD numbers, so ART1 fails."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation that the on-screen text is sharp, legible, and unobstructed."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": false,
+       "comment": "The drone's scale and position jump inconsistently between frames (it appears to drift/teleport closer and then vanish without a continuous collision path), and the corridor's laser geometry shifts shape between shots, so the scene does not hold together spatially."
+      },
+      {
+       "criterion": "UI1",
+       "passed": false,
+       "comment": "HUD elements (health, ammo, score) are present, legible and stable, but their values never change across all 8 frames \u2014 health never drops, ammo stays at 12, and score never rises from 1250 to 1400 as the brief requires, so the interface does not fulfill the called-for behavior."
+      },
+      {
+       "criterion": "VFX1",
+       "passed": false,
+       "comment": "The drone's destruction in the final frames shows only a faint red glow with no clear spark burst or impact particles, so the promised spark/impact VFX do not read as intended."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": true,
+       "comment": "The frames clearly show the drone engaging, the health bar dropping (90\u219270) while ammo falls, a visible spark-burst explosion destroying the drone, and the score changing from 1250 to 1400."
+      },
+      {
+       "criterion": "UIVAL1",
+       "passed": false,
+       "comment": "The score stays at 1250 in every frame (never rises to 1400 when the drone is destroyed), and the bottom-left health bar and bottom-right ammo counter show no visible change despite the hits and shots."
+      },
+      {
+       "criterion": "EFFECT1",
+       "passed": true,
+       "comment": "The world responds to each interaction: health drops 100\u219275\u219250 with no refill, ammo falls 80\u219245, the drone visibly bursts and is gone by the final frame, and the score jumps 1250\u21921400."
+      },
+      {
+       "criterion": "MOTION1",
+       "passed": false,
+       "comment": "The drone never visibly takes hits or explodes in a spark burst, and the score jumps from 1250 to 1400 with no death event, so the described attack/destroy sequence is not correctly performed."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "All frames maintain a consistent first-person POV with the player's weapon at the bottom-center and a wide corridor view, matching the brief's first-person gameplay intent."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": false,
+       "comment": "The drone is clearly framed as the in-focus central subject, but the clip fails the prompt: the ammo counter stays at 150 throughout and the score doesn't update until after the destruction, so the required HUD feedback (ammo falling with each shot, health dropping per hit) isn't verifiable."
+      },
+      {
+       "criterion": "CONTRAST1",
+       "passed": false,
+       "comment": "HUD text (health, ammo, score) is legible against the dark scene, but the clip fails the prompt match: the ammo counter stays at 12/40 through all firing frames despite the prompt requiring it to fall with every shot, so the checked element doesn't behave as specified."
+      },
+      {
+       "criterion": "HIGHL1",
+       "passed": true,
+       "comment": "The entire 8-second clip stays locked on the drone encounter \u2014 its approach, the player's counter-fire, and the spark-burst kill with score/health/ammo HUD changes \u2014 with no filler segments."
+      }
+     ]
+    },
+    {
+     "seed_id": "educational_003",
+     "category": "educational",
+     "status": "completed",
+     "score": 26.53,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ENV1",
+      "TEMP1",
+      "PROP1",
+      "ENTRY1",
+      "ART1",
+      "ANAT1",
+      "EFFECT1",
+      "STEP1",
+      "ANIM1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 0.0
+      },
+      {
+       "dimension": "technical",
+       "score": 37.5
+      },
+      {
+       "dimension": "fidelity",
+       "score": 55.56
+      },
+      {
+       "dimension": "structure",
+       "score": 37.5
+      },
+      {
+       "dimension": "craft",
+       "score": 25.0
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The beaker and gloved hands stay consistent through the titration steps, but in the final frames both beakers appear colorless instead of one pink and one clear as the prompt and caption require, so the demonstration's subject does not resolve as described."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": false,
+       "comment": "The bench and wall do not survive the cuts: the bench surface color/texture and the wall tone/lighting shift noticeably between the bottle shot, the pipetting shots, and the final two-beaker shot, so the single bench location contradicts itself."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": false,
+       "comment": "The clip is temporally incoherent: captions advance through steps 2-4 while the same static bottle shot persists (frames 1-5), then the scene abruptly pops to a pipette shot (frame 6) and finally two beakers (frame 8), so the visuals neither match the prompt's step order nor transition stably."
+      },
+      {
+       "criterion": "PROP1",
+       "passed": false,
+       "comment": "The pipette and beakers jump inconsistently between shots \u2014 the pipette vanishes from the hand during step 3 and the beakers rearrange/teleport between the close-up and final side-by-side shots, breaking prop continuity."
+      },
+      {
+       "criterion": "SEC1",
+       "passed": false,
+       "comment": "The secondary bench items break continuity: the small labelled beaker present at the left edge in the pipetting shots (frames 3\u20134) is gone by frames 5\u20137, and the final frame's two-beaker arrangement doesn't match what was on the bench, so untracked props reconfigure across cuts."
+      },
+      {
+       "criterion": "ENTRY1",
+       "passed": false,
+       "comment": "The gloved hands and pipette appear already in position without a visible lead-in, so entrance continuity cannot be confirmed."
+      },
+      {
+       "criterion": "STYLE1",
+       "passed": false,
+       "comment": "The frames do not clearly confirm a single consistent visual style throughout the demonstration."
+      },
+      {
+       "criterion": "ART1",
+       "passed": false,
+       "comment": "In frames 4\u20135 the pipette tip visibly clips into the beaker wall/liquid interface and the hand-pipette assembly warps and smears between frames, so the critical artifact check fails."
+      },
+      {
+       "criterion": "TEXT1",
+       "passed": true,
+       "comment": "The step captions and bottle labels are rendered as sharp, correctly spelled, fully visible text throughout all frames."
+      },
+      {
+       "criterion": "RES1",
+       "passed": true,
+       "comment": "Labels on the bottles are legible and the beaker color changes (clear\u2192pink\u2192clear) and side-by-side beakers are clearly distinguishable, so resolution/detail suffice for the brief."
+      },
+      {
+       "criterion": "LABEL1",
+       "passed": false,
+       "comment": "The in-world bottle labels are not clearly legible as the required chemical names, so the scene text cannot be confirmed as well-formed."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "Cannot clearly confirm anatomically correct hands or limbs from the provided frames."
+      },
+      {
+       "criterion": "PHYS1",
+       "passed": true,
+       "comment": "Bottles, beakers and pipette remain consistently sized and supported on the bench throughout, liquids are contained and change color in place, and the side-by-side final beakers are stable with no floating, teleporting, or surface-penetration artifacts."
+      },
+      {
+       "criterion": "FACT1",
+       "passed": true,
+       "comment": "The chemistry shown is correct: phenolphthalein turns pink in sodium hydroxide, and added HCl neutralizes the base fading the pink to colourless, with a valid pink-vs-clear comparison at the end matching the prompt."
+      },
+      {
+       "criterion": "EFFECT1",
+       "passed": false,
+       "comment": "The beaker's color never visibly changes between the dropwise additions \u2014 it stays the same shade across the pipetting frames, so the claimed pinking and fading consequences are not confirmed."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": true,
+       "comment": "The frames progress in the briefed order: labeled bottles (1), pipette adding phenolphthalein turning the beaker pink (2), acid drops fading the pink to colourless (3), and two beakers side by side, one pink and one clear (4)."
+      },
+      {
+       "criterion": "STEP1",
+       "passed": false,
+       "comment": "judge call failed: unparseable judge output: '<tool_call>\\n<function=computer_use>\\n<parameter=action>\\nview\\n</parameter>\\n<parameter=file>\\n/tmp/pi_judge_7_b5uiow/img_01.jpg\\n</parameter>\\n</function>\\n</tool_call>'"
+      },
+      {
+       "criterion": "PACE1",
+       "passed": false,
+       "comment": "The clip omits the required opening step of three labelled bottles, jumping straight to the beaker, so the prompt-matching condition for pacing fails."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "Each step keeps its intended subject (bottles, pipette-drip beaker, final pair of beakers) centered and sharp against a plain white backdrop, with captions that don't compete for attention."
+      },
+      {
+       "criterion": "CONTRAST1",
+       "passed": false,
+       "comment": "I cannot clearly confirm that the captions and key visuals maintain sufficient contrast against the white background in the provided frames."
+      },
+      {
+       "criterion": "CLEAN1",
+       "passed": false,
+       "comment": "Beyond the brief's bench, bottles, beakers and gloved hands, the frames show extra clutter and inconsistent stray elements (additional containers/objects and mismatched captions) competing for attention, so the no-distractors check cannot be clearly confirmed."
+      },
+      {
+       "criterion": "ANIM1",
+       "passed": false,
+       "comment": "All eight frames show the same static bottle scene with only the caption text changing \u2014 none of the prompted actions (pipetting, pink color change, side-by-side beakers) are actually animated, making it a slideshow rather than moving footage."
+      }
+     ]
+    },
+    {
+     "seed_id": "event_002",
+     "category": "event",
+     "status": "completed",
+     "score": 55.56,
+     "passed": false,
+     "critical_failures": [
+      "SUBJ1",
+      "ANAT1",
+      "SCENE1",
+      "MOMENT1",
+      "SEQ1"
+     ],
+     "dimensions": [
+      {
+       "dimension": "consistency",
+       "score": 54.55
+      },
+      {
+       "dimension": "technical",
+       "score": 83.33
+      },
+      {
+       "dimension": "fidelity",
+       "score": 0.0
+      },
+      {
+       "dimension": "structure",
+       "score": 66.67
+      },
+      {
+       "dimension": "craft",
+       "score": 72.73
+      }
+     ],
+     "scores": [
+      {
+       "criterion": "SUBJ1",
+       "passed": false,
+       "comment": "The singer's appearance drifts noticeably across the cuts (hair length/style, build and clothing differ between the pit low-angle and side-stage shots), so the subject is not consistently the same person throughout."
+      },
+      {
+       "criterion": "ENV1",
+       "passed": true,
+       "comment": "All three camera angles (wide crowd view, low pit view, side-stage view) show the same venue, stage layout, drum kit placement and deep blue/magenta lighting with no contradicting set details across cuts."
+      },
+      {
+       "criterion": "TEMP1",
+       "passed": true,
+       "comment": "The three camera segments (wide, low-angle pit, side-stage drummer) each show stable, consistent band members, stage rigging and lighting across their respective frames, with hard cuts between positions rather than flicker or morphing."
+      },
+      {
+       "criterion": "PAL1",
+       "passed": false,
+       "comment": "Cannot clearly confirm a consistent deep blue and magenta grade across all provided frames."
+      },
+      {
+       "criterion": "SEC1",
+       "passed": false,
+       "comment": "Secondary elements don't survive the cuts: the stage/drum-kit and rig details visible in the side-stage shot (cymbal layout, monitor wedges, band member silhouettes) are not consistent with what the wide and pit shots establish, and the singer's wardrobe/positioning shifts between the low-angle and wide views."
+      },
+      {
+       "criterion": "ART1",
+       "passed": true,
+       "comment": "The three camera positions (wide crowd shot, low pit angle at the mic, side-stage view past the drummer) match the prompt with consistent blue/magenta lighting, and no clear smearing, ghosting, duplication, clipping, or warped edges are visible across the frames."
+      },
+      {
+       "criterion": "STAB1",
+       "passed": false,
+       "comment": "The wide opening shot shows progressive, uneven framing shifts frame-to-frame (stage drifting left then re-centering) that read as accidental drift/jitter rather than a smooth deliberate pan, and the brief's handheld pit shot also appears unsteady beyond intended shake."
+      },
+      {
+       "criterion": "TRANS1",
+       "passed": true,
+       "comment": "All sampled frames show single, fully-formed shots (wide crowd, low-angle singer, side-stage drummer) with no frame exhibiting a double-exposed blend of two scenes at the cut seams."
+      },
+      {
+       "criterion": "ANAT1",
+       "passed": false,
+       "comment": "The provided frames do not allow clear confirmation of correct anatomical integrity."
+      },
+      {
+       "criterion": "SCENE1",
+       "passed": false,
+       "comment": "I cannot clearly confirm the required live-concert scene and camera setup from the provided frames."
+      },
+      {
+       "criterion": "MOMENT1",
+       "passed": false,
+       "comment": "The required three distinct camera positions and the singer stepping up to the microphone cannot be clearly confirmed from the provided frames."
+      },
+      {
+       "criterion": "SEQ1",
+       "passed": false,
+       "comment": "All three camera positions appear but the clip cycles through them (wide\u2192pit\u2192side\u2192pit\u2192wide\u2192side) instead of proceeding cleanly in the briefed order 1\u21922\u21923."
+      },
+      {
+       "criterion": "CONT1",
+       "passed": true,
+       "comment": "The three camera positions appear in the prompted order (wide crowd \u2192 low pit angle of singer at mic \u2192 side view past drummer), and the singer's position at the microphone and the band's state remain consistent across the cuts, so action flows without unexplained jumps."
+      },
+      {
+       "criterion": "ANGLE1",
+       "passed": true,
+       "comment": "The frames clearly show three genuinely different viewpoints \u2014 a wide shot over the packed crowd, a low handheld pit angle as the singer reaches the mic, and a side-stage view past the drum kit toward the audience \u2014 all with consistent blue/magenta lighting and the same band."
+      },
+      {
+       "criterion": "CAM1",
+       "passed": true,
+       "comment": "Frames confirm all three specified positions: wide from the back of a packed crowd (1-2), low-angle pit shots of the singer at the mic (3-5), and a side-stage view looking across the drummer toward the audience (6-8), all under blue/magenta lighting."
+      },
+      {
+       "criterion": "MOOD1",
+       "passed": true,
+       "comment": "The frames consistently show a deep blue and magenta concert palette that matches the requested moody live-stage mood."
+      },
+      {
+       "criterion": "EXPR1",
+       "passed": false,
+       "comment": "In the wide and pit shots the faces are too small to read, and the close-up frames show a near-static, unanimated face with no legible change of expression matching the intended performance emotion."
+      },
+      {
+       "criterion": "FOCUS1",
+       "passed": true,
+       "comment": "In each of the three camera positions the intended subject (band on stage, singer at the mic, drummer/singer in profile) is centered, reasonably sharp, and reads clearly against the dark, blue-magenta venue."
+      },
+      {
+       "criterion": "EXPO1",
+       "passed": false,
+       "comment": "Exposure cannot be clearly confirmed as controlled across the sampled frames, so it fails under strict review."
+      },
+      {
+       "criterion": "CTX1",
+       "passed": true,
+       "comment": "The pit-angle frames clearly show a dense crowd of audience members, and the wide and side-stage shots include the stage, truss rigging, and band performing, so the live-concert venue context is well carried by the background."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

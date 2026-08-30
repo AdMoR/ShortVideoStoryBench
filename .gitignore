@@ -46,6 +46,11 @@ runs/*
 *.mp4
 *.webm
 
+# ...except the worked example's clips. `make site-example` re-encodes three of a
+# run's videos down to a few hundred KB each and commits them, because the site is
+# static and a <video> on GitHub Pages has to point at a file that is actually there.
+!site/media/*.mp4
+
 # make(1) build stamps
 .make/
 

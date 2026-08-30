@@ -131,6 +131,18 @@ site: ## Build the GitHub Pages site into _site/ (open _site/index.html)
 site-data: ## Re-export runs/*/report.json into site/data/runs.json (commit it)
 	$(UV) run python -m video_eval_bench.report.site export runs/*/report.json
 
+# The worked example at the top of the performance page: one run's clips, agent traces
+# and verdicts. Needs ffmpeg — the clips are re-encoded to a few hundred KB so they can
+# be committed. RUN picks the run; SEED_IDS overrides the automatic best/median/worst
+# pick. (Not SEEDS — that one already means "how many seeds to build" further down.)
+#
+#   make site-example RUN=runs/20260825-072222
+#   make site-example RUN=runs/20260828-222208 SEED_IDS=event_002,event_001,gaming_001
+site-example: ## Re-export one run as the page's worked example (commit it)
+	@test -n "$(RUN)" || { echo "set RUN=runs/<timestamp>"; exit 1; }
+	$(UV) run python -m video_eval_bench.report.site example $(RUN) \
+		$(if $(SEED_IDS),--seeds $(SEED_IDS),)
+
 # ── the seed builder ─────────────────────────────────────────────────────────
 # Build benchmark seeds and their rubrics from FineVideo. Start with the pilot:
 # ten videos, a few minutes, and a report to read before you spend on two hundred.

@@ -61,7 +61,9 @@ video_eval_bench/
 └── compare.py          # `veb-compare` — comparative table over reports
 dataset/                # seeds.yaml + rubrics.yaml + genres.yaml + safety.yaml + references/
                         # RUBRICS.md — the standard a criterion is held to
-site/data/runs.json     # the published run snapshot — the site's only committed data
+site/data/runs.json     # the published run snapshot — the numbers behind the site
+site/data/example.json  # one run up close: its config, three traces, three verdicts
+site/media/             # the clips those three seeds produced, re-encoded to commit
 .github/workflows/      # pages.yml — builds and deploys the site
 docker/                 # the agent jail: Dockerfile.pi + build.sh + entrypoint
 tests/                  # offline suite; tests/e2e/ is the opt-in live tier
@@ -510,11 +512,12 @@ report code or the published run snapshot:
 | --- | --- |
 | `index.html` | What the benchmark is, and how one score is produced. |
 | `atlas.html` | The rubric library (`report/atlas.py`) — every criterion, filterable by tag, with section shortcuts. |
-| `performance.html` | Every published run, the criteria models fail most often, and the judge's written reason for each verdict. |
+| `performance.html` | One run up close — its clips, agent traces and verdicts — then every published run, the criteria models fail most often, and the judge's written reason for each verdict. |
 
 ```bash
 make site           # build into _site/, open _site/index.html
 make site-data      # re-export runs/*/report.json -> site/data/runs.json
+make site-example RUN=runs/20260825-072222     # re-export the worked example
 ```
 
 **The snapshot is the only thing CI cannot regenerate.** `runs/` is gitignored — a run
@@ -534,6 +537,42 @@ Runs made before the rubric review name criteria that have since merged. The
 performance page maps them through the same table the atlas uses (`PROP1` → `SEC1`,
 `CLEAN1` → `FOCUS1`, …), drops `GEO1`, which has no successor, and says so under the
 table rather than quietly recounting old verdicts as new ones.
+
+#### The worked example
+
+The tables say how well an arm did. They do not say what any of it looks like, and a
+reader who has never seen the benchmark run needs that answered before a mean score
+means anything. So the performance page opens with one run up close: the arm's exact
+configuration, what the generation cost, and for three of its seeds the brief, the
+clip, the agent's trace and every question the judge answered.
+
+```bash
+make site-example RUN=runs/20260825-072222
+make site-example RUN=runs/20260828-222208 SEED_IDS=event_002,event_001,gaming_001
+```
+
+It needs **ffmpeg**, because none of that fits in a repository as it stands. The export
+shrinks all three axes:
+
+* the trace goes through the same `condense_trace` the run report uses — which drops
+  the streaming deltas that are 95% of a transcript — and is then trimmed again to
+  ~120 items with tool output capped, taking a 130 MB transcript to tens of KB,
+* each clip is re-encoded to fit a **640px box at CRF 30**, turning 8 MB of five-second
+  video into a few hundred KB, and a poster frame is extracted so an unopened seed
+  costs one JPEG. `.gitignore` un-ignores `site/media/*.mp4` for exactly these,
+* re-exporting from a different run **prunes** the media the old one left behind,
+  rather than leaving its clips committed and deployed forever.
+
+Seeds default to the run's **best, median and worst** judged score — three clips that
+all scored the same teach nothing — and `SEED_IDS` overrides that. Everything on the
+page is collapsed: three autoplaying videos and three traces above the tables would
+bury what most readers came for.
+
+Two things to know when picking `RUN`. An arm with `generator=external` has no agent
+and therefore **no trace to show**, whatever it scored. And a run older than the rubric
+review was judged on per-category rubrics whose ids the library never had: the verdict
+block renders them as the run wrote them, under a note saying so, rather than as named
+criteria with dead atlas links.
 
 One-time setup on the repository: **Settings → Pages → Source: GitHub Actions**.
 

@@ -2,11 +2,12 @@
 The public site: three pages, one visual system, built by CI.
 
     python -m video_eval_bench.report.site export runs/*/report.json   # snapshot
+    python -m video_eval_bench.report.site example runs/20260825-072222  # one run shown
     python -m video_eval_bench.report.site build --out _site           # the site
 
   * `index.html` — what the benchmark is and how a score is produced.
   * `atlas.html` — the rubric library, rendered by `report/atlas.py`.
-  * `performance.html` — what the arms actually scored, across every run.
+  * `performance.html` — one run up close, then what the arms scored across every run.
 
 **Why a snapshot.** `runs/` is gitignored: a run directory holds the generated mp4s
 and is hundreds of megabytes, and CI has no GPU to regenerate one. So the performance
@@ -14,6 +15,13 @@ page is built from `site/data/runs.json`, a small committed export of the number
 each run's `report.json` — scores, verdicts and the arm's config, no media. Refresh it
 with `make site-data` after a run you want published, and commit it. The build reads
 that file and never touches `runs/`, so a Pages build is deterministic and cheap.
+
+**Why a worked example.** The tables say how well an arm did and never what any of it
+looks like. So the performance page opens with one exported run — its config, its
+clips, its agent traces, its verdicts — from `site/data/example.json` and the
+re-encoded media in `site/media/`, both written by `report/example.py` and committed
+for the same reason the snapshot is. The section is optional; without the file the
+page is what it was.
 
 **Old criterion ids.** Runs predate the review that merged and deleted criteria, and
 their verdicts name ids the library no longer has. They are mapped through
@@ -35,7 +43,7 @@ from typing import Dict, List, Optional
 
 from video_eval_bench.dataset import load_dataset
 from video_eval_bench.dataset.dataset_schemas import Dataset, RubricLibrary
-from video_eval_bench.report import atlas
+from video_eval_bench.report import atlas, example
 
 e = html.escape
 
@@ -44,6 +52,10 @@ e = html.escape
 MIN_SEEDS_FOR_HEADLINE = 5
 
 DEFAULT_DATA = Path("site/data/runs.json")
+# The worked example: one run's clips, traces and verdicts, exported beside the
+# snapshot. Optional — the page renders without it.
+DEFAULT_EXAMPLE = Path("site/data/example.json")
+DEFAULT_MEDIA = Path("site/media")
 
 # One page per tab, in the order they appear in the bar.
 TABS = [
@@ -612,7 +624,23 @@ def _verdict_blocks(runs: List[dict], lib: RubricLibrary) -> str:
     )
 
 
-def render_performance(ds: Dataset, data: dict, nav_html: str) -> str:
+def _example_section(sample: Optional[dict], lib: RubricLibrary) -> str:
+    """
+    The worked example, if one has been exported.
+
+    Rendered first, before any table. The tables answer "how well"; a reader who has
+    never seen the benchmark run needs "what does this even look like" answered
+    before the numbers mean anything — and it is the only place on the site where the
+    clips, the agent's trace and the judge's reasons sit next to each other.
+    """
+    if not sample:
+        return ""
+    return example.render_section(sample, lib, lambda cid: _live(cid, lib))
+
+
+def render_performance(
+    ds: Dataset, data: dict, nav_html: str, sample: Optional[dict] = None
+) -> str:
     lib = ds.rubrics
     runs = data.get("runs", [])
     best = headline(runs)
@@ -647,7 +675,7 @@ sizes — but only within the same dataset revision.</p>
 </div></header>
 
 <div class="wrap"><main>
-
+{_example_section(sample, lib)}
 <section class="block" id="runs">
 <h2>Runs</h2>
 <p class="lede">One row per published run. The arm is the configuration that produced
@@ -696,9 +724,12 @@ def build(
     data_file: Path = DEFAULT_DATA,
     pilot: Optional[Path] = None,
     repo: str = "https://github.com/AdMoR/ShortVideoStoryBench",
+    example_file: Path = DEFAULT_EXAMPLE,
+    media_dir: Path = DEFAULT_MEDIA,
 ) -> List[Path]:
     ds = load_dataset(dataset_dir)
     data = json.loads(data_file.read_text()) if data_file.exists() else {"runs": []}
+    sample = json.loads(example_file.read_text()) if example_file.exists() else None
     # The pilot is not checked in (it is a build output), so CI renders the atlas's
     # coverage over the benchmark's own seeds instead. Both are real corpora; the
     # page names whichever one it counted.
@@ -716,7 +747,9 @@ def build(
             nav=EXTRA_CSS + nav("atlas.html", repo),
             corpus=corpus,
         ),
-        "performance.html": render_performance(ds, data, nav("performance.html", repo)),
+        "performance.html": render_performance(
+            ds, data, example.CSS + nav("performance.html", repo), sample
+        ),
     }
     written = []
     for name, page in pages.items():
@@ -726,6 +759,10 @@ def build(
     # Pages runs the site through Jekyll unless told not to; a leading-underscore
     # directory would vanish and the build is already static.
     (out / ".nojekyll").write_text("")
+    # The example's clips and posters, copied rather than referenced: `_site` is the
+    # deploy artifact, and a <video src> pointing outside it resolves to nothing.
+    if sample:
+        example.copy_media(media_dir, out / "media")
     return written
 
 
@@ -739,6 +776,8 @@ def main(argv=None) -> None:
     b.add_argument("--data", type=Path, default=DEFAULT_DATA)
     b.add_argument("--pilot", type=Path, default=Path("dataset_finevideo_pilot"))
     b.add_argument("--repo", default="https://github.com/AdMoR/ShortVideoStoryBench")
+    b.add_argument("--example", type=Path, default=DEFAULT_EXAMPLE)
+    b.add_argument("--media", type=Path, default=DEFAULT_MEDIA)
 
     x = sub.add_parser("export", help="snapshot report.json files for publication")
     x.add_argument("reports", nargs="+", type=Path)
@@ -749,14 +788,52 @@ def main(argv=None) -> None:
         help="publish mock/self-test runs too (they pass everything)",
     )
 
+    x = sub.add_parser(
+        "example", help="export one run as the worked example (clips, traces, verdicts)"
+    )
+    x.add_argument("run_dir", type=Path, help="a run directory, e.g. runs/20260825-072222")
+    x.add_argument(
+        "--seeds",
+        default=None,
+        help="comma-separated seed ids; the default is the best, median and worst judged",
+    )
+    x.add_argument("--n", type=int, default=3, help="how many seeds to show (default 3)")
+    x.add_argument("--out", type=Path, default=DEFAULT_EXAMPLE)
+    x.add_argument("--media", type=Path, default=DEFAULT_MEDIA)
+    x.add_argument("--dataset", type=Path, default=None)
+
     args = ap.parse_args(argv)
+    if args.cmd == "example":
+        # The brief comes from the dataset rather than the run: a run records what it
+        # sent the agent only in a 4 KB argv blob, and the seed's own prompt is the
+        # thing the page is quoting.
+        briefs = {s.seed_id: s.prompt for s in load_dataset(args.dataset).seeds}
+        data, written = example.export(
+            args.run_dir,
+            args.media,
+            seed_ids=[s.strip() for s in args.seeds.split(",")] if args.seeds else None,
+            n_seeds=args.n,
+            briefs=briefs,
+        )
+        for stale in example.prune(args.media, written):
+            print(f"  removed stale {stale}")
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(data, indent=1) + "\n")
+        media_kb = sum(p.stat().st_size for p in written) // 1024
+        print(
+            f"{args.out} — {len(data['seeds'])} seed(s) from {data['run_id']}, "
+            f"{args.out.stat().st_size // 1024}KB + {media_kb}KB of media in {args.media}"
+        )
+        return
     if args.cmd == "export":
         args.out.parent.mkdir(parents=True, exist_ok=True)
         data = snapshot(args.reports, include_mock=args.include_mock)
         args.out.write_text(json.dumps(data, indent=1, sort_keys=False) + "\n")
         print(f"{args.out} — {len(data['runs'])} run(s), {args.out.stat().st_size // 1024}KB")
         return
-    written = build(args.out, args.dataset, args.data, args.pilot, args.repo)
+    written = build(
+        args.out, args.dataset, args.data, args.pilot, args.repo, args.example, args.media
+    )
     print(f"{args.out}/ — {', '.join(p.name for p in written)}")
 
 

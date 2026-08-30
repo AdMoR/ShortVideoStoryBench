@@ -1,0 +1,17 @@
+# @package builder_llm
+#
+# A deterministic stand-in: no network, no cost, every stage exercised end to end.
+# For checking the plumbing after a change — never for a real corpus, since every
+# seed it writes carries the same invented brief.
+#
+#   veb-seedbuild builder_llm=mock seedbuild.limit=3
+
+kind: mock
+model: null
+api_base: null
+api_key: null
+temperature: 0.0
+max_output_tokens: 2048
+timeout_seconds: 30
+attempts: 1
+backoff_seconds: 0

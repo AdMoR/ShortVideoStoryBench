@@ -1,0 +1,24 @@
+# Entry config for `veb-seedbuild`.
+#
+# Its own root rather than an extra group on `conf/config.yaml`: the builder needs a
+# model and nothing else the benchmark composes — no generator, no sandbox, no video
+# backend, and no video judge — so hanging those off the build would mean a config
+# error in an arm it never uses could stop a corpus build.
+#
+# `builder_llm` is its own group rather than the benchmark's `judge` group for the
+# same reason. The builder's two validating judges are text-in, text-out: they read a
+# brief and a criterion and never see a frame. Sharing the judge group would let a
+# build be pointed at `pi` — a subprocess per call — or at a video endpoint, neither
+# of which has anything to offer a text prompt.
+
+defaults:
+  - _self_
+  - builder_llm: gx10
+  - seedbuild: default
+  - override hydra/job_logging: default
+
+hydra:
+  run:
+    dir: ${seedbuild.work_dir}/hydra/${now:%Y%m%d-%H%M%S}
+  job:
+    chdir: false

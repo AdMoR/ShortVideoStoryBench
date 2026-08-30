@@ -24,7 +24,12 @@ from video_eval_bench.judge.frames import video_frame_count
 
 
 def make_seed(seed_id: str = "marketing_001") -> Seed:
-    return Seed(seed_id=seed_id, category="marketing", prompt="A 30-second product ad.")
+    return Seed(
+        seed_id=seed_id,
+        category="marketing",
+        prompt="A 30-second product ad.",
+        rubrics=["SUBJ1", "PROD1"],
+    )
 
 
 def paths_for(config, run_dir: Path, seed_id: str = "marketing_001") -> _SeedPaths:
@@ -370,7 +375,9 @@ async def test_run_bench_records_generator_metadata(pi_config, mode, tmp_path):
         output_dir=tmp_path,
         run_id="test_run",
         dataset=dataset,
-        category="marketing",
+        # Named rather than filtered by category: these assert on a single
+        # result, and "marketing" is a genre that gains seeds over time.
+        seed_ids=["marketing_001"],
     )
 
     summary = report.summary()
@@ -395,7 +402,9 @@ async def test_generation_failure_does_not_abort_the_bench(pi_config, mode, tmp_
         output_dir=tmp_path,
         run_id="test_run",
         dataset=dataset,
-        category="entertainment",  # two seeds: both must be attempted
+        # Two seeds, named: both must be attempted. Named rather than filtered
+        # by category so the count stays two as the dataset grows.
+        seed_ids=["entertainment_001", "entertainment_002"],
     )
 
     assert report.summary()["n_seeds"] == 2
@@ -427,7 +436,9 @@ async def test_a_timed_out_run_still_reports_what_it_burned(pi_config, mode, tmp
         output_dir=tmp_path,
         run_id="test_run",
         dataset=dataset,
-        category="marketing",
+        # Named rather than filtered by category: these assert on a single
+        # result, and "marketing" is a genre that gains seeds over time.
+        seed_ids=["marketing_001"],
     )
 
     (result,) = report.results

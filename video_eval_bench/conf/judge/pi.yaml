@@ -4,6 +4,7 @@
 # focused call per rubric criterion, so this is ~25 short calls per video.
 
 backend: pi
+media: frames
 pi_bin: pi
 provider: gx10
 model: unsloth/Qwen3.8-27B-GGUF:Q8_0

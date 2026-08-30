@@ -4,6 +4,7 @@
 # ~25 model calls per video.
 
 backend: mock
+media: frames
 model: null
 provider: null
 api_base: null

@@ -1,0 +1,20 @@
+# @package builder_llm
+#
+# A hosted frontier model, through litellm. Build the corpus with one of these and
+# the briefs get noticeably better; the two validating judges get stricter too.
+#
+#   veb-seedbuild builder_llm=litellm builder_llm.model=anthropic/claude-sonnet-5
+#   veb-seedbuild builder_llm=litellm builder_llm.model=openai/gpt-4o
+#
+# Credentials come from the environment the way litellm expects them
+# (ANTHROPIC_API_KEY, OPENAI_API_KEY), read from .env like everything else here.
+
+kind: litellm
+model: openai/gpt-4o
+api_base: null
+api_key: null
+temperature: 0.2
+max_output_tokens: 2048
+timeout_seconds: 180
+attempts: 3
+backoff_seconds: 3

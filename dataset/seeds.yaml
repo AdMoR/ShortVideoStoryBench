@@ -1,3 +1,18 @@
+# The benchmark seeds.
+#
+# `rubrics` is the list of criteria from dataset/rubrics.yaml this seed is
+# judged on — and only those. A criterion the brief gives no way to earn or
+# fail does not belong in the list: it used to be answered "not applicable,
+# PASSED" and still count its full weight, which handed free points to whichever
+# seed the fixed rubric fit worst.
+#
+# The comment above each list says why the borderline ones are in or out.
+#
+# ANIM1 is on every seed, which no other criterion is. It asks whether the clip is
+# moving footage at all, and every brief here asks for a video — a generator that
+# answers with a still plate and a slow push has failed the brief whatever the
+# genre, so there is no seed whose brief cannot fail it.
+
 seeds:
   - seed_id: entertainment_001
     category: entertainment
@@ -6,6 +21,35 @@ seeds:
       kitchen table, warm morning light; (2) she walks through a rainy city
       street at night, following a stranger; (3) they meet in a dimly lit
       cafe, she smiles with relief. Same woman throughout, same red coat.
+    # No ENV1: the brief deliberately travels through three different places and
+    # gives no place a second shot to be inconsistent with. Holding the cafe to
+    # its reference image is REF1's job here.
+    # LIGHT1 but not PAL1: the three scenes are meant to look different.
+    # SEC1 carries the letter, which used to be PROP1's — and the dressing of
+    # each of the three places, which used to be CTX1's.
+    # REFCOV1 because there are two references and only one of them is the
+    # subject: a clip that holds Maya perfectly and sets scene 3 in some other
+    # cafe has used half of what it was given.
+    # No MOOD1: the brief names a different light for each scene, not one look
+    # for the clip, so there is nothing whole-clip to hold it to. LIGHT1 asks
+    # the per-scene question instead.
+    rubrics:
+      - SUBJ1
+      - TEMP1
+      - SEC1
+      - LIGHT1
+      - ART1
+      - ANIM1
+      - REF1
+      - REFCOV1
+      - ANAT1
+      - PHYS1
+      - SCENE1
+      - SEQ1
+      - CONT1
+      - CAM1
+      - EXPR1
+      - NATURAL1
     references:
       - id: maya
         role: character
@@ -29,6 +73,27 @@ seeds:
       5 seconds story : A chef in a small restaurant: (1) he plates a dish with tweezers,
       close-up; (2) he serves it to a table of guests, medium shot; (3) the
       guests taste it and react with delight. Consistent warm lighting. The restaurant is small and cosy, the kitchen is behind a counter
+    # ENV1 carries this seed: one restaurant, three shots of it from different
+    # distances, so the counter, the room and its contents have to survive the
+    # cuts. SEC1 for the dish the three shots pass along, and for the guests,
+    # the tables and the kitchen behind the counter.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - SEC1
+      - LIGHT1
+      - PAL1
+      - ART1
+      - ANIM1
+      - ANAT1
+      - PHYS1
+      - SCENE1
+      - SEQ1
+      - CONT1
+      - CAM1
+      - EXPR1
+      - FOCUS1
 
   - seed_id: educational_001
     category: educational
@@ -36,6 +101,33 @@ seeds:
       5 seconds story : An explainer video showing how a car engine works, step by step:
       intake, compression, combustion, exhaust. Clear on-screen text labels
       for each step, centered diagrams, plain background.
+    # ENV1 applies to a plain background too: it is one setting held across four
+    # steps, and a background that changes colour or gains furniture between
+    # them is exactly the failure ENV1 names.
+    # No ANAT1, no SCENE1: no bodies and no location to get right.
+    # SEQ1 is what STEP1 used to be here — four named steps in a stated order is
+    # an enumeration like any other, and it was the same question twice.
+    # FACT1 binds the one claim the brief actually asserts; ungated it would
+    # read as "the engine should be correct", which no judge answers twice the
+    # same way.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - id: FACT1
+        bind:
+          claim: >-
+            the four-stroke cycle in the order intake, compression, combustion,
+            exhaust, each stroke acting on the same cylinder and its valves and
+            piston moving the way that stroke requires
+      - DIAG1
+      - SEQ1
+      - PACE1
+      - FOCUS1
+      - CONTRAST1
 
   - seed_id: educational_002
     category: educational
@@ -43,6 +135,43 @@ seeds:
       5 seconds story : A 1920s history lesson: a classroom scene with period-accurate clothing
       and blackboard, a teacher explaining the Weimar Republic. No modern
       objects visible.
+    # The one seed where period and cultural accuracy are the point, and the
+    # only one that binds them: HIST1 names the period, CULT1 names the symbol,
+    # FACT1 names the claim. All three are unanswerable ungated — "is it
+    # period-accurate" has no answer for a brief that names no period.
+    # SEC1 for the desks, the chalk and the classroom dressing, which is where
+    # a modern object turns up if one does.
+    # No CLEAN1: the anachronism sweep is HIST1's, and FOCUS1 absorbed the rest.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - SEC1
+      - LIGHT1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - ANAT1
+      - id: HIST1
+        bind:
+          period: >-
+            Germany in the 1920s, under the Weimar Republic
+      - id: CULT1
+        bind:
+          symbol: >-
+            the black-red-gold Weimar flag and any period German insignia,
+            lettering or classroom iconography the clip puts on the wall or the
+            blackboard
+      - id: FACT1
+        bind:
+          claim: >-
+            whatever the blackboard states about the Weimar Republic — its dates,
+            names and events as they really were, written in a script of the
+            period
+      - SCENE1
+      - CONT1
+      - FOCUS1
+      - EXPR1
 
   - seed_id: marketing_001
     category: marketing
@@ -51,6 +180,32 @@ seeds:
       clean white background with the brand logo; (2) a runner using it on a
       trail; (3) final frame with the bottle, logo, and "Buy Now" call to
       action. 16:9 aspect ratio.
+    # The bottle is the subject, so SUBJ1 covers it drifting, PROD1 covers it
+    # being hidden and REF1 covers it not matching the supplied image — three
+    # different failures, not one counted three times. No SEC1: the bottle is
+    # the subject rather than one of the things around it, and the two studio
+    # shots are dressed with nothing else the brief names.
+    # ENV1 because shots 1 and 3 are the same studio setup.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - LIGHT1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - AR1
+      - REF1
+      - ANAT1
+      - LOGO1
+      - BRAND1
+      - PROD1
+      - COPY1
+      - SEQ1
+      - CTA1
+      - CAM1
+      - EXPO1
+      - FOCUS1
     references:
       - id: bottle
         role: prop
@@ -68,6 +223,48 @@ seeds:
       (3-8s) the messy "before" state of a kitchen; frustration
       and mess piling up; (8-9s) the cleaning product reveal; (9-12s) The before after of the cleaning with details shots
       "Link in bio" CTA. Fast cuts
+    # This is the seed that motivated per-seed rubrics. It carries no HIST1 and
+    # no CULT1: there is no period and no cultural symbol in a kitchen-cleaning
+    # ad, and asking anyway was free criteria. (GEO1, the third of them, no
+    # longer exists.)
+    # The transformation beats — SETUP1, TENS1, REVEAL1 — each name the beat
+    # they grade. This brief is the shape they were narrowed for: a before, a
+    # consequence, a product reveal and an after.
+    # ENV1 is the load-bearing one instead — the "after" kitchen must be the
+    # same kitchen as the "before", which is the whole premise.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - AR1
+      - PROD1
+      - COPY1
+      - id: TRIG1
+        bind:
+          trigger: >-
+            frustration at the mess, and then the satisfaction of the kitchen
+            coming clean
+      - HOOK1
+      - id: SETUP1
+        bind:
+          before: >-
+            the messy kitchen, dishes and clutter piled up, before any cleaning
+            starts
+      - id: TENS1
+        bind:
+          stakes: >-
+            the mess visibly getting worse and the frustration it causes
+      - id: REVEAL1
+        bind:
+          payoff: >-
+            the cleaning product itself, revealed at the 8-9s mark, and then the
+            clean kitchen it produces
+      - CTA1
+      - CUT1
+      - FOCUS1
 
   - seed_id: gaming_001
     category: gaming
@@ -75,6 +272,31 @@ seeds:
       5 seconds story : A gameplay highlight clip in a stylized low-poly game: the player
       character dodges enemy fire, the HUD shows health and score, a boss
       defeat moment with particle effects matching the game's style. 5 seconds
+    # ASSET1 rather than a generic style check: "low-poly" is a claim the frames
+    # can be held to. TEXT1 is here for the score and health readouts, which are
+    # where a HUD usually turns to noise.
+    # No ANAT1: stylised low-poly bodies are not held to real anatomy.
+    # HIGHL1 rather than MOMENT1: this brief is a *highlight* clip built around
+    # the boss defeat, which is the narrow case HIGHL1 was rewritten for, and
+    # MOMENT1 would be the same question in its plain form.
+    # EFFECT1 for the defeat: the boss has to react to being hit, not play a
+    # particle burst next to an untouched enemy.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - UI1
+      - ASSET1
+      - VFX1
+      - PHYS1
+      - MOTION1
+      - EFFECT1
+      - HIGHL1
+      - FOCUS1
+      - CAM1
 
   - seed_id: event_001
     category: event
@@ -83,3 +305,340 @@ seeds:
       with crowd; (2) close-up of the winner crossing; (3) podium ceremony
       with confetti. At least two camera angles, stable camera, venue
       lighting.
+    # ANGLE1 and STAB1 are explicit asks in the brief. ENV1 holds the venue
+    # together across the three angles — the same finish line, the same crowd,
+    # the same banners. No AV1 despite "live coverage": the judge is given
+    # picture only.
+    # SEC1 is what CTX1 used to be here, and more: a marathon finish with an
+    # empty street fails its "present" half, and the crowd and the banners that
+    # do appear have to be the same ones across the three angles.
+    # MOMENT1 rather than HIGHL1: the brief names three shots of equal standing,
+    # so the winner crossing has to be *there*, but the clip is not built around
+    # it the way a highlight clip is.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - LIGHT1
+      - ART1
+      - ANIM1
+      - RES1
+      - STAB1
+      - ANAT1
+      - PHYS1
+      - SCENE1
+      - MOMENT1
+      - SEQ1
+      - CONT1
+      - ANGLE1
+      - SEC1
+      - FOCUS1
+
+  # ── added to reach the criteria no seed exercised ────────────────────────────
+  # The eight seeds above left twelve criteria in the library unused, i.e. never
+  # asked of any model. The six below are built around them: a single-shot
+  # monologue (LIPSYNC1, ANIM1), named landmarks, a transformation whose
+  # middle must be shown (CAUSE1, EFFECT1), a HUD that has to report the truth
+  # (UIVAL1), in-world signage (LABEL1) and a live multi-camera cut (TRANS1,
+  # ANGLE1). AV1 stays unused on purpose — see the comment on it in rubrics.yaml.
+
+  - seed_id: entertainment_003
+    category: entertainment
+    prompt: >
+      A single unbroken 8-second shot, locked-off camera: a woman in her
+      fifties sits at a wooden desk in a home office and says straight to
+      camera, "I kept that letter for thirty years, and I never once opened
+      it." On the word "letter" she lifts a yellowed envelope up into frame
+      from below the desk, holds it, then sets it down in front of her. Soft
+      window light from camera left. No cuts.
+    # The one seed with no cuts anywhere: no SEQ1, CONT1, CUT1 or TRANS1,
+    # because there is no seam to get wrong. What it buys instead is eight
+    # seconds a subject has to stay coherent without a cut to hide behind.
+    # LIPSYNC1 is judgeable from stills only in its coarse form — a mouth shut
+    # or frozen through a clip that is all speech — and that is the failure
+    # worth catching; the brief gives the line so the judge knows speech is due.
+    # ENTRY1 is the envelope: it must travel up into frame, not appear held.
+    # No SEC1 where PROP1 used to be: SEC1's consistency half wants the same
+    # element seen twice across a cut, and there are no cuts. TEMP1 covers the
+    # envelope morphing inside the take, ENTRY1 covers it arriving.
+    # ANIM1 because a portrait with a drifting zoom is the standard way a
+    # generator fakes this brief. No TEXT1: nothing is written on screen.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - LIGHT1
+      - ART1
+      - ENTRY1
+      - ANAT1
+      - LIPSYNC1
+      - STAB1
+      - RES1
+      - CAM1
+      - EXPR1
+      - NATURAL1
+      - ANIM1
+      - FOCUS1
+      - EXPO1
+
+  - seed_id: marketing_002
+    category: marketing
+    prompt: >
+      A 10-second 16:9 tourism spot for Rome, four shots joined by slow
+      cross-dissolves: (1) the Colosseum at sunrise, exterior wide; (2) the
+      Trevi Fountain with morning crowds; (3) a couple eating gelato on the
+      Spanish Steps; (4) the dome of St Peter's Basilica at dusk, holding on
+      the words "Rome — book your escape". Warm golden grade throughout.
+    # The landmarks are why this seed exists: four named ones, in a brief a
+    # generator will happily answer with generic ruins and a generic fountain.
+    # They are now a *local* criterion rather than the library's GEO1, which was
+    # removed: "the right shapes in the right positions" gave no judge a way to
+    # decide what right was, while a local criterion can say, for these four
+    # landmarks, the one feature each that makes it that landmark.
+    # TRANS1 because the brief names the transition, so a blended two-scene
+    # frame is a failure against an explicit ask rather than a judgement call.
+    # ANIM1 for the same reason it is on the monologue: scenic plates are where
+    # a "video" turns into a slideshow with a push-in.
+    # No SUBJ1 and no ENV1: the clip has no single subject and travels through
+    # four places. PAL1 and MOOD1 carry the "warm golden grade throughout",
+    # which is the only thing holding the four shots together — and MOOD1 binds
+    # that phrase, so it is graded against the words the brief used.
+    # SEC1 is what CTX1 used to be here, and only its "present" half really
+    # bites: four different places means nothing repeats, but a Trevi Fountain
+    # with no morning crowds is an empty plate where the brief named one.
+    rubrics:
+      - TEMP1
+      - PAL1
+      - ART1
+      - TEXT1
+      - AR1
+      - RES1
+      - STAB1
+      - TRANS1
+      - ANAT1
+      - marketing_002.LANDMARK1
+      - COPY1
+      - SEQ1
+      - CTA1
+      - CAM1
+      - id: MOOD1
+        bind:
+          look: >-
+            a warm golden grade, held through all four shots
+      - ANIM1
+      - FOCUS1
+      - EXPO1
+      - SEC1
+    local_criteria:
+      # Tier 3: the check this one brief needs and no other does. GEO1 tried to
+      # be the library's version of it and could not be graded — which landmark,
+      # and right by what measure? Named here, it can be.
+      - id: marketing_002.LANDMARK1
+        dimension: fidelity
+        evidence: pixels
+        tags: [environment, realism]
+        name: Named Landmarks Identifiable
+        description: >
+          Each of the four landmarks the brief names is identifiable as that
+          landmark rather than as generic scenery of its type: the Colosseum as a
+          tiered elliptical arena wall of arched openings, the Trevi Fountain as a
+          fountain built into a palace facade, the Spanish Steps as a wide flight
+          of stone steps climbing to a twin-towered church, St Peter's as a ribbed
+          dome carrying a lantern. One unmistakable feature each is enough — the
+          number of arches is not the question.
+        weight: 2
+        critical: true
+
+  - seed_id: social_media_002
+    category: social_media
+    prompt: >
+      A 9-second vertical (9:16) restoration clip, no text and no speech:
+      (0-2s) a heavily rusted pocket knife lying on a workbench, close-up;
+      (2-7s) two bare hands work it over — sandpaper first, then a wire
+      brush, then a polishing cloth — and the rust comes off pass after pass,
+      more of the blade clean each time; (7-9s) the finished blade, mirror
+      bright, back on the same workbench.
+    # CAUSE1 and EFFECT1 are the point, and they are two different failures:
+    # cutting rust-to-shine with no work shown fails CAUSE1, while hands sawing
+    # away at a blade that stays exactly as rusty fails EFFECT1. A clip can fail
+    # either one alone, so both are listed.
+    # ENTRY1: the hands and each of the three tools have to arrive into frame.
+    # SEC1: the tools are exactly the kind of thing that turns into a different
+    # object between passes — and it now covers the named ones too, so the
+    # separate PROP1 this seed used to carry alongside it is gone.
+    # No PACE1: it grades the time something the viewer must *read* is held, and
+    # this brief bans text outright.
+    # No HIGHL1: REVEAL1 already grades the finished blade as the payoff of a
+    # transformation, which is the more specific of the two questions.
+    # ANAT1 at close range on bare hands is the hardest ask in the dataset.
+    # No TEXT1, COPY1, CTA1 or HOOK1-style overlay criteria beyond the visual
+    # ones: unlike social_media_001 this brief bans text outright, so a caption
+    # criterion would have nothing to grade.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - ART1
+      - ANIM1
+      - AR1
+      - RES1
+      - ENTRY1
+      - SEC1
+      - ANAT1
+      - PHYS1
+      - EFFECT1
+      - CAUSE1
+      - HOOK1
+      - id: SETUP1
+        bind:
+          before: >-
+            the heavily rusted pocket knife on the workbench, before any tool
+            touches it
+      - id: REVEAL1
+        bind:
+          payoff: >-
+            the finished blade, mirror bright, back on the same workbench in the
+            closing seconds
+      - CONT1
+      - CUT1
+      - FOCUS1
+
+  - seed_id: gaming_002
+    category: gaming
+    prompt: >
+      An 8-second first-person gameplay clip in a dark sci-fi corridor. A
+      hovering drone attacks: it lands two hits on the player, and the health
+      bar bottom-left drops with each hit and never refills. The player fires
+      back — the ammo counter bottom-right falls with every shot — and
+      destroys the drone in a burst of sparks. The score top-right goes from
+      1250 to 1400 as it dies.
+    # UIVAL1 is the seed: the brief pins what each readout must do (health only
+    # down, ammo only down, score up once, on the kill), so a HUD whose numbers
+    # wander is a checkable failure rather than an impression. UI1 is kept
+    # alongside it because a HUD can be well-drawn and still report nonsense,
+    # and those are the two halves this pair separates.
+    # EFFECT1: the hits and the kill must land on the drone, not play as an
+    # animation against an untouched enemy.
+    # SEC1 covers the drone — first-person means there is no visible subject for
+    # SUBJ1 to hold, and the drone is the thing a viewer tracks between frames.
+    # STYLE1 rather than ASSET1: "dark sci-fi corridor" names a setting, not a
+    # rendering style, so the question is whether the clip keeps any one look.
+    # MOMENT1 rather than HIGHL1: the brief is a sequence of events — two hits,
+    # return fire, the kill — not a clip built around a single highlight.
+    rubrics:
+      - ENV1
+      - TEMP1
+      - SEC1
+      - STYLE1
+      - ART1
+      - ANIM1
+      - TEXT1
+      - PHYS1
+      - UI1
+      - VFX1
+      - MOMENT1
+      - UIVAL1
+      - EFFECT1
+      - MOTION1
+      - CAM1
+      - FOCUS1
+      - CONTRAST1
+
+  - seed_id: educational_003
+    category: educational
+    prompt: >
+      A 10-second lab demonstration on one bench against a plain white wall,
+      in four steps, each with a short caption: (1) three labelled glass
+      bottles stand on the bench — "Sodium hydroxide", "Phenolphthalein",
+      "Hydrochloric acid"; (2) gloved hands add three drops of
+      phenolphthalein from a pipette to a beaker of clear sodium hydroxide
+      solution and it turns bright pink; (3) hydrochloric acid is added drop
+      by drop until the pink fades back to colourless; (4) the two beakers
+      side by side, one pink, one clear.
+    # LABEL1 is the seed: three bottle labels whose words are given, in a brief
+    # that also has overlay captions, so a clip cannot pass on clean titles
+    # while every label in the world behind them is squiggles — which is
+    # precisely the case TEXT1 alone kept missing.
+    # EFFECT1: the colour has to change because something was added to it. A
+    # pipette dripping into a beaker that stays clear is the failure.
+    # FACT1 because the chemistry is real and checkable: base goes pink with
+    # phenolphthalein, acid takes it back to colourless, in that order.
+    # SEC1 covers the named glassware and the gloves, the pipette and whatever
+    # else the bench acquires between steps — one criterion now, where the named
+    # props and the unnamed ones used to be PROP1 and SEC1 asking the same
+    # question with different scopes.
+    # SEQ1 alone for the four steps: STEP1 was the same check written twice.
+    # STYLE1: no style is named, and a four-step explainer swinging from
+    # photoreal bench to 3D render between steps is the failure it describes.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - SEC1
+      - STYLE1
+      - ART1
+      - TEXT1
+      - RES1
+      - LABEL1
+      - ENTRY1
+      - ANAT1
+      - PHYS1
+      - id: FACT1
+        bind:
+          claim: >-
+            phenolphthalein turning a sodium hydroxide solution bright pink, and
+            hydrochloric acid added drop by drop taking it back to colourless, in
+            that order
+      - EFFECT1
+      - SEQ1
+      - PACE1
+      - ANIM1
+      - FOCUS1
+      - CONTRAST1
+
+  - seed_id: event_002
+    category: event
+    prompt: >
+      An 8-second live concert clip cut between three distinct camera
+      positions on the same stage: (1) wide from the back of a packed crowd;
+      (2) low angle from the pit as the singer steps up to the microphone,
+      handheld; (3) from side stage, looking across the drummer and out into
+      the audience. Same venue, same band throughout. Stage lighting in deep
+      blue and magenta.
+    # ANGLE1 and TRANS1 together: a live cut is where a generator either
+    # re-renders the same framing three times (ANGLE1) or blends two angles into
+    # one superimposed frame (TRANS1), and those are different defects.
+    # No LIGHT1 despite three shots: concert lighting is meant to change, so
+    # holding it constant would be the wrong ask. MOOD1 and PAL1 carry the blue
+    # and magenta instead, and MOOD1 binds the brief's own words for it.
+    # SEC1 is what CTX1 used to be here plus the drummer and the kit: a packed
+    # crowd that is a smear in shot 1 and a different smear in shot 3 is the
+    # failure, and an empty venue is the other half of it.
+    # STAB1 is deliberately mixed — handheld on shot 2 only — so both a
+    # uniformly locked-off clip and a uniformly shaky one fail it.
+    # SEC1: the drummer and the kit are never named as the subject but a viewer
+    # tracks them from shot 1 to shot 3.
+    rubrics:
+      - SUBJ1
+      - ENV1
+      - TEMP1
+      - SEC1
+      - PAL1
+      - ART1
+      - ANIM1
+      - STAB1
+      - TRANS1
+      - ANAT1
+      - SCENE1
+      - MOMENT1
+      - SEQ1
+      - CONT1
+      - ANGLE1
+      - CAM1
+      - id: MOOD1
+        bind:
+          look: >-
+            stage lighting in deep blue and magenta
+      - EXPR1
+      - EXPO1
+      - FOCUS1

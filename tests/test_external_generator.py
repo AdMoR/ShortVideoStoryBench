@@ -27,7 +27,9 @@ from video_eval_bench.schemas import Seed
 
 
 def make_seed(seed_id: str = "entertainment_001", category: str = "entertainment") -> Seed:
-    return Seed(seed_id=seed_id, category=category, prompt="A short story.")
+    return Seed(
+        seed_id=seed_id, category=category, prompt="A short story.", rubrics=["SUBJ1"]
+    )
 
 
 async def a_video(tmp_path: Path, seed_id: str = "entertainment_001") -> Path:
@@ -239,7 +241,7 @@ async def test_a_partial_import_keeps_the_benchmark_whole(tmp_path):
         output_dir=tmp_path / "run",
         run_id="test_run",
         dataset=ds,
-        category="entertainment",
+        seed_ids=["entertainment_001", "entertainment_002"],
     )
 
     summary = report.summary()

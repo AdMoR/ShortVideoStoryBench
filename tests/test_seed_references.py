@@ -40,9 +40,14 @@ def write_dataset(tmp_path: Path, references: list[dict]) -> Path:
     """A minimal dataset directory: the real rubrics, one seed we control."""
     dataset = tmp_path / "dataset"
     dataset.mkdir()
-    for name in ("rubric_a.yaml", "rubric_b.yaml", "rubric_c.yaml", "rubric_d.yaml"):
+    for name in ("rubrics.yaml", "genres.yaml", "safety.yaml"):
         shutil.copy2(DEFAULT_DATASET_DIR / name, dataset / name)
-    seed = {"seed_id": "marketing_001", "category": "marketing", "prompt": "An ad."}
+    seed = {
+        "seed_id": "marketing_001",
+        "category": "marketing",
+        "prompt": "An ad.",
+        "rubrics": ["SUBJ1", "REF1"],
+    }
     if references:
         seed["references"] = references
     (dataset / "seeds.yaml").write_text(yaml.safe_dump({"seeds": [seed]}))
@@ -64,6 +69,9 @@ def make_seed(references=()) -> Seed:
         seed_id="marketing_001",
         category="marketing",
         prompt="An ad.",
+        # REF1 is the criterion these tests are about: the one that only means
+        # something for a seed carrying reference images.
+        rubrics=["SUBJ1", "REF1"],
         references=list(references),
     )
 
@@ -253,10 +261,11 @@ async def test_the_judge_sees_the_references_before_the_frames(tmp_path):
     assert 'Image 1 — character, "Hero"' in system
 
 
-async def test_s5_is_passed_without_a_model_call_when_there_are_no_references(tmp_path):
+async def test_ref1_is_passed_without_a_model_call_when_there_are_no_references(tmp_path):
     """
-    Passed, not skipped: a section scores as a percentage of its full weight, so
-    an absent S5 would quietly cost a reference-less seed 3 of Section B's 13.
+    Passed, not skipped: the seed listed REF1, so its weight is already in the
+    denominator — dropping it would score the seed zero for a dataset problem
+    rather than for anything the video did.
     """
     from video_eval_bench.bench import MockGenerator
 
@@ -268,17 +277,17 @@ async def test_s5_is_passed_without_a_model_call_when_there_are_no_references(tm
 
     verdict = await judge.judge(seed, video)
 
-    s5 = next(s for s in verdict.scores if s.criterion == "S5")
-    assert s5.passed and s5.score == 3.0
-    assert not any("S5" in call["system"] for call in backend.calls)
+    ref = next(s for s in verdict.scores if s.criterion == "REF1")
+    assert ref.passed and ref.score == 3.0
+    assert not any("REF1" in call["system"] for call in backend.calls)
     assert all(call["n_images"] == 4 for call in backend.calls)
 
 
 def test_the_judge_prompt_of_a_bare_seed_is_unchanged():
     ds = load_dataset()
-    criterion = ds.rubric_a.criteria[0]
+    criterion = ds.rubrics.get("SUBJ1")
     prompt = build_criterion_prompt(
-        make_seed(), ds.categories["marketing"], criterion, n_frames=8
+        make_seed(), ds.genre_name("marketing"), criterion, n_frames=8
     )
     assert "You are shown 8 frames sampled evenly" in prompt
     assert "Reference" not in prompt.split("## Criterion to check")[0]

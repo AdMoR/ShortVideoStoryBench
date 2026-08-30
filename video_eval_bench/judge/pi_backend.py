@@ -65,8 +65,23 @@ class PiBackend(VisionLLM):
         if shutil.which(self.config.pi_bin) is None:
             raise RuntimeError(f"pi binary not found: {self.config.pi_bin!r}")
 
-    async def complete(self, system: str, user_text: str, images: List[bytes]) -> str:
+    async def complete(
+        self,
+        system: str,
+        user_text: str,
+        images: List[bytes],
+        video: Optional[bytes] = None,
+    ) -> str:
         """One pi run: system prompt + user text + attached JPEG images, no tools."""
+        if video is not None:
+            # `read` on an .mp4 gives pi raw container bytes, not a watchable
+            # clip. Refusing beats attaching a file the model cannot decode and
+            # letting it answer anyway.
+            raise ValueError(
+                "PiBackend cannot send video — pi attaches files for the model to "
+                "read, and it cannot decode a video container. Use "
+                "judge.backend=openai for judge.media=video."
+            )
         with tempfile.TemporaryDirectory(prefix="pi_judge_") as tmp:
             tmp_path = Path(tmp)
             mentions = []

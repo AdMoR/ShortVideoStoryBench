@@ -1,0 +1,1323 @@
+# The rubric library: every criterion the benchmark knows how to check.
+#
+# Organised into `sections`, read top to bottom from the generic to the specific.
+# A section is a **category**: it says what kind of check lives there, and it is what
+# makes the file reviewable — you can read the general criteria, then the ones that
+# only matter for people on screen, then the ones that only matter for music.
+#
+# **Sections and tags decide nothing.** They are for reading, grouping and
+# visualisation. Nothing here attaches a criterion to a seed automatically: a seed is
+# judged on the criteria it names, and only those. The seed builder's `select` stage
+# chooses them one at a time from this library, grounded in that seed's brief, and
+# both of its judges then check that choice.
+#
+# That is deliberate, and it is the second time this library has had to learn it. A
+# genre used to select a rubric outright, which is how a social-media brief came to
+# be asked about geographical accuracy — and to score full marks for it, because a
+# criterion that could not apply was answered "PASSED, not applicable" and still
+# counted its full weight. Attaching a whole category at once has the same shape: it
+# grades a video on questions its brief never asked. A criterion reaches a seed
+# because that seed's brief puts it at risk, or it does not reach it at all.
+#
+# `criterion_tags` is the closed vocabulary each criterion is tagged from — the
+# analytic axis that cuts across sections. It is what answers "how much of this
+# benchmark is about text legibility", "which checks need to see more than one shot",
+# "do agents fail continuity criteria more than artifact ones". Three groups, one
+# flat namespace: a tag outside the vocabulary fails the load, for the same reason
+# the seed tag vocabulary is closed — a value that drifts silently splits one column
+# into three.
+#
+# `dimensions` is the older and coarser reporting axis, and is unchanged. Scoring is
+# flat across all of them: a seed's score is the weight it earned over the weight it
+# was asked for, so adding a criterion to a seed makes that seed harder, never
+# differently scaled.
+#
+# Adding a criterion: give it an id nothing else uses, a dimension, an `evidence`
+# class, tags from the vocabulary, and a description a judge can answer yes/no from
+# what it is shown. Put it in the section that best describes what kind of check it
+# is. It reaches no seed until the builder picks it for one.
+#
+# **Read dataset/RUBRICS.md before adding, merging or refining one.** It is the
+# review standard this library is held to — when a criterion needs an application
+# gate, when two criteria are one, why "the palette delivers the mood" is not a
+# criterion and "the brief names {look} and the clip delivers it" is. Every rule in
+# it came from a review of these criteria, and most of the descriptions below are
+# the second draft.
+#
+# `evidence` says what a validator must be able to SEE to settle the criterion:
+#
+#   description — a semantic or narrative fact any faithful description of the video
+#                 captures: what happens, in what order, whether the named moment is
+#                 on screen. The only class a text judge reading a description of a
+#                 video can adjudicate.
+#   pixels      — needs to look at frames: artifacts, anatomy, legibility, colour,
+#                 whether two shots show the same face.
+#   motion      — needs the clip moving, not stills: cut rhythm, flicker, physics,
+#                 whether anything is animated at all.
+#   audio       — needs the audio track.
+#   container   — a file-level property ffprobe settles exactly, with no model.
+#
+# It exists because the seed builder validates generated criteria against the source
+# material it derived them from, and that source is sometimes only *described*, not
+# watched. Asking a text judge whether a video has generation artifacts gets a
+# confident answer that means nothing. `evidence` is what stops the question being
+# asked — see video_eval_bench/seedbuilder/stages.py.
+#
+# `binds` (optional) lists the `{placeholder}` names the description uses, which a
+# seed fills in through `bind:`. One shared criterion can then ask about each seed's
+# own subject while keeping one id, one weight, and one column in every report.
+#
+# `requires_references` marks a criterion that only means anything for a seed
+# carrying reference images. A seed without them should simply not name it.
+dimensions:
+  - key: consistency
+    name: Consistency
+    description: What must not drift between frames and between shots.
+  - key: technical
+    name: Technical Quality
+    description: Generation artifacts and delivery format.
+  - key: fidelity
+    name: Fidelity
+    description: Faithfulness to the brief, its reference images, and the real world.
+  - key: structure
+    name: Structure
+    description: The sequence, timing and coverage the brief asked for.
+  - key: craft
+    name: Craft
+    description: Cinematography, framing and legibility choices.
+
+criterion_tags:
+  # what the criterion looks at — the broad themes, each a thing a video is made of
+  subject: [people, environment, object, text, audio, camera, colour, lighting,
+            story, visual_effects]
+  # narrower themes that live inside one of the subjects above, and are worth
+  # counting separately: `diagram` and `interface` are kinds of on-screen graphic —
+  # one a figure, one a HUD — and `brand` is a kind of object-and-text only marketing
+  # briefs carry. Kept out of `subject` so a report does not list them as peers of
+  # `people` and `environment`: they answer "which niche" rather than "what is this
+  # check about", and a library with two HUD criteria should not read as though a
+  # fifteenth of it were about interfaces.
+  #
+  # A sub-theme is never carried alone. Every criterion tagged with one also carries
+  # the broad subject it sits inside, so filtering by `text` still finds the HUD and
+  # diagram checks.
+  sub_theme: [brand, diagram, interface]
+  # how much of the video it has to see at once
+  span: [single_shot, cross_shot, whole_clip]
+  # the kind of failure it catches
+  failure: [artifact, continuity, instruction_following, realism, legibility]
+
+sections:
+
+  # ── general ───────────────────────────────────────────────────────────────────
+  - key: general
+    name: General
+    description: >
+      Every seed carries these. They are the failures any generated video can
+      commit whatever it was asked for — a subject that drifts, a frame that
+      melts, shots that arrive in the wrong order.
+    criteria:
+
+      - id: SUBJ1
+        dimension: consistency
+        evidence: pixels
+        tags: [people, object, cross_shot, whole_clip, continuity]
+        name: Subject Consistency
+        description: >
+          The video's main subject stays recognisably the same subject from the
+          first frame to the last. The subject is whatever the brief is about — a
+          person, an animal, a product, a vehicle, a machine, a building — and what
+          counts as drift depends on what it is:
+
+            * a person or character: facial features and proportions, hair (cut,
+              colour, length), skin tone, build, and the clothing they are wearing
+              (garment, cut, colour, and its details);
+            * an animal: species, coat or plumage colour and pattern, markings,
+              build, and size relative to its surroundings;
+            * an object, product or vehicle: shape and silhouette, colour and
+              finish, size relative to its surroundings, and any markings, labels
+              or details carried on it;
+            * anything else: the properties a viewer would use to say "that is the
+              same one".
+
+          Judge across the whole clip, not frame by frame: every individual frame
+          can look plausible while the subject still changes between them. Any
+          change a viewer would notice is a failure. A change the brief explicitly
+          calls for (a costume change, a car being repainted on screen) is not.
+
+          Both spans, which is why it carries both tags. On a clip that cuts it is
+          a cross-shot check: the same subject on the other side of the seam. On a
+          clip that does not cut it is a whole-clip check, and a harder one — an
+          unbroken take is where a subject drifts with no cut to hide behind. A
+          brief does not have to have shots for this to apply.
+        weight: 3
+        critical: true
+
+      - id: TEMP1
+        dimension: consistency
+        evidence: motion
+        tags: [whole_clip, artifact]
+        name: Temporal Stability
+        description: >
+          Nothing flickers, morphs, melts or pops between frames. Objects, surfaces
+          and people persist stably over time instead of being re-invented each
+          frame.
+        weight: 3
+        critical: true
+
+      - id: SEQ1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Scene & Step Sequence
+        description: >
+          Everything the brief enumerated appears, all of it, in the order it gave.
+          "Enumerated" is whatever the brief lists as happening in sequence: three
+          numbered scenes, the four steps of a process, a before and an after. None
+          missing, none reordered, none invented that the brief did not list.
+
+          Order and completeness only. Whether each one shows the right content is
+          SCENE1's or MOTION1's question, and whether each is held long enough to
+          read is PACE1's.
+        weight: 3
+        critical: true
+
+      - id: MOTION1
+        dimension: structure
+        evidence: motion
+        tags: [whole_clip, instruction_following]
+        name: Motion Accuracy
+        description: >
+          The described action is performed correctly: the right movement, in the
+          right direction, on the right object.
+        weight: 3
+        critical: true
+
+      - id: ART1
+        dimension: technical
+        evidence: pixels
+        tags: [whole_clip, artifact]
+        name: Visual Artifacts
+        description: >
+          No generation glitches: smearing, ghosting, duplicated or tiling
+          textures, objects clipping through each other, warped edges, garbled
+          background text.
+        weight: 3
+        critical: true
+
+      - id: TRANS1
+        dimension: technical
+        evidence: motion
+        tags: [cross_shot, artifact]
+        name: Transition Integrity
+        description: >
+          Shots change cleanly. A cut lands on one fully-formed shot; a dissolve,
+          wipe or fade the brief asked for resolves the way that transition is
+          supposed to. What fails this is the accidental blend: a frame carrying
+          two whole scenes superimposed at roughly equal opacity, so two subjects,
+          two rooms or two sets of on-screen titles are visible at once.
+
+          ART1 covers smearing and ghosting inside a shot; this covers the seam
+          between shots. Kept apart on purpose — a generator that cannot cut and a
+          generator that smears are two different failures, and charging both to
+          ART1 hides which one is happening.
+        weight: 2
+        critical: true
+
+      - id: STAB1
+        dimension: technical
+        evidence: motion
+        tags: [camera, whole_clip]
+        name: Camera Stability
+        description: >
+          Camera movement is deliberate: smooth where the brief asks for a pan,
+          dolly or static frame, and steady rather than accidentally drifting or
+          jittering. Handheld shake is fine only where the brief asked for it.
+        weight: 1
+
+      - id: RES1
+        dimension: technical
+        evidence: pixels
+        tags: [artifact, legibility]
+        name: Resolution & Detail
+        description: >
+          Resolution and sharpness are high enough to make out the details the
+          brief depends on, rather than mush at the size things are shown.
+        weight: 1
+
+      - id: CAM1
+        dimension: craft
+        evidence: motion
+        tags: [camera, instruction_following]
+        name: Camera Intent
+        description: >
+          Shot sizes and angles are the ones the brief specified — a close-up where
+          it asked for a close-up, a wide where it asked for a wide.
+        weight: 2
+
+      - id: ANIM1
+        dimension: craft
+        evidence: motion
+        tags: [whole_clip, instruction_following]
+        name: Animation Presence
+        description: >
+          The clip is moving footage, not a slideshow. Each shot has to carry
+          motion a viewer would call animation — the subject acts, the camera
+          moves, the scene develops — rather than a still plate given a drifting
+          element, a faint parallax or a slow push to disguise that nothing in it
+          is happening.
+
+          General, and it belongs to every brief: a brief asks for a video, so a
+          clip that does not move fails it whatever the genre. It sat in
+          `interactive` because animation briefs fail it most visibly, which is not
+          the same as being the only ones that can.
+
+          It judges only whether change occurs, never how good the movement is.
+          NATURAL1 is the other half and the two do not overlap: a shot whose actor
+          moves like a puppet passes this and fails NATURAL1, while three
+          near-static illustrated plates in sequence fail this even when each plate
+          is beautiful, because the brief asked for a video. Where a clip has no
+          living subject, NATURAL1 does not apply at all and this still does.
+        weight: 3
+        critical: true
+
+      - id: PHYS1
+        dimension: fidelity
+        evidence: motion
+        tags: [object, environment, whole_clip, realism]
+        name: Physical & Spatial Plausibility
+        description: >
+          The scene holds together as a physical space. Objects rest on what would
+          support them instead of floating or sinking into it; nothing passes
+          through a solid surface or teleports across the frame; things fall,
+          swing, pour and collide the way their weight implies; two objects shown
+          together keep the same size relative to each other; and the geometry of
+          the space — walls, floor, horizon, what is in front of what — stays the
+          shape it was.
+
+          General rather than narrative: any generated clip can break the physics
+          of its own scene, and a brief does not have to name physics for that to
+          be a failure. Judge against the rules the clip itself establishes, so a
+          stylised or animated brief is not failed for being stylised — a cartoon
+          that has been consistently weightless throughout is not failing this,
+          one whose table falls through the floor for two frames is.
+        weight: 2
+        critical: true
+
+      - id: EFFECT1
+        dimension: fidelity
+        evidence: motion
+        tags: [object, story, whole_clip, realism]
+        name: Interaction Consequence
+        description: >
+          When something acts on something else, the world responds. The wiped
+          surface gets cleaner, the poured glass fills, the struck object moves,
+          the cut ingredient comes apart, the hit enemy reacts. A subject
+          performing the motion over and over against a surface, object or
+          character that never changes is the failure this catches — the action is
+          animated, its consequence is not.
+
+          General rather than interactive: it started as a games criterion and is
+          not one. Any brief where something is done *to* something can fail it.
+          MOTION1 asks whether the described action is performed correctly; this
+          asks whether performing it changed anything.
+        weight: 2
+        critical: true
+
+  # ── people ────────────────────────────────────────────────────────────────────
+  - key: people
+    name: People on Screen
+    description: >
+      Bodies, faces and speech. Attached when the brief puts a person in shot —
+      a talking head, an interview, a vlog, or any seed whose subject is a person.
+    criteria:
+
+      - id: ANAT1
+        dimension: fidelity
+        evidence: pixels
+        tags: [people, realism, single_shot]
+        name: Anatomical Integrity
+        description: >
+          Bodies are well-formed and species-correct: the right number of limbs,
+          fingers, eyes, wings or legs, joints bending the way they can bend, no
+          fused or duplicated parts.
+        weight: 2
+        critical: true
+
+      - id: EXPR1
+        dimension: craft
+        evidence: pixels
+        tags: [people, story, single_shot]
+        name: Facial Expression
+        description: >
+          Faces carry the emotion the brief asked for, legibly, at the moment it is
+          supposed to land.
+        weight: 2
+
+      - id: NATURAL1
+        dimension: craft
+        evidence: motion
+        tags: [people, realism]
+        name: Natural Movement
+        description: >
+          Head turns, blinks, gestures and weight shifts look alive and continuous.
+          A subject locked in one pose for the whole clip is a failure, and so is
+          one whose movement is jerky, rubbery, or repeats the same loop.
+
+          About a living subject's own movement, and only that. ANIM1 asks the
+          different question of whether the clip is moving footage at all: a
+          slideshow of stills fails ANIM1, while a shot that genuinely moves but
+          moves its actor like a puppet fails this one. A clip can fail either
+          without the other.
+        weight: 2
+
+      - id: LIPSYNC1
+        dimension: fidelity
+        evidence: audio
+        tags: [people, audio, realism]
+        name: Lip Sync
+        description: >
+          Mouth movements match the spoken line in timing and shape. Lips frozen, a
+          mouth shut while speaking, or clearly wrong syllable shapes are failures.
+        weight: 3
+        critical: true
+
+
+  # ── continuity ────────────────────────────────────────────────────────────────
+  - key: continuity
+    name: Cross-Scene Consistency
+    description: >
+      What must survive a cut. Attached when the brief implies more than one shot
+      of the same material — a montage, a demo, a story that returns to a place.
+      A single-shot brief grounds none of this, and the seed judge says so.
+
+      SUBJ1 is the one consistency check that is not here: it holds the main
+      subject together whether or not the clip cuts, so it sits in `general`.
+      Everything else in this section needs a second shot of the same material to
+      have a question at all — with one half-exception, SEC1, whose "is the scene
+      dressed at all" half a single-shot brief can still fail.
+    criteria:
+
+      - id: ENV1
+        dimension: consistency
+        evidence: pixels
+        tags: [environment, cross_shot, continuity]
+        name: Environment Consistency
+        description: >
+          Wherever two shots depict the same place, it is the same place. Compare
+          the frames against each other and look for details that do not survive a
+          cut: wallpaper, paint or tiling that changes pattern or colour; furniture
+          that moves, disappears, or appears twice (a second television in a living
+          room already shown to have one); windows, doors or floors that change
+          number, position or material; a room whose layout could not be the one
+          seen from the other angle.
+
+          Judge only shots of the same location. A brief that deliberately travels
+          between places — a story moving from a kitchen to a street to a cafe —
+          does not fail this for the places being different; it fails only if one
+          of those places contradicts itself between two shots of it.
+        weight: 3
+        critical: true
+
+      - id: LIGHT1
+        dimension: consistency
+        evidence: pixels
+        tags: [lighting, cross_shot, continuity]
+        name: Lighting Consistency
+        description: >
+          Light direction, colour temperature and intensity stay consistent within
+          a scene, and consistent between shots that share a location and a moment.
+        weight: 2
+
+      - id: PAL1
+        dimension: consistency
+        evidence: pixels
+        tags: [colour, cross_shot, continuity]
+        name: Palette Consistency
+        description: >
+          The colour grade holds across the clip. Shots do not swing between
+          unrelated palettes without the brief asking for it.
+        weight: 1
+
+      - id: SEC1
+        dimension: consistency
+        evidence: pixels
+        tags: [people, object, environment, cross_shot, whole_clip, continuity]
+        name: Secondary Element Consistency
+        description: >
+          Everything on screen that is not the main subject is populated and holds
+          together. Two halves of one question about the same material:
+
+            * **Present.** The setting is dressed the way it implies — the crowd at
+              the venue, the traffic in the street, the tools on the workbench, the
+              glassware on the bench, the other diners in the restaurant — rather
+              than an empty plate with the subject alone in it.
+            * **Consistent.** Those elements, and the props the brief names by name
+              — the letter, the plate, the tool — keep their shape, colour and
+              construction across the cuts, and stay in the hand or the place the
+              action left them in.
+
+          This is one criterion because it is one failure mode: the generator does
+          not track what it is not being asked about. It absorbed PROP1 (named
+          props) and CTX1 (background context), which were the same question asked
+          twice with a narrower scope each time.
+
+          The two halves carry different spans, which is why it holds both tags.
+          "Present" is answerable from any clip, cuts or no cuts. "Consistent"
+          needs the same element on screen more than once — across a cut, or across
+          an unbroken take.
+
+          Judge only elements a viewer would actually track from one shot to the
+          next. A crowd whose individual faces differ between shots is not a
+          failure; a sprig of parsley that becomes a ball of leaves, a wire brush
+          that turns into a different tool between passes, or a boss whose blocks
+          reconfigure between two frames of the same fight, is.
+        weight: 2
+        critical: true
+
+      - id: ENTRY1
+        dimension: consistency
+        evidence: motion
+        tags: [story, cross_shot, continuity]
+        name: Entrance & Exit Continuity
+        description: >
+          People and objects enter and leave the frame by moving. A hand that is
+          absent in one frame and fully in position mid-gesture in the next has
+          materialised rather than arrived, and the same goes for anything that
+          vanishes without leaving.
+
+          Distinct from TEMP1, which is about a thing already on screen flickering
+          or morphing in place. This is about arrival and departure: was there a
+          lead-in, or did the clip cut the motion that would explain it?
+        weight: 2
+        critical: true
+
+      - id: STYLE1
+        dimension: consistency
+        evidence: pixels
+        tags: [colour, cross_shot, continuity]
+        name: Internal Style Consistency
+        description: >
+          The clip is drawn, lit and rendered in ONE visual idiom from start to
+          finish. Faces built flat with dot eyes in one shot and modelled with
+          shading and a nose line in the next are two styles, not one, even when
+          the character is recognisably the same person.
+
+          ASSET1 asks whether the style matches the one the brief named; this asks
+          whether the clip holds any single style at all, and so applies to briefs
+          that name no style.
+        weight: 2
+
+      - id: CONT1
+        dimension: structure
+        evidence: motion
+        tags: [story, cross_shot, continuity]
+        name: Action Continuity
+        description: >
+          Action flows logically across cuts: what a shot ends doing is what the
+          next shot continues, without unexplained jumps in position or state.
+        weight: 3
+        critical: true
+
+      - id: CUT1
+        dimension: structure
+        evidence: motion
+        tags: [whole_clip, instruction_following]
+        name: Cut Rhythm
+        description: >
+          The clip is actually cut at the rhythm the brief asked for — fast cuts
+          mean visibly distinct shots in quick succession, not one continuous take.
+        weight: 2
+
+
+  # ── light ─────────────────────────────────────────────────────────────────────
+  - key: light
+    name: Light, Exposure & Grade
+    description: >
+      What the light is doing, gathered into one place to look. Exposure and grade
+      used to sit in `instructional`, filed next to text legibility, which is where
+      nobody would think to look for them.
+
+      LIGHT1 stays next door in `continuity` on purpose: it asks whether the light
+      matches *between two shots*, which is a continuity question. These two ask
+      whether the light in the frame is usable at all, and whether it is the light
+      the brief named.
+    criteria:
+
+      - id: EXPO1
+        dimension: craft
+        evidence: pixels
+        tags: [lighting, legibility]
+        name: Exposure Quality
+        description: >
+          The frame is exposed so that what it shows can be seen. On any frame the
+          brief expects a viewer to read:
+
+            * no large region — more than a small specular highlight — is blown to
+              flat white with no detail left in it;
+            * no large region is crushed to flat black with no detail left in it;
+            * the face, label or working surface the shot is about is bright enough
+              to make out, and is lost to neither extreme.
+
+          Judged against what the brief asked for, not against a house style. A
+          brief that asks for a silhouette, a night scene, a low-key look or a
+          deliberately blown high-key look passes on its own terms. This catches
+          the clip that lost its subject to the light without being asked to.
+        weight: 1
+
+      - id: MOOD1
+        dimension: craft
+        evidence: pixels
+        tags: [colour, lighting, instruction_following]
+        name: Named Look Match
+        binds: [look]
+        description: >
+          Applies only when the brief names the look in so many words. This brief
+          names {look}, and that phrase is the whole question: the clip's dominant
+          colour cast and key light deliver it, over most of the runtime, rather
+          than defaulting to neutral daylight with one shot that happens to fit.
+
+          Gated on the naming because the ungated version — "the palette delivers
+          the mood" — is the vaguest thing a rubric can ask, and a brief that names
+          no look leaves it to taste. Whether the grade *holds* across the clip is
+          PAL1; whether the frame is readable is EXPO1; this is only whether the
+          named look is the look.
+        weight: 2
+
+
+  # ── attention ─────────────────────────────────────────────────────────────────
+  - key: attention
+    name: Attention & Emphasis
+    description: >
+      Where the clip points the viewer — in the frame, and across the runtime.
+      Both criteria here were filed as general craft once and should not have been:
+      "is the composition clean" and "does the clip spend its time well" are the
+      two places a rubric slides into taste. They are kept, narrowed, and gated on
+      the brief naming what the shot or the clip is about. A brief that names
+      neither grounds neither.
+    criteria:
+
+      - id: FOCUS1
+        dimension: craft
+        evidence: pixels
+        tags: [camera, single_shot, legibility]
+        name: Subject Emphasis
+        description: >
+          Applies only where the brief says what a shot is about — the product, the
+          face, the label, the diagram, the moment. In those shots that element is
+          the one the frame directs the eye to:
+
+            * it is in focus, whatever the rest of the frame does;
+            * it is unobstructed and fully in frame, not cropped or hidden behind
+              something else;
+            * nothing the brief did not ask for competes with it — a stray object,
+              an extra character, a leftover element, a background detail brighter
+              or larger than the subject.
+
+          The third bullet is the old CLEAN1, folded in here: "nothing irrelevant
+          is on screen" and "the subject is what the frame emphasises" were being
+          answered from the same look at the same frame, and neither could be
+          graded without the other. A busy frame is not a failure. A busy frame
+          that buries what the brief pointed at is.
+        weight: 2
+
+      - id: HIGHL1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Highlight Coverage
+        description: >
+          Applies only to a brief built around one named moment — the goal, the
+          finish line, the boss kill, the trick, the reveal — where that moment is
+          the point of the clip and everything else is approach. Then:
+
+            * the named moment is on screen from its start to its resolution, not
+              cut away from part-way through;
+            * the clip reaches it rather than ending on the approach, and does not
+              bury it as a passing detail among unrelated material.
+
+          MOMENT1 is the plain version — is the moment on screen at all — and is
+          what a brief that merely mentions a moment should carry. This is for the
+          brief whose whole shape is that moment.
+        weight: 1
+
+
+  # ── references ────────────────────────────────────────────────────────────────
+  - key: references
+    name: Reference-Based Briefs
+    description: >
+      Only for a brief that ships reference images, and the only section with a
+      hard activation rule: everything in it is `requires_references: true`. A seed
+      with no references names none of it. A seed that names one and whose images
+      fail to load is passed without a model call, so a dataset problem never
+      scores as a video defect.
+
+      It is a section of its own because a reference changes what "correct" means.
+      With no reference, SUBJ1 asks whether the subject stayed the same as itself;
+      with one, the question becomes whether it was the right subject in the first
+      place — a different failure, and one gradeable only against the images the
+      brief supplied.
+    criteria:
+
+      - id: REF1
+        dimension: fidelity
+        evidence: pixels
+        tags: [people, object, environment, instruction_following]
+        name: Reference Adherence
+        description: >
+          Every subject, location, prop or style the brief supplied a reference
+          image for is recognisably the same one in the video: the same face, the
+          same garment and colour, the same place, the same object, the same look.
+          Judge against the reference images shown before the clip, not against the
+          wording of the prompt. A subject that drifts between frames fails this
+          even if each individual frame resembles the reference.
+        weight: 3
+        critical: true
+        requires_references: true
+
+      - id: REFCOV1
+        dimension: fidelity
+        evidence: pixels
+        tags: [people, object, environment, instruction_following]
+        name: Reference Coverage
+        description: >
+          Every reference supplied is actually used: each referenced subject,
+          location, prop or style appears in the clip, in the role its reference
+          names. A brief that hands over a character and a location, and comes back
+          with the character standing somewhere else, has dropped half of what it
+          was given however well the other half matches.
+
+          REF1 asks whether what was shown matches the images. This asks whether
+          what the images were for was shown at all — a clip must not pass by
+          quietly leaving out the reference it found hard.
+        weight: 2
+        requires_references: true
+
+
+  # ── audio ─────────────────────────────────────────────────────────────────────
+  - key: audio
+    name: Audio — Speech, Sound & Music
+    description: >
+      The audio track, all of it. Attached when the brief quotes lines to be spoken,
+      names the music, or tags the seed as carrying either.
+
+      Speech and music used to be two sections and two tags, which split one axis in
+      half: "how much of this benchmark is about sound" could not be answered without
+      adding two numbers, and a criterion like ACONT1 — the ambience bed under both —
+      belonged to neither. They are one section and one `audio` tag now. The
+      distinction that survives is per-criterion, where it is legible in the text.
+
+      Every criterion here is `evidence: audio`, and no judge backend in this repo
+      is fed sound yet — judge/frames.py hands the model still frames. They will
+      therefore record `unchecked`, which is the same status every `pixels` and
+      `motion` criterion already gets from the metadata judge: nothing looked, as
+      opposed to something found at fault. They are written now because the brief
+      synthesis already extracts `spoken` lines, so the seeds carry the grounding.
+    criteria:
+
+      # Deliberately listed by no seed: both judge media modes reach the model as
+      # still frames (judge/frames.py, and the video arm decodes server-side), so
+      # there is no audio to match. It stays in the library for the day a judge
+      # backend carries sound; a seed listing it today would grade silence.
+      - id: AV1
+        dimension: fidelity
+        evidence: audio
+        tags: [audio, whole_clip, realism]
+        name: Audio-Visual Match
+        description: >
+          The audio matches the visible action — sound sources on screen, speech
+          from the speaking character, no track unrelated to the picture.
+        weight: 2
+
+      - id: LANG1
+        dimension: fidelity
+        evidence: audio
+        tags: [audio, instruction_following]
+        name: Speech Language Match
+        description: >
+          The spoken audio is in the language the brief specifies. A brief that
+          quotes its lines fixes the language of those lines; a video that delivers
+          them in another language, or in phonemes that are not any language, fails
+          this however well the picture matches.
+
+          Judge only the language, not the wording: a paraphrase in the right
+          language passes, and a verbatim reading in the wrong one does not.
+        weight: 2
+        critical: true
+
+      - id: ACONT1
+        dimension: consistency
+        evidence: audio
+        tags: [cross_shot, continuity]
+        name: Audio Continuity
+        description: >
+          The audio bed survives the cuts. Room tone, ambience and level stay
+          continuous across a shot change instead of dropping to silence, jumping in
+          volume, or switching to an unrelated space between one shot and the next.
+
+          A cut the brief marks as a change of place is allowed to change ambience
+          with it. What fails is the change no cut in the brief accounts for.
+        weight: 2
+
+      - id: SPEECH1
+        dimension: technical
+        evidence: audio
+        tags: [audio, legibility]
+        name: Speech Intelligibility
+        description: >
+          Lines the brief asks to be spoken are audible and intelligible: not buried
+          under music or effects, not clipped mid-word, not so degraded that a
+          listener could not write down what was said.
+        weight: 2
+        critical: true
+
+      - id: CAPTION1
+        dimension: fidelity
+        evidence: audio
+        tags: [audio, text, legibility]
+        name: Caption Accuracy
+        description: >
+          Where the video renders subtitles or captions, they say what is actually
+          spoken, and they are on screen while it is being said. Judge the match
+          between the two tracks; whether the lettering is legible is TEXT1's
+          question, not this one.
+        weight: 2
+
+      - id: MUSCONT1
+        dimension: consistency
+        evidence: audio
+        tags: [audio, cross_shot, continuity]
+        name: Musical Continuity
+        description: >
+          One continuous piece of music runs across the shot changes. The music does
+          not restart, cut to silence, or change key, tempo or instrumentation at a
+          cut the brief gave no reason to change at — the picture cuts, the track
+          does not.
+
+          This is the criterion a shot-by-shot generation pipeline fails by
+          construction: each shot generated with its own audio yields a video whose
+          music restarts every few seconds. A brief that asks for a deliberate drop
+          or a change of track at a named moment grounds that change, and it passes.
+        weight: 3
+        critical: true
+
+      - id: BEAT1
+        dimension: structure
+        evidence: audio
+        tags: [audio, whole_clip, instruction_following]
+        name: Beat Alignment
+        description: >
+          Where the brief asks the edit to follow the music, the cuts land on the
+          beat rather than at arbitrary points across it. Judge the relationship
+          between the cut points and the audible pulse, not the choice of tempo.
+
+          Only for a brief that asks for it. An edit that ignores the beat is a
+          legitimate choice unless the brief fixed it.
+        weight: 2
+
+      - id: MUSFIT1
+        dimension: fidelity
+        evidence: audio
+        tags: [audio, instruction_following]
+        name: Musical Character Match
+        description: >
+          The music is the kind of music the brief named — its genre, its mood, its
+          instrumentation, its energy. A brief asking for "upbeat electronic" and
+          getting a solo piano ballad fails this, whatever the picture does.
+
+          Judge against what the brief names and nothing more. A brief that does not
+          describe the music grounds no verdict here.
+        weight: 2
+
+
+  # ── narrative ─────────────────────────────────────────────────────────────────
+  - key: narrative
+    name: Narrative & Scene Fidelity
+    description: >
+      Whether the video is of the thing the brief described: the right setting, and
+      the moment the brief is about actually on screen. Attached to entertainment
+      briefs and to anything cut as a narrative.
+
+      It used to hold the story-arc criteria (now `transformation`), the mood and
+      exposure ones (now `light`) and physical plausibility (now `general`, since
+      any clip can break its own physics). What is left is the pair that asks
+      whether the brief's *content* is there at all.
+    criteria:
+
+      - id: SCENE1
+        dimension: fidelity
+        evidence: description
+        tags: [environment, story, instruction_following]
+        name: Scene Match
+        description: >
+          The setting matches what the brief described — the right location and
+          kind of space, the right time of day, the right weather, and the key
+          objects the brief said would be there.
+        weight: 3
+        critical: true
+
+      - id: MOMENT1
+        dimension: fidelity
+        evidence: description
+        tags: [story, instruction_following]
+        name: Key Moment Inclusion
+        description: >
+          The specific moment the brief is about is actually on screen and
+          identifiable, not implied or cut around.
+        weight: 3
+        critical: true
+
+
+  # ── transformation ────────────────────────────────────────────────────────────
+  - key: transformation
+    name: Transformation & Story Beats
+    description: >
+      A narrow section, for one shape of brief: the one that promises a change and
+      the work that causes it — before and after, problem and solution, dirty and
+      clean, broken and fixed, mess then product reveal. Restoration clips,
+      cleaning ads, makeovers, repair explainers, most short-form "satisfying"
+      formats.
+
+      These four were general story criteria once, and were the least gradeable
+      things in the library: "is the context established", "is there tension" have
+      no answer for a brief that is a montage, a talking head or an explainer. They
+      only mean something when the brief has a before, a middle and an after — so
+      they are gated on that here, and each names the beat it grades. A brief with
+      no promised change carries none of them.
+
+      CAUSE1 is the one that matters most and the one a generator fails most
+      often: the before and after are easy to render and the work between them is
+      not, so a clip cuts straight from one to the other.
+    criteria:
+
+      - id: SETUP1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Before State
+        binds: [before]
+        description: >
+          The "before" the brief describes — {before} — is on screen, identifiably,
+          before the change begins. Not implied by a caption, not inferable from
+          the after: shown, long enough and clearly enough that a viewer who did
+          not read the brief could say what the starting state was.
+
+          Applies only to a brief that promises a change from one state to another.
+        weight: 2
+
+      - id: TENS1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Stakes Shown
+        binds: [stakes]
+        description: >
+          The consequence the brief attaches to the "before" — {stakes} — is shown
+          rather than skipped on the way to the resolution: the mess spreading, the
+          part failing, the frustration on the face, the deadline closing. It has
+          to be a visible event in the clip, not a mood a viewer might infer.
+
+          Applies only where the brief states such a consequence. A brief that
+          describes a change with no stakes attached does not carry this.
+        weight: 2
+
+      - id: CAUSE1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, realism]
+        name: Causal Action Shown
+        description: >
+          The action that causes the promised change happens on screen: the
+          scrubbing, the sanding, the assembling, the pouring, the repair. Cutting
+          from the "before" state straight to the "after" state, with the work that
+          connects them never shown, fails this however good both states look.
+
+          SETUP1 asks whether the before is established and REVEAL1 whether the
+          payoff lands. Both can pass on a clip that skipped the middle, which is
+          the part a transformation brief is actually about. EFFECT1 in `general`
+          is the adjacent check for a single action: this one is about the arc.
+        weight: 3
+        critical: true
+
+      - id: REVEAL1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Payoff Reveal
+        binds: [payoff]
+        description: >
+          The payoff the brief names — {payoff} — is shown clearly and
+          unmistakably, at the point in the clip the brief puts it, and held long
+          enough to register. A payoff glimpsed in a single transitional frame, or
+          arriving before the work that earns it, fails.
+
+          Applies only where the brief names a payoff and where in the clip it
+          belongs.
+        weight: 2
+        critical: true
+
+
+  # ── instructional ─────────────────────────────────────────────────────────────
+  - key: instructional
+    name: Explanation & Instruction
+    description: >
+      Whether the thing being taught survives being filmed: the claim it makes, the
+      legibility of a diagram or a label, the coverage the explanation needs.
+
+      Step *order* is not here any more — it was STEP1, and it was SEQ1 in
+      `general` written twice. A brief that lists four steps is a brief that
+      enumerates four things, and SEQ1 already asks whether all four arrived in
+      order.
+    criteria:
+
+      - id: FACT1
+        dimension: fidelity
+        evidence: description
+        tags: [whole_clip, realism, instruction_following]
+        name: Claim Accuracy
+        binds: [claim]
+        description: >
+          The clip depicts {claim}, and depicts it correctly — the mechanism
+          working the way it really works, the parts in the real arrangement, the
+          stated result being the result that really follows.
+
+          Judge that statement and nothing else. The bind is required, and it is
+          the whole criterion: ungated, this reads as "the video should be true",
+          which no judge can answer the same way twice and which fails any clip a
+          judge happens to know something about. The seed must name a claim that is
+          checkable and that the brief itself asserts — the four-stroke order, the
+          indicator that turns pink in base, the date on the blackboard — not the
+          general truthfulness of the video.
+        weight: 3
+        critical: true
+
+      - id: DIAG1
+        dimension: fidelity
+        evidence: pixels
+        tags: [diagram, text, legibility]
+        name: Diagram Integrity
+        description: >
+          Applies only when the brief calls for a diagram, chart, schematic or
+          labelled figure on screen. It is about that drawing as a drawing:
+
+            * every connector meets something at both ends — no line that stops in
+              space, no arrow pointing at nothing;
+            * closed shapes are closed, and repeated elements are drawn the same
+              way each time they appear;
+            * each label sits beside the one element it labels, with no ambiguity
+              about which element that is, and no element the brief named is left
+              unlabelled;
+            * nothing is duplicated or orphaned between steps of the figure.
+
+          Whether the words in the labels are legible is TEXT1's question, and
+          whether what the diagram asserts is true is FACT1's.
+        weight: 2
+
+      - id: ANGLE1
+        dimension: structure
+        evidence: description
+        tags: [camera, cross_shot, instruction_following]
+        name: Multi-Angle Coverage
+        description: >
+          The subject is covered from the number of distinct camera positions the
+          brief asked for — genuinely different viewpoints, not the same framing
+          re-rendered.
+        weight: 3
+        critical: true
+
+      - id: TEXT1
+        dimension: technical
+        evidence: pixels
+        tags: [text, legibility]
+        name: Text Legibility
+        description: >
+          On-screen text is sharp, correctly spelled, fully visible and
+          unobstructed — real words, not letter-shaped noise. Judges rendering, not
+          wording; whether it says the right thing is COPY1.
+        weight: 2
+        critical: true
+
+      - id: LABEL1
+        dimension: technical
+        evidence: pixels
+        tags: [text, environment, legibility]
+        name: In-World Text Legibility
+        description: >
+          Text that belongs to the scene rather than to the edit — a product
+          label, packaging, a shop sign, a blackboard, a screen or a book in
+          frame — is made of real, well-formed words at the size it is shown, not
+          squiggles standing in for writing.
+
+          TEXT1 is routinely answered on the overlay captions alone, which are
+          often clean while every label in the world behind them is noise. This
+          asks the question separately so a clip cannot pass on its titles.
+        weight: 2
+
+      - id: CONTRAST1
+        dimension: craft
+        evidence: pixels
+        tags: [colour, legibility]
+        name: Contrast
+        description: >
+          Text and key visuals stand out against what is behind them, at the size
+          they are shown.
+        weight: 1
+
+
+  # ── promotional ───────────────────────────────────────────────────────────────
+  - key: promotional
+    name: Marketing & Short-Form
+    description: >
+      Briefs that are selling something or built for a feed: the product, the
+      branding, and the hook/CTA shape short-form depends on.
+    criteria:
+
+      - id: LOGO1
+        dimension: fidelity
+        evidence: pixels
+        tags: [brand, text, instruction_following]
+        name: Logo Accuracy
+        description: >
+          The logo is present where the brief asks for it, with the correct shape,
+          proportions and colours, the right way up, and not warped or partially
+          redrawn.
+        weight: 3
+        critical: true
+
+      - id: BRAND1
+        dimension: fidelity
+        evidence: pixels
+        tags: [brand, colour, instruction_following]
+        name: Brand Colour Match
+        description: >
+          Brand colours match the ones the brief specified, rather than a nearby
+          hue.
+        weight: 2
+
+      - id: PROD1
+        dimension: fidelity
+        evidence: pixels
+        tags: [object, brand, instruction_following]
+        name: Product Visibility
+        description: >
+          The product is clearly visible and unobstructed for long enough to be
+          read as the subject — not cropped, blurred, turned away or buried in the
+          background.
+        weight: 3
+        critical: true
+
+      - id: COPY1
+        dimension: fidelity
+        evidence: pixels
+        tags: [text, brand, legibility]
+        name: On-Screen Copy Accuracy
+        description: >
+          The words shown on screen are the words the brief asked for — the right
+          call to action, the right claim, the right product name. Judges wording,
+          not rendering; whether it is sharp and readable is TEXT1.
+        weight: 2
+
+      - id: TRIG1
+        dimension: fidelity
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Emotional Trigger Fidelity
+        binds: [trigger]
+        description: >
+          Applies only when the brief names the response it is after — {trigger}.
+          The question is not whether a viewer would feel it, which no two judges
+          would answer alike, but whether the clip contains an identifiable shot
+          whose content *is* that trigger: the mess piling up for frustration, the
+          finished result held on screen for satisfaction, the countdown or the
+          near-miss for urgency, the withheld answer for curiosity, the problem
+          solved for relief. A judge that cannot point to the shot fails it.
+
+          The failure it exists for is the competent illustration: a clip that
+          depicts the topic accurately and contains no such shot.
+        weight: 2
+        critical: true
+
+      - id: HOOK1
+        dimension: structure
+        evidence: description
+        tags: [story, whole_clip, instruction_following]
+        name: Hook
+        description: >
+          Something changes in the opening of the clip — within roughly the first
+          shot, or the first quarter of a clip too short to have shots. A cut, a
+          subject entering, a movement toward or away from camera, a reveal, an
+          on-screen title arriving: any visible change counts.
+
+          What fails is the opening that establishes the scene and waits — a held
+          frame in which nothing occurs, however slowly the camera drifts across
+          it, until the clip's first real event some seconds in. Stated as a
+          threshold on purpose: "is the opening engaging" cannot be answered the
+          same way twice, "does anything happen before the first event" can.
+        weight: 2
+        critical: true
+
+      - id: CTA1
+        dimension: structure
+        evidence: description
+        tags: [text, story, instruction_following]
+        name: Call to Action
+        description: >
+          The call to action is present and readable in the closing section, where
+          the brief asked for it.
+        weight: 2
+        critical: true
+
+      - id: PACE1
+        dimension: structure
+        evidence: motion
+        tags: [text, whole_clip, legibility]
+        name: Reading Time
+        description: >
+          Anything the brief requires the viewer to *read* is held long enough to
+          read: about a second for a short line of on-screen text, and the same
+          order for a caption, a diagram step, a price, a product shot the clip is
+          asking to be looked at. Nothing that must be read appears for less than
+          half a second, and nothing is replaced before it has finished resolving.
+
+          "Long enough" is the reading time of the thing on screen, which is what
+          makes this gradeable — it is not an opinion about the edit. How fast the
+          clip cuts as a style is CUT1, and CUT1 asks it against what the brief
+          specified.
+        weight: 2
+
+      - id: AR1
+        dimension: technical
+        evidence: container
+        tags: [whole_clip, instruction_following]
+        name: Aspect Ratio
+        description: >
+          The frame matches the aspect ratio the brief asked for, with no letterbox
+          or pillarbox bars and no stretched or squashed content.
+        weight: 2
+        critical: true
+
+
+  # ── interactive ───────────────────────────────────────────────────────────────
+  - key: interactive
+    name: Interfaces, Games & Art Style
+    description: >
+      Synthetic imagery with rules of its own — a HUD that has to read as a real
+      HUD and report the truth, a game asset that has to match its art style, an
+      effect that has to read as the effect it is meant to be.
+
+      UI1 and UIVAL1 apply only to a brief that puts an interface on screen: a game
+      HUD, a screen capture, a dashboard. That is a narrow slice of briefs, which is
+      why `interface` is tagged as a sub-theme rather than as a subject of its own.
+
+      ANIM1 used to live here and does not any more. "The clip actually moves" is
+      not a property of animated briefs — it is what every brief asks for — so it
+      sits in `general` now.
+    criteria:
+
+      - id: UI1
+        dimension: fidelity
+        evidence: pixels
+        tags: [interface, text, realism, legibility]
+        name: Interface Integrity
+        description: >
+          HUD and interface elements the brief calls for are present, correctly
+          laid out, stable in position, and made of real widgets rather than
+          interface-shaped smears.
+        weight: 3
+        critical: true
+
+      - id: UIVAL1
+        dimension: fidelity
+        evidence: pixels
+        tags: [interface, text, realism]
+        name: Interface Value Coherence
+        description: >
+          The numbers and meters an interface shows behave. A score counts in the
+          direction it is supposed to count and moves when something happens that
+          would move it; a health or progress bar tracks the damage or progress the
+          clip actually shows; a timer runs one way. A counter that drifts up and
+          down between frames with nothing on screen to cause it fails, as does a
+          bar that flashes depleted and refills with no hit shown.
+
+          UI1 asks whether the HUD is present, laid out and made of real widgets.
+          A HUD can pass that completely and still be reporting nonsense, which is
+          what this asks.
+        weight: 2
+
+      - id: ASSET1
+        dimension: fidelity
+        evidence: pixels
+        tags: [visual_effects, colour, instruction_following]
+        name: Art Style Accuracy
+        description: >
+          Characters, environments and props are drawn in the art style the brief
+          specified, consistently — not a mix of that style and photorealism.
+        weight: 3
+        critical: true
+
+      - id: VFX1
+        dimension: fidelity
+        evidence: pixels
+        tags: [visual_effects, instruction_following]
+        name: Effect Accuracy
+        description: >
+          Visual effects — particles, impacts, trails, weather — match the style
+          the brief asked for and read as the effect they are meant to be.
+        weight: 2
+
+  # ── world ─────────────────────────────────────────────────────────────────────
+  - key: world
+    name: Period & Culture
+    description: >
+      Claims a brief makes about a real period or a real culture. The narrowest
+      section in the library, and the one that taught it the lesson: these are the
+      criteria that most often reached briefs with no business carrying them — a
+      kitchen-cleaning ad asked about geographical accuracy, and scoring full marks
+      for it.
+
+      Both are gated on the brief *naming* the period or the symbol, and both bind
+      it, so the judge is asked about a stated thing rather than about the past in
+      general. "Realistic", "modern day" and "a European city" name neither: a clip
+      being realistic is not a claim about a period, and every clip is set in some
+      culture.
+
+      GEO1 — landmarks rendered with "the right shapes in the right positions" —
+      was removed rather than gated. It gave no judge a way to decide what right
+      was, and a brief that genuinely turns on one landmark is better served by a
+      local criterion on that seed that says what to check.
+    criteria:
+
+      - id: HIST1
+        dimension: fidelity
+        evidence: pixels
+        tags: [environment, object, realism]
+        name: Period Accuracy
+        binds: [period]
+        description: >
+          Applies only when the brief names a period — here, {period}. Clothing,
+          technology, vehicles, signage, hairstyles and architecture on screen
+          belong to it, and nothing visible postdates it: a wristwatch, a modern
+          car, a plastic chair, a printed logo in a scene set before them.
+
+          A brief that names no period carries none of this — there is nothing for
+          a present-day clip to be anachronistic against.
+        weight: 2
+        critical: true
+
+      - id: CULT1
+        dimension: fidelity
+        evidence: pixels
+        tags: [environment, realism]
+        name: Cultural Symbolism
+        binds: [symbol]
+        description: >
+          Applies only when the brief names a symbol whose depiction can be checked
+          — here, {symbol}: a flag, an emblem, a religious icon, an item of
+          traditional dress. It is rendered with the right colours, the right
+          number and arrangement of elements and the right orientation, and shown
+          in the context it belongs to rather than invented or blended with another
+          tradition's.
+
+          A brief that names no such symbol does not carry this. Every video is set
+          in some culture, which is not what this asks.
+        weight: 2

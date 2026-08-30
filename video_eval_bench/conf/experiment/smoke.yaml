@@ -13,6 +13,10 @@
 
 defaults:
   - override /generator: pi
+  # Names the two tools rather than making the agent discover them: this run is
+  # about whether it can drive generate_video and hand the result back, not about
+  # whether it can work out that a generator exists.
+  - override /system_prompt: tooled
   - override /video_backend: fake
   - override /judge: pi
 

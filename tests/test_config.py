@@ -68,6 +68,22 @@ def test_packaged_prompts_resolve_to_real_files():
     assert "{prompt}" in bench.generator.system_prompt.task()  # still a template
 
 
+def test_smoke_names_the_tools_in_its_system_prompt():
+    """
+    The smoke arm asks whether the agent can *drive* the tools, so it hands them
+    over by name instead of making it discover them.
+
+    Locked down because the failure is silent and costs a whole budget: a real
+    run decided the stand-in generator was broken, drove the WanGP server by hand
+    over HTTP instead, and timed out without ever calling submit_video.
+    """
+    bench, choices, _ = build("experiment=smoke")
+    assert choices.get("system_prompt") == "tooled"
+    system = bench.generator.system_prompt.system()
+    assert "generate_video" in system
+    assert "submit_video" in system
+
+
 def test_experiment_preset_drops_inapplicable_axes():
     bench, choices, _ = build("experiment=mock")
     assert bench.generator.kind == "mock"
@@ -90,7 +106,7 @@ def test_video_backend_arms_swap_the_generation_tool():
     assert none.generator.extensions == []
     assert [p.name for p in fake.generator.extensions] == ["fake_video_tools.ts"]
     assert [p.name for p in real.generator.extensions] == ["wangp_tools.ts"]
-    assert real.generator.env["LTX_SERVER_URL"].startswith("http")
+    assert real.generator.env["WANGP_SERVER_URL"].startswith("http")
 
 
 def test_packaged_extensions_and_asset_exist():
@@ -215,3 +231,40 @@ def test_secrets_are_redacted_before_reaching_a_report():
     assert out["judge"]["api_key"] == "***"
     assert out["generator"]["env"]["SERVICE_API_KEY"] == "***"
     assert out["generator"]["env"]["SERVICE_URL"] == "http://x"
+
+
+# ── judge media mode ──────────────────────────────────────────────────────────
+
+
+def test_video_mode_is_rejected_on_a_frames_only_backend():
+    """
+    A backend call that raises is recorded as a failed criterion, which scores
+    ZERO. Getting this wrong would not error out — it would publish a run in
+    which every video scored 0/100.
+    """
+    from video_eval_bench.config import JudgeConfig
+
+    with pytest.raises(ValidationError, match="can only send frames"):
+        JudgeConfig(backend="pi", media="video")
+
+
+def test_openai_backend_requires_an_api_base():
+    from video_eval_bench.config import JudgeConfig
+
+    with pytest.raises(ValidationError, match="api_base"):
+        JudgeConfig(backend="openai", media="video")
+
+
+def test_the_video_arm_loads_and_builds_a_video_judge():
+    """The shipped arm has to be usable as shipped, not just parseable."""
+    from video_eval_bench.config import JudgeConfig, build_judge
+    from video_eval_bench.dataset import load_dataset
+    from video_eval_bench.judge.llm import OpenAIBackend
+
+    cfg = JudgeConfig(
+        backend="openai", media="video", api_base="http://endpoint:8080/v1", model="m"
+    )
+    judge = build_judge(cfg, load_dataset())
+    assert judge.media == "video"
+    assert isinstance(judge.backend, OpenAIBackend)
+    assert judge.backend.supports_video

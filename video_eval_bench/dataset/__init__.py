@@ -1,43 +1,60 @@
 """
-Dataset package: seeds + rubrics (Sections A/B/C/D) loaded from YAML files.
+Dataset package: seeds + the rubric library, loaded from YAML files.
 
-Re-exports the schema types (Seed, SeedReference, Category, Rubric,
-RubricCriterion, SafetyCheck, Dataset) and the load_*() loaders so callers can do:
+Re-exports the schema types (Seed, SeedReference, Dimension, RubricCriterion,
+RubricLibrary, SafetyCheck, Dataset) and the load_*() loaders so callers can do:
 
     from video_eval_bench.dataset import load_dataset
 """
 
-from video_eval_bench.dataset.seed import Seed, SeedReference
+from video_eval_bench.dataset.seed import (
+    CriterionVerification,
+    Seed,
+    SeedCriterion,
+    SeedJudgeVerdict,
+    SeedProvenance,
+    SeedReference,
+)
 from video_eval_bench.dataset.dataset_schemas import (
     DEFAULT_DATASET_DIR,
-    Category,
     Dataset,
-    Rubric,
+    Dimension,
     RubricCriterion,
+    RubricLibrary,
     SafetyCheck,
+    TagFacet,
+    TagVocabulary,
+    bind_description,
 )
 from video_eval_bench.dataset.dataset_utils import (
-    load_categories,
     load_dataset,
-    load_rubric_a,
-    load_rubric_b,
+    load_tags,
+    load_genres,
+    load_rubrics,
     load_safety_checks,
     load_seeds,
 )
 
 __all__ = [
     "Seed",
+    "SeedCriterion",
+    "SeedJudgeVerdict",
+    "CriterionVerification",
+    "SeedProvenance",
     "SeedReference",
-    "Category",
     "Dataset",
-    "Rubric",
+    "Dimension",
     "RubricCriterion",
+    "RubricLibrary",
     "SafetyCheck",
+    "TagFacet",
+    "TagVocabulary",
+    "bind_description",
     "DEFAULT_DATASET_DIR",
-    "load_categories",
     "load_dataset",
-    "load_rubric_a",
-    "load_rubric_b",
+    "load_tags",
+    "load_genres",
+    "load_rubrics",
     "load_safety_checks",
     "load_seeds",
 ]

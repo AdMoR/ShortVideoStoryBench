@@ -7,7 +7,7 @@ line: every path the agent can see is one the harness chose to mount, and the
 host layout appears nowhere it could be read off.
 
 Why it matters is in runs/FINDINGS.md §4. On the host, with `tools=full`, a real
-run walked out of its workspace and read `dataset/rubric_c.yaml` — then scored
+run walked out of its workspace and read `dataset/rubrics.yaml` — then scored
 itself against it.
 """
 

@@ -1,0 +1,16 @@
+# @package generator.skills
+#
+# Every skill bundle in `skills/` — the full-capability arm, and what `make run`
+# gives the agent by default.
+#
+# This is the ceiling the ablation measures against: `skills=none` is the same
+# agent knowing nothing about the medium or the model, and the gap between the
+# two is what the skills are worth. Keep it a full listing rather than pi's own
+# discovery (`discover: true`), which reads the operator's skill roots — those
+# are not in the repo, so a run would depend on whose box it ran on.
+#
+# Adding a bundle to `skills/` means adding it here too.
+
+paths:
+  - ${paths.root}/skills/video-h3-prompting
+discover: false

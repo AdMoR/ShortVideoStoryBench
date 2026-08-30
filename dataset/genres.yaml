@@ -1,0 +1,28 @@
+# The genres a seed can belong to.
+#
+# A genre is a reporting label: it groups seeds in the summary table and in
+# `veb-compare` columns, and it names the kind of brief in the judge's prompt.
+#
+# It selects no rubric, and neither does anything else. A seed is judged on the
+# criteria it names in seeds.yaml — chosen one at a time, per brief, by the seed
+# builder. A genre once selected a rubric outright, which is why a social-media brief
+# came to be asked about geographical accuracy and scored full marks for it: a
+# criterion that could not apply was answered "PASSED, not applicable" and still
+# counted its full weight.
+#
+# The list exists so a typo in a seed's `category` fails the load instead of
+# silently opening a new column in every report.
+
+genres:
+  - key: entertainment
+    name: Entertainment & Storytelling
+  - key: educational
+    name: Educational & Informative
+  - key: marketing
+    name: Marketing & Business
+  - key: social_media
+    name: Social Media & Short-Form
+  - key: gaming
+    name: Gaming & Interactive
+  - key: event
+    name: Event & Live Coverage

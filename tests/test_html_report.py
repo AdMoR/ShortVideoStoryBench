@@ -221,29 +221,33 @@ def test_truncate_reports_what_it_hid():
 # ── rubric index ──────────────────────────────────────────────────────────────
 
 
-def test_rubric_index_assigns_sections():
+def test_rubric_index_assigns_dimensions():
     index = rubric_index(load_dataset())
-    assert index["U1"]["section"] == "A"
-    assert index["S1"]["section"] == "B"
-    assert index["D1"]["section"] == "D"
-    assert index["U1"]["weight"] > 0
-    assert index["U1"]["name"]
+    assert index["SUBJ1"]["dimension"] == "consistency"
+    assert index["LOGO1"]["dimension"] == "fidelity"
+    assert index["D1"]["dimension"] == "safety"
+    assert index["SUBJ1"]["weight"] > 0
+    assert index["SUBJ1"]["name"]
+    assert index["SUBJ1"]["critical"] is True
 
 
-def test_rubric_index_scopes_section_c_to_one_genre():
+def test_rubric_index_covers_the_whole_library():
     """
-    Genre criterion ids only happen to be unique across genres; nothing enforces
-    it. Scoping per seed means a future reused id cannot mislabel a criterion.
+    A report may be rendered from a run made against an older seed selection, so
+    every criterion has to be labellable — not only the ones the current seeds
+    list.
     """
     dataset = load_dataset()
-    index = rubric_index(dataset, "marketing")
-    assert index["M1"]["section"] == "C"
-    assert index["M1"]["title"] == dataset.categories["marketing"].name
-    assert "G1" not in index  # gaming's criteria are not in scope here
+    index = rubric_index(dataset)
+    listed = {c for seed in dataset.seeds for c in seed.criterion_ids()}
+    assert {c.id for c in dataset.rubrics.criteria} - listed  # some are unlisted
+    assert all(c.id in index for c in dataset.rubrics.criteria)
 
 
-def test_section_c_heading_names_the_genre(rendered):
-    assert "Section C — " in rendered()
+def test_dimension_headings_name_the_dimension_and_its_weights(rendered):
+    markup = rendered()
+    assert "Consistency" in markup and "Fidelity" in markup
+    assert "3 / 6 pts" in markup  # earned / total, printed beside the heading
 
 
 # ── whole-page rendering ──────────────────────────────────────────────────────
@@ -295,14 +299,20 @@ def rendered(tmp_path):
                     "generation_error": None, "duration_seconds": 180.0,
                     "verdict": {
                         "seed_id": "marketing_001", "category": "marketing",
-                        "section_a": 66.7, "section_b": 50.0, "section_c": 67.8,
                         "total_score": 61.5,
+                        "dimensions": [
+                            {"dimension": "consistency", "name": "Consistency",
+                             "score": 100.0, "earned": 3.0, "total": 3.0},
+                            {"dimension": "fidelity", "name": "Fidelity",
+                             "score": 50.0, "earned": 3.0, "total": 6.0},
+                        ],
+                        "critical_failures": ["LOGO1"],
                         "scores": [
-                            {"criterion": "U1", "passed": True, "score": 3.0,
+                            {"criterion": "SUBJ1", "passed": True, "score": 3.0,
                              "comment": "Stable framing throughout."},
-                            {"criterion": "S1", "passed": False, "score": 0.0,
+                            {"criterion": "LOGO1", "passed": False, "score": 0.0,
                              "comment": "The <b>logo</b> never appears."},
-                            {"criterion": "M1", "passed": True, "score": 15.0,
+                            {"criterion": "PROD1", "passed": True, "score": 3.0,
                              "comment": "Brand mark is legible in the final frame."},
                         ],
                         "safety": [{"check_id": "D1", "violation": False, "comment": "clear"}],
@@ -361,10 +371,17 @@ def test_single_seed_run_opens_expanded(rendered, tmp_path):
 
 def test_judge_results_render_every_criterion(rendered):
     markup = rendered()
-    assert "U1" in markup and "S1" in markup
+    assert "SUBJ1" in markup and "LOGO1" in markup and "PROD1" in markup
     assert "Stable framing throughout." in markup
-    assert "Section A" in markup and "Section D" in markup
+    assert "Consistency" in markup and "Safety" in markup
     assert "pass" in markup and "fail" in markup
+
+
+def test_failed_critical_criteria_are_called_out(rendered):
+    """A failed ⚠️ criterion is the finding; it should not need hunting for."""
+    markup = rendered()
+    assert "Critical criteria failed" in markup
+    assert "LOGO1 (Logo Accuracy)" in markup
 
 
 def test_reasoning_renders_distinctly_from_prose(tmp_path):

@@ -5,7 +5,7 @@
 # This is the historical behaviour and still the default, but be aware of what it
 # costs: the workspace sits four levels under the repo root, `tools=full` puts no
 # path restriction on `read` or `bash`, and a real run used that to read
-# `dataset/rubric_c.yaml` before being scored against it (runs/FINDINGS.md §4).
+# `dataset/rubrics.yaml` before being scored against it (runs/FINDINGS.md §4).
 # For anything whose number you intend to quote, use `sandbox=docker`.
 
 kind: none

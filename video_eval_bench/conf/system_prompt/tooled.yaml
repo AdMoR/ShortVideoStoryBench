@@ -1,0 +1,18 @@
+# @package generator.system_prompt
+#
+# The director prompt with the tools named: `generate_video` makes the video,
+# `submit_video` delivers it, and going around either is called out explicitly.
+#
+# The contrast with `director` is discovery. That arm deliberately says "do not
+# assume any particular generation tool" and measures whether the agent finds
+# what it has; this one hands it the answer. Two real runs showed what discovery
+# costs when it goes wrong: one agent decided the stand-in generator was "just a
+# broken wrapper", spent the rest of its budget driving the WanGP server by hand
+# over HTTP, and timed out without ever calling `submit_video`.
+#
+# Only for arms where a `generate_video` tool actually exists — under
+# `video_backend=none` this prompt names a tool that was never registered.
+
+system_file: ${veb_prompt:tooled_system.md}
+task_file: ${veb_prompt:task.md}
+append_files: []

@@ -212,46 +212,34 @@ def _result_text(result) -> str:
 # ── rubric lookup ─────────────────────────────────────────────────────────────
 
 
-def rubric_index(dataset, category_key: Optional[str] = None) -> dict:
+def rubric_index(dataset) -> dict:
     """
-    criterion id -> its section, human name, weight and description.
+    criterion id -> its dimension, human name, weight and description.
 
-    Scoped to one genre when `category_key` is given. Genre criterion ids only
-    happen to be unique across genres today (E1…, M1…, G1…); nothing enforces
-    it, and a reused id in a new genre would otherwise silently mislabel a
-    criterion in the report. Indexing per seed makes that impossible.
+    The whole library, not one seed's selection: a report may be rendered from a
+    run made against an older seed list, and a criterion the current seeds no
+    longer name still has to be labelled rather than shown as a bare id. It used
+    to be scoped per genre because genre rubrics could reuse an id; the library
+    enforces uniqueness, so there is nothing left to disambiguate.
     """
     index = {}
-    for section, rubric in (("A", dataset.rubric_a), ("B", dataset.rubric_b)):
-        for criterion in rubric.criteria:
-            index[criterion.id] = {
-                "section": section,
-                "title": rubric.title,
-                "name": criterion.name,
-                "description": criterion.description,
-                "weight": criterion.weight,
-            }
-    categories = (
-        [dataset.categories[category_key]]
-        if category_key and category_key in dataset.categories
-        else list(dataset.categories.values())
-    )
-    for category in categories:
-        for criterion in category.rubric.criteria:
-            index[criterion.id] = {
-                "section": "C",
-                "title": category.name,
-                "name": criterion.name,
-                "description": criterion.description,
-                "weight": criterion.weight,
-            }
+    for criterion in dataset.rubrics.criteria:
+        index[criterion.id] = {
+            "dimension": criterion.dimension,
+            "title": dataset.rubrics.dimension_name(criterion.dimension),
+            "name": criterion.name,
+            "description": criterion.description,
+            "weight": criterion.weight,
+            "critical": criterion.critical,
+        }
     for check in dataset.safety_checks:
         index[check.id] = {
-            "section": "D",
+            "dimension": "safety",
             "title": "Safety",
             "name": check.category,
             "description": check.description,
             "weight": 0.0,
+            "critical": True,
         }
     return index
 
@@ -340,7 +328,7 @@ def render_run(run_dir: Path, dataset=None) -> Path:
     briefs = {seed.seed_id: seed.prompt.strip() for seed in dataset.seeds}
     budget = Budget()
     for result in results:
-        index = rubric_index(dataset, result.get("category"))
+        index = rubric_index(dataset)
         body.append(
             _seed(
                 result, run_dir, index, briefs, budget,
@@ -669,33 +657,48 @@ def _judge(verdict: dict, index: dict) -> str:
     if not verdict:
         return '<p class="muted small">This seed was never judged.</p>'
 
-    sections = {"A": [], "B": [], "C": []}
+    # Grouped by the dimension the verdict itself reports, in its own order —
+    # the verdict was produced against the rubric library as it stood then, so
+    # re-deriving the grouping from today's library could regroup old numbers.
+    dimensions = verdict.get("dimensions") or []
+    order = [d.get("dimension") for d in dimensions]
+    grouped = {key: [] for key in order}
+    ungrouped = []
     for score in verdict.get("scores", []):
         meta = index.get(score.get("criterion"), {})
-        sections.get(meta.get("section", "C"), sections["C"]).append((score, meta))
+        key = meta.get("dimension")
+        (grouped[key] if key in grouped else ungrouped).append((score, meta))
 
-    genre = next(
-        (meta.get("title") for _, meta in sections["C"] if meta.get("title")), "Genre-specific"
-    )
     blocks = []
-    headings = {
-        "A": ("Section A — Universal technical baseline", verdict.get("section_a")),
-        "B": ("Section B — Semantic &amp; cultural fidelity", verdict.get("section_b")),
-        "C": (f"Section C — {e(genre)}", verdict.get("section_c")),
-    }
-    for key in ("A", "B", "C"):
-        rows = sections[key]
+    for dim in dimensions:
+        rows = grouped.get(dim.get("dimension")) or []
         if not rows:
             continue
-        title, pct = headings[key]
+        pct = dim.get("score")
+        weights = f"{fmt_weight(dim.get('earned'))} / {fmt_weight(dim.get('total'))} pts"
         blocks.append(
-            f'<h4>{title} <span class="score {score_class(pct)}">{fmt(pct)}</span></h4>'
+            f'<h4>{e(dim.get("name", dim.get("dimension", "")))} '
+            f'<span class="score {score_class(pct)}">{fmt(pct)}</span> '
+            f'<span class="muted small">{weights}</span></h4>'
             + _criteria_table(rows)
+        )
+    if ungrouped:
+        # A criterion the current library no longer defines: still show it,
+        # rather than dropping scores that counted toward the total.
+        blocks.append("<h4>Other criteria</h4>" + _criteria_table(ungrouped))
+
+    failed = verdict.get("critical_failures") or []
+    if failed:
+        names = ", ".join(
+            f'{e(cid)} ({e(index.get(cid, {}).get("name", ""))})' for cid in failed
+        )
+        blocks.insert(
+            0, f'<div class="warn"><b>Critical criteria failed</b><p>{names}</p></div>'
         )
 
     safety = verdict.get("safety") or []
     if safety:
-        blocks.append("<h4>Section D — Safety</h4>" + _safety_table(safety, index))
+        blocks.append("<h4>Safety</h4>" + _safety_table(safety, index))
 
     if verdict.get("judge_error"):
         blocks.insert(
@@ -710,11 +713,18 @@ def _judge(verdict: dict, index: dict) -> str:
 </details>"""
 
 
+def fmt_weight(value) -> str:
+    """Weights are small whole numbers in practice; don't print 3.0."""
+    if value is None:
+        return "?"
+    return f"{float(value):g}"
+
+
 def _criteria_table(rows) -> str:
     body = "".join(
         f'<tr class="{"pass" if score.get("passed") else "fail"}">'
         f'<td class="cid">{e(score.get("criterion"))}</td>'
-        f'<td>{e(meta.get("name", ""))}</td>'
+        f'<td>{e(meta.get("name", ""))}{" ⚠️" if meta.get("critical") else ""}</td>'
         f'<td class="num">{e(meta.get("weight", ""))}</td>'
         f'<td class="verdict">{"pass" if score.get("passed") else "fail"}</td>'
         f'<td class="comment">{e(score.get("comment", ""))}</td></tr>'

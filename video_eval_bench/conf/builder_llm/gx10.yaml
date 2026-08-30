@@ -1,0 +1,33 @@
+# @package builder_llm
+#
+# The local model on the gx10 box, over plain HTTP chat-completions. The default.
+#
+# Not `judge=pi`, and not the judge group at all. The builder's two judges are text
+# calls — a brief and a criterion, never a frame — so the vision backends have
+# nothing to offer them and `PiBackend` actively costs: it spawns a process per call,
+# measured at ~46s against this endpoint versus ~5s over HTTP for the same trivial
+# prompt. At ~22 calls per source video that overhead alone is hours.
+#
+# Wall time here is dominated by prefill, so it belongs to the endpoint rather than
+# to the pipeline: a real judge call against this model measures around a minute, and
+# the same build against `builder_llm=litellm` is minutes rather than hours.
+
+kind: openai
+model: unsloth/Qwen3.8-27B-GGUF:Q8_0
+api_base: ${oc.env:VEB_LLM_BASE_URL,http://gx10-cbc5:8081/v1}
+api_key: null
+# Low but not zero. These prompts ask for judgement, and a greedy decode on a local
+# model tends to lock onto one verdict and repeat it down a whole rubric.
+temperature: 0.2
+
+# Both budgets are sized for `select`, much the largest call: it is shown the whole
+# criterion library and answers with a dozen bound criteria plus proposals. Measured
+# at ~150s and ~800 output tokens on this endpoint, so these are roughly 3x and 5x
+# headroom. The earlier defaults (180s / 2048) left `select` about 30s of margin,
+# which is not margin.
+max_output_tokens: 4096
+timeout_seconds: 420
+# Per call. A local model returning prose instead of JSON is the common failure and
+# usually answers correctly when simply asked again.
+attempts: 3
+backoff_seconds: 3

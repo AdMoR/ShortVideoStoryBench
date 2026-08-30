@@ -3,6 +3,7 @@
 # Any OpenAI-compatible / Anthropic / Google endpoint, via litellm.
 
 backend: litellm
+media: frames
 model: openai/gpt-4o
 provider: null
 api_base: null

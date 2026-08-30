@@ -1,0 +1,32 @@
+# @package judge
+#
+# Send the judge the whole clip instead of frames.
+#
+# Frames are a workaround: motion, timing and cut rhythm have to be inferred
+# from the gaps between stills, which is exactly what criteria like CUT1,
+# MOTION1, TEMP1 and ANGLE1 ask about. This arm hands the model the video.
+#
+# It speaks plain OpenAI chat-completions over HTTP, with the clip carried as an
+# `input_video` content part (base64). litellm cannot be used here: it validates
+# content parts against the OpenAI schema and rejects that part outright.
+#
+# What the endpoint at `api_base` needs:
+#   * a vision model with its multimodal projector loaded;
+#   * video decoding available in the server build, with ffmpeg and ffprobe on
+#     the server's PATH — frames are extracted server-side by shelling out;
+#   * `GET {api_base}/props` reporting modalities.video = true, which `veb`
+#     checks at startup so a misconfigured server fails the run instead of
+#     scoring every video zero.
+#
+# Cost: the clip is re-sent on every criterion call (one per criterion, plus the
+# safety checks), base64-encoded at 4/3 the file size. Keep the seeds' clips
+# short. `n_frames` is ignored in this mode.
+
+backend: openai
+media: video
+api_base: ${oc.env:VEB_LLM_BASE_URL,http://gx10-cbc5:8081/v1}
+model: unsloth/Qwen3.8-27B-GGUF:Q8_0
+api_key: null
+provider: null
+timeout_seconds: 300
+n_frames: 8

@@ -85,6 +85,25 @@ def selected_choices(choices) -> dict:
     }
 
 
+def _preflight_judge(judge) -> None:
+    """
+    Let the judge backend check its endpoint before any generation is paid for.
+
+    Worth its own step because a judge that cannot answer does not fail the run:
+    every criterion call errors, each error scores that criterion zero, and the
+    report comes out looking like the videos were terrible. Better to refuse to
+    start.
+    """
+    preflight = getattr(judge.backend, "preflight", None)
+    if preflight is None:
+        return
+    try:
+        asyncio.run(preflight())
+    except Exception as exc:
+        logger.error(f"judge endpoint is not usable: {exc}")
+        raise SystemExit(2) from exc
+
+
 def _generator_label(generate) -> str:
     """What the generator calls itself, if it has a name of its own."""
     return str(getattr(generate, "label", "") or "")
@@ -112,6 +131,7 @@ def main(cfg: DictConfig) -> None:
     dataset = load_dataset(bench.run.dataset_dir)
     generate = build_generator(bench.generator)
     judge = build_judge(bench.judge, dataset)
+    _preflight_judge(judge)
 
     started = datetime.now(timezone.utc)
     report = asyncio.run(

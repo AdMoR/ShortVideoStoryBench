@@ -36,7 +36,7 @@ seed's workspace and nothing else, and gives the agent neutral paths — /worksp
 /out, /opt/veb — so the mount reveals nothing about the host. This is a
 correctness feature, not a deployment one: on the host the workspace sits four
 levels under the repo root with no path restriction on `read` or `bash`, and a
-real run used that to read `dataset/rubric_c.yaml` before being scored against it
+real run used that to read `dataset/rubrics.yaml` before being scored against it
 (runs/FINDINGS.md §4).
 
 Under `sandbox=none` every path below is the host path and the argv is exactly

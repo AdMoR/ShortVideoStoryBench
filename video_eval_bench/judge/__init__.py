@@ -1,1 +1,1 @@
-"""LLM judge harness: grades generated videos against category rubrics."""
+"""LLM judge harness: grades generated videos against each seed's rubric."""

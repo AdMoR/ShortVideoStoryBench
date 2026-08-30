@@ -27,7 +27,7 @@ import { Type } from "typebox";
 import { StringEnum } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-const SERVER = () => (process.env.LTX_SERVER_URL ?? "http://gx10-cbc5:8082").replace(/\/$/, "");
+const SERVER = () => (process.env.WANGP_SERVER_URL ?? "http://gx10-cbc5:8082").replace(/\/$/, "");
 const API_KEY = () => process.env.WANGP_API_KEY ?? "";
 const WORKSPACE = () => process.env.VEB_WORKSPACE ?? process.cwd();
 

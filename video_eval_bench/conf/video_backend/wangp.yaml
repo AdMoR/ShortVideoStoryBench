@@ -13,4 +13,4 @@ extensions:
   - ${veb_ext:wangp_tools.ts}
 
 env:
-  LTX_SERVER_URL: http://gx10-cbc5:8082
+  WANGP_SERVER_URL: http://gx10-cbc5:8082

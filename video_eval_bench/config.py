@@ -100,7 +100,7 @@ class SandboxConfig(_Base):
 
     This is not an ablation axis; it is a correctness one. With `kind="none"` the
     agent has the operator's whole filesystem, its workspace sits four levels
-    under the repo root, and a real run walked up and read `dataset/rubric_c.yaml`
+    under the repo root, and a real run walked up and read `dataset/rubrics.yaml`
     before scoring itself (runs/FINDINGS.md §4). `kind="docker"` mounts the seed's
     workspace and nothing else, so there is nothing above it to walk into.
 
@@ -426,7 +426,16 @@ GeneratorConfig = Annotated[
 class JudgeConfig(_Base):
     """Which vision LLM grades the videos."""
 
-    backend: Literal["mock", "pi", "litellm"] = "mock"
+    backend: Literal["mock", "pi", "litellm", "openai"] = "mock"
+    media: Literal["frames", "video"] = Field(
+        default="frames",
+        description=(
+            "What the judge is shown. 'frames' samples n_frames stills and works "
+            "with any vision model. 'video' sends the clip itself, so motion, "
+            "timing and cut rhythm are judged rather than inferred — it needs "
+            "backend=openai against an endpoint that accepts video."
+        ),
+    )
     model: Optional[str] = None
     provider: Optional[str] = None
     api_base: Optional[str] = None
@@ -438,6 +447,27 @@ class JudgeConfig(_Base):
     attempts: int = Field(default=3, ge=1)
     retry_backoff_seconds: float = Field(default=5.0, ge=0)
     n_frames: int = Field(default=8, gt=0)
+
+    @model_validator(mode="after")
+    def _video_needs_a_backend_that_can_send_it(self) -> "JudgeConfig":
+        """
+        Reject media=video on a backend that cannot carry it, here rather than
+        at the first criterion call.
+
+        A backend call that raises is recorded as a failed criterion, which
+        scores ZERO — so getting this wrong would not error out, it would quietly
+        publish a run where every video scored 0/100.
+        """
+        if self.media == "video" and self.backend not in ("openai", "mock"):
+            raise ValueError(
+                f"judge.media=video needs a backend that can send a clip; "
+                f"judge.backend={self.backend!r} can only send frames. "
+                "Use judge.backend=openai (with judge.api_base set), or "
+                "judge.media=frames."
+            )
+        if self.backend == "openai" and not self.api_base:
+            raise ValueError("judge.backend=openai needs judge.api_base set")
+        return self
 
 
 class RunConfig(_Base):
@@ -503,7 +533,12 @@ def build_generator(cfg):
 def build_judge(cfg: JudgeConfig, dataset):
     """Build the VideoJudge for a validated judge config."""
     from video_eval_bench.judge.agent import VideoJudge
-    from video_eval_bench.judge.llm import LLMConfig, LiteLlmBackend, MockBackend
+    from video_eval_bench.judge.llm import (
+        LLMConfig,
+        LiteLlmBackend,
+        MockBackend,
+        OpenAIBackend,
+    )
 
     if cfg.backend == "mock":
         backend = MockBackend()
@@ -520,15 +555,27 @@ def build_judge(cfg: JudgeConfig, dataset):
                 retry_backoff_seconds=cfg.retry_backoff_seconds,
             )
         )
+    elif cfg.backend == "openai":
+        backend = OpenAIBackend(
+            LLMConfig(
+                model=cfg.model or "",
+                api_base=cfg.api_base,
+                api_key=cfg.api_key,
+                timeout_seconds=cfg.timeout_seconds,
+            )
+        )
     else:
         backend = LiteLlmBackend(
             LLMConfig(
                 model=cfg.model or "openai/gpt-4o",
                 api_base=cfg.api_base,
                 api_key=cfg.api_key,
+                timeout_seconds=cfg.timeout_seconds,
             )
         )
-    return VideoJudge(backend=backend, dataset=dataset, n_frames=cfg.n_frames)
+    return VideoJudge(
+        backend=backend, dataset=dataset, n_frames=cfg.n_frames, media=cfg.media
+    )
 
 
 def redact(config: dict) -> dict:

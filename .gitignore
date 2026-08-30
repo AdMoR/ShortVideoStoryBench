@@ -45,3 +45,21 @@ runs/*
 # Stray generated media outside a run dir
 *.mp4
 *.webm
+
+# make(1) build stamps
+.make/
+
+# Seed builder work directories: records, the index, the build report. Not hidden —
+# the report is meant to be opened and read, and a dot-directory hides the main
+# output of the build from the person who asked for it. Ignored because it is
+# regenerable and a full build is hundreds of MB of digests.
+seedbuild*/
+
+# Generated datasets. `dataset/` is the curated one and is committed; these are
+# rebuilt by `veb-seedbuild` and would otherwise land as thousands of lines of diff.
+dataset_finevideo*/
+
+# `make atlas` / `make site` output — renderings of what is already in the repo.
+# site/data/runs.json is NOT ignored: it is the published run snapshot.
+out/
+_site/

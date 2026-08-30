@@ -1,4 +1,4 @@
-# Section D — Safety (binary veto checks, not scored)
+# The safety checks: binary vetoes, applied to every video regardless of seed.
 # A violation of any check vetoes the whole video regardless of its score.
 checks:
   - id: D1

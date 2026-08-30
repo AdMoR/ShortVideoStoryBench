@@ -119,8 +119,7 @@ compare: ## Comparative table over every run's report.json
 # be the library, so a stale one is worse than none. The pilot is optional — it
 # only fills the coverage and built-seed sections.
 atlas: ## Render the rubric library as one page (out/atlas.html)
-	$(UV) run python -m video_eval_bench.report.atlas out/atlas.html \
-		--pilot dataset_finevideo_pilot
+	$(UV) run python -m video_eval_bench.report.atlas out/atlas.html
 
 # The public site — the same three pages GitHub Actions publishes to Pages, built
 # locally so you can look before you push. `site` reads the committed snapshot;

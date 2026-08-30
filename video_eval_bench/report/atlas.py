@@ -88,8 +88,6 @@ a{color:var(--accent)}
 </style>
 <style>
 .wrap{max-width:1180px; margin:0 auto; padding:0 clamp(1rem,4vw,2.5rem)}
-.shell{display:grid; grid-template-columns:200px minmax(0,1fr); gap:clamp(1.5rem,4vw,3.5rem); align-items:start}
-@media (max-width:900px){ .shell{grid-template-columns:1fr} nav.rail{display:none} }
 
 /* ── masthead ─────────────────────────────────────────── */
 header.top{border-bottom:1px solid var(--line-hard); background:var(--sunk)}
@@ -109,16 +107,6 @@ h1{font-size:clamp(2.4rem,6vw,3.9rem); font-weight:800; letter-spacing:-.03em;
 .tierchip.t1::before{background:var(--tier1)}
 .tierchip.t2::before{background:var(--tier2)}
 .tierchip.t3::before{background:var(--tier3)}
-
-/* ── rail ─────────────────────────────────────────────── */
-nav.rail{position:sticky; top:1.5rem; padding-top:3rem}
-nav.rail ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.1rem}
-nav.rail a{display:block; padding:.3rem .5rem; text-decoration:none; color:var(--muted);
-  font-family:"Archivo",sans-serif; font-size:.82rem; border-left:2px solid var(--line);
-  transition:color .12s, border-color .12s}
-nav.rail a:hover{color:var(--ink); border-left-color:var(--accent)}
-nav.rail .grp{font-family:"JetBrains Mono",monospace; font-size:.64rem; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--faint); margin:1.1rem 0 .35rem .5rem}
 
 main{padding:3rem 0 5rem; min-width:0}
 section.block{margin-bottom:4rem; scroll-margin-top:1.5rem}
@@ -248,6 +236,38 @@ footer code{font-size:.8rem; color:var(--body)}
 @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
 </style>
 <style>
+/* ── coverage figure ──────────────────────────────────── */
+.hero{font-size:1.02rem; color:var(--body); max-width:66ch; margin:0 0 1.3rem}
+.hero b{font-family:"Archivo",sans-serif; font-size:1.5rem; font-weight:800;
+  color:var(--ink); font-variant-numeric:tabular-nums}
+.cufig{margin:0; border:1px solid var(--line); border-radius:3px; background:var(--raise);
+  box-shadow:var(--shadow); padding:1rem 1.1rem}
+.culegend{display:flex; align-items:center; gap:.3rem; margin-bottom:1rem;
+  font-family:"JetBrains Mono",monospace; font-size:.64rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint)}
+.culegend span:last-child{margin-left:.3rem}
+.culegend .key{width:26px; height:14px; padding:0; min-width:0}
+.curow{display:grid; grid-template-columns:150px minmax(0,1fr); gap:.9rem;
+  padding:.45rem 0; border-top:1px solid var(--line); align-items:baseline}
+.curow:first-of-type{border-top:none}
+.culab{font-family:"Archivo",sans-serif; font-size:.8rem; color:var(--ink);
+  display:flex; justify-content:space-between; gap:.4rem; padding-top:.2rem}
+.culab span{font-family:"JetBrains Mono",monospace; font-size:.66rem; color:var(--faint);
+  font-variant-numeric:tabular-nums}
+.cucells{display:flex; flex-wrap:wrap; gap:3px}
+.cu{display:inline-flex; align-items:baseline; gap:.3rem; text-decoration:none;
+  padding:.2rem .4rem; min-width:66px; border-radius:2px; border:1px solid var(--line-hard);
+  background:var(--raise);
+  background:color-mix(in oklab, var(--accent) calc(var(--r) * 52%), var(--raise));
+  transition:border-color .12s}
+.cu b{font-family:"JetBrains Mono",monospace; font-size:.66rem; font-weight:600;
+  color:var(--ink)}
+.cu i{font-family:"JetBrains Mono",monospace; font-style:normal; font-size:.62rem;
+  color:var(--muted); margin-left:auto; font-variant-numeric:tabular-nums}
+.cu:hover{border-color:var(--accent)}
+.cu.z{background:var(--ground); border-style:dashed; border-color:var(--line)}
+.cu.z b{color:var(--faint)}
+figcaption{font-size:.84rem; color:var(--muted); margin-top:1rem; max-width:70ch}
 .flabel i{font-style:normal; text-transform:none; letter-spacing:0; color:var(--faint)}
 .jumps{padding-bottom:1rem; margin-bottom:.4rem; border-bottom:1px solid var(--line)}
 .jumprow{display:flex; flex-wrap:wrap; gap:.25rem}
@@ -332,10 +352,10 @@ def _section_chips(lib: RubricLibrary) -> str:
     """
     Shortcuts to every section, in the filter header.
 
-    The rail carries the same links but disappears under 900px, and on a page this
-    long the sections below the fold are the thing you are looking for. They also
-    double as a readout of the filter: pick a tag and a chip's count drops to what
-    that section still holds, or the chip goes away.
+    Every section is collapsed, so these are how the page is navigated: the chip is
+    the section's name, its count, and the thing that opens it. They also double as a
+    readout of the filter — pick a tag and a chip's count drops to what that section
+    still holds, or the chip goes away.
     """
     chips = "".join(
         f'<a class="jump" href="#s-{e(s.key)}" data-jump="{e(s.key)}">'
@@ -376,11 +396,12 @@ def _flatten(text: str) -> str:
 
 def _sections(lib: RubricLibrary) -> str:
     out = []
-    for i, s in enumerate(lib.sections):
+    for s in lib.sections:
         tier = "1" if s.key == "general" else "2"
+        # All closed, `general` included. Thirteen open sections is 65 criteria of
+        # prose before the page has said anything; the summaries are the index.
         out.append(
-            f'<details class="sect" id="s-{e(s.key)}" data-tier="{tier}"'
-            f'{" open" if i == 0 else ""}><summary>'
+            f'<details class="sect" id="s-{e(s.key)}" data-tier="{tier}"><summary>'
             f'<span class="sname">{e(s.name)}</span> '
             f'<span class="skey">{e(s.key)}</span>'
             f'<span class="scount"><b class="shown">{len(s.criteria)}</b> criteria</span>'
@@ -390,84 +411,65 @@ def _sections(lib: RubricLibrary) -> str:
     return "".join(out)
 
 
-def _coverage(lib: RubricLibrary, seeds: List[Seed]) -> tuple:
-    """Supply (criteria carrying a tag) against demand (times a seed was judged on one)."""
+def _usage(lib: RubricLibrary, seeds: List[Seed]) -> Counter:
+    """How many seeds of the corpus carry each criterion, by live id."""
     used = Counter()
-    seeds_with = Counter()
     for seed in seeds:
-        seen = set()
-        for cid in seed.criterion_ids():
+        for cid in set(seed.criterion_ids()):
             cid = SUPERSEDED.get(cid, cid)
-            if cid is None or cid not in lib:
-                continue
-            for tag in lib.get(cid).tags:
-                used[tag] += 1
-                seen.add(tag)
-        for tag in seen:
-            seeds_with[tag] += 1
+            if cid and cid in lib:
+                used[cid] += 1
+    return used
+
+
+def _coverage_figure(lib: RubricLibrary, seeds: List[Seed], corpus: str) -> str:
+    """
+    One picture of what the corpus actually asks: every criterion, filed under its
+    section, shaded by how many seeds carry it.
+
+    A grid rather than a bar chart because the question here is coverage, not
+    ranking — what you want to see is the *shape* of the library and where the holes
+    are, and a hole is a criterion no brief has ever needed. Each cell prints its own
+    number, so the shading is a second encoding rather than the only one.
+    """
+    used = _usage(lib, seeds)
+    total = max(len(seeds), 1)
+    reached = sum(1 for c in lib.criteria if used[c.id])
 
     rows = []
-    for group, values in _tag_groups(lib):
-        rows.append(f'<tr class="grp"><td colspan="4">{e(group)}</td></tr>')
-        for v in values:
-            supply = len(lib.with_tag(v))
-            rows.append(
-                f'<tr><td class="val">{e(v)}</td>'
-                f'<td class="n{"" if supply else " zero"}">{supply}</td>'
-                f'<td class="n{"" if used[v] else " dim"}">{used[v] or "—"}</td>'
-                f'<td class="n dim">{seeds_with[v] or "—"}</td></tr>'
+    for s in lib.sections:
+        cells = []
+        for c in s.criteria:
+            n = used[c.id]
+            ratio = n / total
+            cells.append(
+                f'<a class="cu{"" if n else " z"}" href="#c-{e(c.id)}" '
+                f'style="--r:{ratio:.3f}" '
+                f'title="{e(c.id)} — {e(c.name)}: carried by {n} of {total} seeds">'
+                f"<b>{e(c.id)}</b><i>{n or '·'}</i></a>"
             )
-    sect_rows = "".join(
-        f'<tr><td class="val">{e(s.key)}</td><td>{e(s.name)}</td>'
-        f'<td class="n">{len(s.criteria)}</td></tr>'
-        for s in lib.sections
+        rows.append(
+            f'<div class="curow"><div class="culab">{e(s.name)}'
+            f'<span>{len(s.criteria)}</span></div>'
+            f'<div class="cucells">{"".join(cells)}</div></div>'
+        )
+
+    ramp = "".join(
+        f'<span class="cu key" style="--r:{r}"></span>' for r in (0, 0.25, 0.5, 0.75, 1)
     )
     return (
-        '<div class="scroll"><table>'
-        "<thead><tr><th>Tag</th><th>Supply</th><th>Used</th><th>Seeds</th></tr></thead>"
-        f"<tbody>{''.join(rows)}</tbody></table></div>",
-        '<div class="scroll"><table>'
-        "<thead><tr><th>Section</th><th>Name</th><th>Criteria</th></tr></thead>"
-        f"<tbody>{sect_rows}</tbody></table></div>",
+        f'<p class="hero"><b>{reached}</b> of the library\'s {len(lib.criteria)} '
+        f"criteria are carried by at least one of the {total} seeds in {corpus}. "
+        f"The rest are questions the benchmark can ask and has not yet had a brief "
+        f"for.</p>"
+        f'<figure class="cufig">'
+        f'<div class="culegend"><span>never asked</span>{ramp}'
+        f"<span>every seed</span></div>"
+        f'{"".join(rows)}'
+        f"<figcaption>One cell per criterion, in section order; the number is how many "
+        f"seeds carry it. Click a cell to jump to its entry above.</figcaption>"
+        f"</figure>"
     )
-
-
-def _seeds(lib: RubricLibrary, seeds: List[Seed]) -> str:
-    out = []
-    for s in seeds:
-        tags = "".join(
-            f'<span class="tg"><b>{e(k)}</b> {e(", ".join(v))}</span>'
-            for k, v in sorted(s.tags.items())
-        )
-        by_section = Counter()
-        pills = []
-        for cid in s.criterion_ids():
-            mapped = SUPERSEDED.get(cid, cid)
-            if mapped is None:
-                pills.append(f'<span class="pill dim">{e(cid)} ✗</span>')
-                continue
-            if mapped not in lib:
-                pills.append(f'<span class="pill dim">{e(cid)}</span>')
-                continue
-            by_section[lib.section_of(mapped)] += 1
-            label = e(mapped) if mapped == cid else f"{e(mapped)} <i>← {e(cid)}</i>"
-            pills.append(f'<span class="pill">{label}</span>')
-        drawn = "".join(
-            f'<span class="pill">{e(k)} <b>{n}</b></span>'
-            for k, n in by_section.most_common()
-        )
-        out.append(
-            f'<details class="seed"><summary><span class="sid">{e(s.seed_id)}</span>'
-            f'<span class="scat">{e(s.category)}</span>'
-            f'<span class="scount2">{len(s.rubrics)} criteria</span></summary>'
-            f'<div class="sbody"><p class="sbrief">{e(_flatten(s.prompt)[:420])}</p>'
-            f'<div class="tagrow">{tags}</div>'
-            f'<div class="rgroup general"><div class="rghead">Drawn from</div>'
-            f'<div class="pills">{drawn}</div></div>'
-            f'<div class="rgroup"><div class="rghead">Criteria</div>'
-            f'<div class="pills">{"".join(pills)}</div></div></div></details>'
-        )
-    return "".join(out)
 
 
 def render(
@@ -486,135 +488,41 @@ def render(
     """
     pilot = pilot or []
     n_tags = sum(len(v) for _, v in _tag_groups(lib))
-    n_groups = len(_tag_groups(lib))
-    cov_table, sect_table = _coverage(lib, pilot)
-    gated = [c for c in lib.criteria if "Applies only" in c.description]
-    bound = [c for c in lib.criteria if c.binds]
-
-    rail = (
-        '<nav class="rail"><div class="grp">Browse</div><ol>'
-        '<li><a href="#filter">Filter by tag</a></li></ol>'
-        '<div class="grp">Sections</div><ol>'
-        + "".join(
-            f'<li><a href="#s-{e(s.key)}">{e(s.name)}</a></li>' for s in lib.sections
-        )
-        + '</ol><div class="grp">Analysis</div><ol>'
-        '<li><a href="#coverage">Coverage</a></li>'
-        + ('<li><a href="#seeds">Built seeds</a></li>' if pilot else "")
-        + '<li><a href="#reading">How to read it</a></li></ol></nav>'
-    )
-
-    seeds_block = (
-        f'''
-<section class="block" id="seeds">
-<h2>Built seeds</h2>
-<p class="lede">The {len(pilot)} seeds of {corpus}, and what each one ended up
-carrying. Every criterion here was chosen for that brief specifically — nothing
-arrived as part of a set. Where a seed predates the rubric review, ids that have since
-merged are shown mapped to their successor (<code>SEC1 ← PROP1</code>) and the one
-that was deleted outright is struck (<code>GEO1 ✗</code>).</p>
-<div class="rule"></div>
-{_seeds(lib, pilot)}
-</section>
-'''
-        if pilot
-        else ""
-    )
 
     body = f'''
 {nav}
 <header class="top"><div class="wrap">
 <div class="eyebrow">video-eval-bench · dataset/rubrics.yaml</div>
 <h1>Rubric Library Atlas</h1>
-<p class="standfirst">Every criterion the benchmark knows how to check —
-{len(lib.criteria)} of them, filed into {len(lib.sections)} categories and tagged from
-a closed vocabulary of {n_tags} across {n_groups} groups. Both axes are for reading and
-reporting. <strong>Neither one puts a criterion on a seed.</strong></p>
-<div class="tierbar">
-<div class="tierchip t1"><b>Sections</b><span>{len(lib.sections)} categories, generic first</span></div>
-<div class="tierchip t2"><b>Tags</b><span>{n_tags} across {" / ".join(g for g, _ in _tag_groups(lib))}</span></div>
-<div class="tierchip t3"><b>Gated</b><span>{len(gated)} say when they apply · {len(bound)} bind a value</span></div>
-</div>
 </div></header>
 
-<div class="wrap"><div class="shell">
-{rail}
-<main>
+<div class="wrap"><main>
+
+<section class="block" id="coverage">
+<h2>Coverage</h2>
+<div class="rule"></div>
+{_coverage_figure(lib, pilot, corpus)}
+</section>
 
 <section class="block" id="filter">
-<h2>Filter by tag</h2>
-<p class="lede">Tags are the axis that cuts across categories — what a check looks at,
-how much of the video it needs at once, and what kind of failure it catches. Pick any
-and the library below narrows to criteria carrying all of them.</p>
+<h2>Browse</h2>
+<p class="lede">By category, or across them. A section says what <em>kind</em> of check
+lives there; a tag is the axis that cuts through all of them — what a check looks at,
+how much of the video it needs at once, what kind of failure it catches. Pick any
+number of tags and the library below narrows to the criteria carrying all of them.</p>
 {_filter_bar(lib)}
 </section>
 
 <section class="block" id="library">
 <h2>The library</h2>
-<p class="lede">Sections in file order, generic first. A section says what
-<em>kind</em> of check lives there so the file can be reviewed a category at a time —
-it is not a bundle, and taking one wholesale is exactly the failure this library was
-flattened to escape. The later sections hold the criteria that only mean something for
-a kind of brief, and each one opens by saying which.</p>
+<p class="lede">Sections in file order, generic first. A section is not a bundle, and
+taking one wholesale is exactly the failure this library was flattened to escape. The
+later sections hold the criteria that only mean something for a kind of brief, and
+each one opens by saying which.</p>
 <div class="rule"></div>
 {_sections(lib)}
 </section>
-
-<section class="block" id="coverage">
-<h2>Coverage</h2>
-<p class="lede"><b>Supply</b> is how many criteria in the library carry the tag.
-<b>Used</b> is how many times a seed in {corpus} actually carries one, and
-<b>Seeds</b> how many distinct seeds that is. A tag with supply and no use is a
-question the library can ask and this corpus never did.</p>
-{cov_table}
-<h3 style="margin-top:1.8rem">By section</h3>
-<div class="rule" style="margin-top:.6rem"></div>
-{sect_table}
-</section>
-{seeds_block}
-<section class="block" id="reading">
-<h2>How to read it</h2>
-<div class="rule"></div>
-<h3>Categories and tags decide nothing</h3>
-<p>This is the property the whole design turns on. A seed is judged on the criteria it
-names, chosen one at a time from this library by the seed builder, grounded in that
-seed's own brief and checked by two judges. No category is applied on top.</p>
-<p>The library has had to learn this twice. A genre once selected a rubric outright,
-which is how a social-media brief came to be asked about geographical accuracy — and
-to score full marks for it, because a criterion that could not apply was answered
-"PASSED, not applicable" and still counted its full weight. Attaching a whole category
-at once has the same shape and the same failure: it grades a video on questions its
-brief never asked.</p>
-<h3>Broad subjects, and the niches inside them</h3>
-<p>The <code>subject</code> tags are the broad themes a check can be about. The
-<code>sub_theme</code> ones — <code>brand</code>, <code>diagram</code> — are niches
-inside those, and are kept in their own group for a reporting reason: listed beside
-<code>people</code> and <code>environment</code> they read as peers, and a library with
-five marketing criteria looks like it is a fifth about branding. Every criterion
-carrying a sub-theme also carries the broad subject it sits inside, so filtering by
-<code>text</code> still finds the diagram checks.</p>
-<h3>Gates are part of the criterion</h3>
-<p>{len(gated)} of the {len(lib.criteria)} criteria open by naming the kind of brief
-they apply to, and {len(bound)} bind a value the seed must supply — the claim, the
-look, the period, the payoff. Both exist for the same reason: a criterion that cannot
-say when it applies gets applied anyway, answered "not applicable, passed", and banks
-its full weight. The standard is written up in <code>dataset/RUBRICS.md</code>.</p>
-<h3>Evidence is what a validator must be able to see</h3>
-<p>The five classes route verification. A text judge reading a description of a video
-can settle <span class="ev description">description</span>; it cannot settle
-<span class="ev pixels">pixels</span> or <span class="ev motion">motion</span>, so
-those record <code>unchecked</code> — nothing looked, as opposed to something found at
-fault. <span class="ev container">container</span> goes to ffprobe.</p>
-<h3>The audio criteria are written ahead of the judge</h3>
-<p>Every criterion in the <code>audio</code> section is
-<span class="ev audio">audio</span>, and no judge backend here is fed sound yet — the
-judge hands the model still frames. They will record <code>unchecked</code> until that
-changes. They are written now because brief synthesis already extracts the spoken
-lines, so the seeds carry the grounding; and because <code>MUSCONT1</code> names the
-failure a shot-by-shot generation pipeline commits by construction — music that
-restarts at every cut.</p>
-</section>
-</main></div></div>
+</main></div>
 
 <footer><div class="wrap">
 Generated from <code>dataset/rubrics.yaml</code> ({len(lib.criteria)} criteria ·
@@ -643,6 +551,11 @@ by <code>video_eval_bench/report/atlas.py</code>.
         return !c.hidden;
       }}).length;
       sec.hidden = visible === 0;
+      // Sections are collapsed by default, so a filter that only changed the counts
+      // would look like it had done nothing. A live filter opens what still matches
+      // and clearing it puts the page back the way it loaded.
+      if (chosen.size) sec.open = visible > 0;
+      else sec.open = false;
       const badge = sec.querySelector(".shown");
       if (badge) badge.textContent = visible;
       const key = sec.id.replace(/^s-/, "");
@@ -696,15 +609,24 @@ def main(argv=None) -> None:
         "--pilot",
         type=Path,
         default=None,
-        help="a built dataset to draw the coverage and seed sections from",
+        help="another dataset to count coverage over (default: this one's own seeds)",
     )
     args = ap.parse_args(argv)
 
-    lib = load_dataset(args.dataset).rubrics
-    seeds = load_dataset(args.pilot).seeds if args.pilot else []
+    ds = load_dataset(args.dataset)
+    # Coverage is always counted over some real corpus: the benchmark's own seeds
+    # unless another dataset is named. An empty one would render a grid of zeros and
+    # read as "nothing is used", which is a different claim entirely.
+    if args.pilot:
+        seeds, corpus = load_dataset(args.pilot).seeds, f"{args.pilot.name}"
+    else:
+        seeds, corpus = ds.seeds, "the benchmark's dataset"
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(render(lib, seeds))
-    print(f"{args.out} — {len(lib.criteria)} criteria, {len(lib.sections)} sections")
+    args.out.write_text(render(ds.rubrics, seeds, corpus=corpus))
+    print(
+        f"{args.out} — {len(ds.rubrics.criteria)} criteria, "
+        f"{len(ds.rubrics.sections)} sections, coverage over {len(seeds)} seeds"
+    )
 
 
 if __name__ == "__main__":

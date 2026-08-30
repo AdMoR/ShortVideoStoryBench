@@ -203,7 +203,7 @@ def test_the_atlas_names_the_corpus_it_counted(tmp_path, runs_file):
     differs between a local build (the pilot) and CI (the dataset's own seeds).
     """
     site.build(tmp_path / "out", data_file=runs_file, pilot=Path("/nonexistent"))
-    assert "the benchmark's own seeds" in (tmp_path / "out" / "atlas.html").read_text()
+    assert "the benchmark's dataset" in (tmp_path / "out" / "atlas.html").read_text()
 
     lib = load_dataset().rubrics
     standalone = atlas.render(lib)

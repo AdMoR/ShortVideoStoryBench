@@ -92,10 +92,14 @@ EXTRA_CSS = """
 
 ol.steps{counter-reset:step; list-style:none; padding:0; margin:1.2rem 0;
   display:grid; gap:.7rem}
-ol.steps li{counter-increment:step; display:grid; grid-template-columns:2rem 1fr; gap:.9rem;
-  align-items:baseline; font-size:.97rem}
-ol.steps li::before{content:counter(step,decimal-leading-zero);
-  font-family:"JetBrains Mono",monospace; font-size:.72rem; color:var(--accent)}
+/* Positioned rather than a grid. A grid container wraps each run of inline content
+   in its own anonymous item, so `<b>Lead.</b> then prose` became two items and the
+   prose landed in the 2rem counter column — one word per line, all the way down. */
+ol.steps li{counter-increment:step; position:relative; padding-left:2.9rem;
+  font-size:.97rem; max-width:74ch}
+ol.steps li::before{content:counter(step,decimal-leading-zero); position:absolute;
+  left:0; top:.15rem; font-family:"JetBrains Mono",monospace; font-size:.72rem;
+  color:var(--accent)}
 ol.steps b{color:var(--ink); font-family:"Archivo",sans-serif; font-weight:600}
 
 .meter{display:block; height:6px; width:110px; background:var(--sunk);
@@ -106,6 +110,25 @@ td.pass{color:var(--ev-motion)} td.fail{color:var(--crit)}
 tr.best td{background:var(--accent-soft)}
 .wide{max-width:none}
 .foot-note{font-size:.86rem; color:var(--muted); margin-top:.8rem; max-width:70ch}
+
+.diagram{overflow-x:auto; margin:1.4rem 0; padding-bottom:.4rem}
+.diagram svg{display:block; min-width:880px; height:auto; margin:0 auto}
+.dg-box{fill:var(--raise); stroke:var(--line-hard); stroke-width:1}
+.dg-edge{fill:var(--accent-soft); stroke:var(--accent); stroke-width:1}
+.dg-band{fill:var(--sunk); stroke:var(--line); stroke-width:1}
+.dg-band-l{fill:var(--muted); font-family:"JetBrains Mono",monospace; font-size:10px;
+  letter-spacing:.11em; text-transform:uppercase}
+.dg-t{fill:var(--ink); font-family:"Archivo",sans-serif; font-size:14px; font-weight:600}
+.dg-s{fill:var(--muted); font-family:"Newsreader",Georgia,serif; font-size:12px}
+.dg-s2{fill:var(--body); font-family:"Newsreader",Georgia,serif; font-size:12px}
+.dg-s3{fill:var(--faint); font-family:"Newsreader",Georgia,serif; font-size:11px}
+.dg-c{fill:var(--faint); font-family:"JetBrains Mono",monospace; font-size:10px;
+  letter-spacing:.06em}
+.dg-c.llm{fill:var(--accent)}
+.dg-o{fill:var(--muted); font-family:"JetBrains Mono",monospace; font-size:10px}
+.dg-a{stroke:var(--line-hard); stroke-width:1.5; fill:none}
+.dg-tip{fill:var(--line-hard)}
+.dg-div{stroke:var(--line); stroke-width:1}
 </style>
 """
 
@@ -309,6 +332,15 @@ costs nothing and gives nothing.</li>
 </section>
 
 <section class="block">
+<h2>Where the seeds come from</h2>
+<div class="rule"></div>
+<p class="lede">Seeds are built from FineVideo: a real video's metadata is condensed
+into a brief, and the criteria that brief puts at risk are chosen and then checked
+twice. <strong>Nothing is attached in bulk.</strong></p>
+<div class="diagram">{_pipeline_diagram()}</div>
+</section>
+
+<section class="block">
 <h2>Where to go next</h2>
 <div class="rule"></div>
 <div class="cards">
@@ -340,6 +372,115 @@ accuracy, and to score full marks for it.</p>
 {_footer(f'Dataset: {len(ds.seeds)} seeds · {len(lib.criteria)} criteria · {len(ds.safety_checks)} safety checks. ')}
 """
     return _page("Video Eval Bench", nav_html, body)
+
+
+
+# ── the seed-building diagram ─────────────────────────────────────────────────
+
+
+def _pipeline_diagram() -> str:
+    """
+    How a FineVideo source video becomes a seed, as one SVG.
+
+    Inline rather than a diagram library: the Pages site is static and offline, and
+    every colour is a CSS custom property so the drawing follows the viewer's theme
+    like the rest of the page.
+
+    The two bands are the fact worth showing. Everything above the break happens once
+    per source video and is checkpointed, so a killed build resumes where it stopped;
+    everything below needs the whole corpus in hand, which is why recurrence — several
+    unrelated briefs reaching for the same missing check — is the only thing that can
+    mint a criterion into the library.
+
+    Three columns, fixed: what the stage costs on the left, the stage in the middle,
+    what it produces on the right. The middle column is wide enough for its longest
+    caption at 12px, which is the constraint that sets the whole viewBox — SVG text
+    does not wrap, so a caption that outgrows its box silently draws across the
+    neighbouring column.
+    """
+    BOX_X, BOX_W = 176, 340
+    MID = BOX_X + BOX_W // 2
+    COST_X, OUT_X = 158, 536
+
+    def box(y, h, label, sub, cls="dg-box"):
+        ty = y + (h / 2 if not sub else h / 2 - 6)
+        out = [f'<rect class="{cls}" x="{BOX_X}" y="{y}" width="{BOX_W}" height="{h}" rx="2"/>',
+               f'<text class="dg-t" x="{BOX_X + 15}" y="{ty}" dominant-baseline="middle">{label}</text>']
+        if sub:
+            out.append(f'<text class="dg-s" x="{BOX_X + 15}" y="{y + h / 2 + 11}"'
+                       f' dominant-baseline="middle">{sub}</text>')
+        return "".join(out)
+
+    def cost(y, text, llm=False):
+        return (f'<text class="dg-c{" llm" if llm else ""}" x="{COST_X}" y="{y}"'
+                f' text-anchor="end" dominant-baseline="middle">{text}</text>')
+
+    def out(y, text):
+        return f'<text class="dg-o" x="{OUT_X}" y="{y}" dominant-baseline="middle">{text}</text>'
+
+    def arrow(y1, y2):
+        return f'<path class="dg-a" d="M{MID} {y1} L{MID} {y2}" marker-end="url(#dg-tip)"/>'
+
+    svg = ['<svg viewBox="0 0 880 690" role="img" width="880"',
+           ' aria-label="How a FineVideo source video becomes a benchmark seed:'
+           ' digest, synthesize, select and two judges per video, then clustering,'
+           ' minting and policy across the corpus.">',
+           '<defs><marker id="dg-tip" viewBox="0 0 8 8" refX="7" refY="4"'
+           ' markerWidth="7" markerHeight="7" orient="auto">'
+           '<path class="dg-tip" d="M0 0 L8 4 L0 8 z"/></marker></defs>']
+
+    svg.append(box(14, 40, "FineVideo", "one source video", "dg-edge"))
+    svg.append(arrow(54, 74))
+
+    svg.append('<rect class="dg-band" x="16" y="74" width="848" height="376" rx="3"/>')
+    svg.append(f'<text class="dg-band-l" x="30" y="92">per source video &#183; '
+               f'checkpointed after every stage</text>')
+
+    for y, name, sub, c, llm, o in (
+        (100, "digest", "metadata &#8594; bounded text", "local", False, "deterministic &#183; hashed"),
+        (174, "synthesize", "the brief, and the seed&#8217;s tags", "1 call", True,
+         "brief &#183; spoken lines &#183; tags"),
+        (248, "select", "which criteria this brief risks", "1 call", True,
+         "criteria &#183; proposals"),
+    ):
+        svg.append(box(y, 46, name, sub))
+        svg.append(cost(y + 23, c, llm))
+        svg.append(out(y + 23, o))
+        svg.append(arrow(y + 46, y + 74))
+
+    jy = 322
+    svg.append(f'<rect class="dg-box" x="{BOX_X}" y="{jy}" width="{BOX_W}" height="106" rx="2"/>')
+    svg.append(f'<text class="dg-t" x="{BOX_X + 15}" y="{jy + 22}" dominant-baseline="middle">the two judges</text>')
+    svg.append(f'<line class="dg-div" x1="{BOX_X + 15}" y1="{jy + 36}" x2="{BOX_X + BOX_W - 15}" y2="{jy + 36}"/>')
+    svg.append(f'<text class="dg-s2" x="{BOX_X + 15}" y="{jy + 54}" dominant-baseline="middle">judge_seed &#8212; does the brief ground it?</text>')
+    svg.append(f'<text class="dg-s2" x="{BOX_X + 15}" y="{jy + 74}" dominant-baseline="middle">judge_metadata &#8212; does the source satisfy it?</text>')
+    svg.append(f'<text class="dg-s3" x="{BOX_X + 15}" y="{jy + 93}" dominant-baseline="middle">container criteria &#8594; ffprobe, no model</text>')
+    svg.append(cost(jy + 45, "1 call", True))
+    svg.append(cost(jy + 61, "per criterion", True))
+    svg.append(out(jy + 45, "grounded &#183; ungrounded"))
+    svg.append(out(jy + 65, "verified &#183; contradicted"))
+    svg.append(out(jy + 85, "unchecked &#8212; nothing looked"))
+    svg.append(arrow(jy + 106, 478))
+
+    svg.append('<rect class="dg-band" x="16" y="478" width="848" height="150" rx="3"/>')
+    svg.append('<text class="dg-band-l" x="30" y="496">once, over the whole corpus</text>')
+
+    svg.append(box(508, 46, "cluster &#8594; mint", "recurring proposals &#8594; the library"))
+    svg.append(cost(523, "1 call", True))
+    svg.append(cost(539, "per cluster", True))
+    svg.append(out(521, "&#8805; 5 videos &#8594; new criterion"))
+    svg.append(out(541, "fewer &#8594; kept on that one seed"))
+    svg.append(arrow(554, 570))
+
+    svg.append(box(570, 46, "policy", "which criteria are graded"))
+    svg.append(cost(593, "local", False))
+    svg.append(out(583, "reversible &#8212; no rebuild,"))
+    svg.append(out(603, "no model calls"))
+    svg.append(arrow(616, 636))
+
+    svg.append(box(636, 40, "dataset", "seeds.yaml &#183; rubrics.yaml", "dg-edge"))
+    svg.append("</svg>")
+    return "".join(svg)
 
 
 # ── the performance page ──────────────────────────────────────────────────────
@@ -564,7 +705,7 @@ def build(
     if pilot and pilot.exists():
         corpus_seeds, corpus = load_dataset(pilot).seeds, "the FineVideo pilot"
     else:
-        corpus_seeds, corpus = ds.seeds, "the benchmark's own seeds"
+        corpus_seeds, corpus = ds.seeds, "the benchmark's dataset"
 
     out.mkdir(parents=True, exist_ok=True)
     pages = {
